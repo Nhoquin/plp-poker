@@ -433,10 +433,10 @@ nav{position:fixed;z-index:30;left:50%;bottom:0;transform:translateX(-50%);width
 
 <section class="screen" id="profile">
   <div class="screen-top"><div class="screen-top-inner"><img class="mini-logo" src="assets/league-logo.png"><div><h2>Perfil</h2><p>Acesso ao aplicativo</p></div><button class="back-home" data-go="home">⌂</button></div></div>
-  <div class="card" style="text-align:center;padding:24px"><img class="mini-logo" style="width:86px;height:86px" src="assets/league-logo.png"><h3 style="margin:11px 0 3px">1ª Liga de Poker</h3><div class="muted small">Versão 15 Premium • Temporada 2026</div></div>
+  <div class="card" style="text-align:center;padding:24px"><img class="mini-logo" style="width:86px;height:86px" src="assets/league-logo.png"><h3 style="margin:11px 0 3px">1ª Liga de Poker</h3><div class="muted small">Versão 16 Premium • Temporada 2026</div></div>
   <div class="card"><div class="row"><span class="muted">Perfil atual</span><b id="profileRole">Administrador local</b></div><div class="row"><span class="muted">Temporada</span><b>2026</b></div><div class="row"><span class="muted">Tema</span><b>PLP Preto & Dourado</b></div></div>
 <div class="card" id="authCard">
-  <div class="row"><div><b>Acesso administrativo</b><div class="small muted">A senha é exigida para desbloquear cadastros, resultados e controles administrativos.</div></div><span class="pill warn" id="backendBadge">LOCAL</span></div>
+  <div class="row"><div><b>Acesso administrativo</b><div class="small muted">Somente contas cadastradas como administradoras podem acessar cadastros, resultados e controles administrativos.</div></div><span class="pill warn" id="backendBadge">LOCAL</span></div>
   <div class="auth-fields"><input id="adminEmail" type="email" autocomplete="username" placeholder="E-mail do administrador" value="franmfilho@gmail.com"><input id="adminPassword" type="password" autocomplete="current-password" placeholder="Senha"></div>
   <div class="auth-actions"><button class="btn gold" id="adminLogin">Entrar</button><button class="btn ghost" id="adminCreate">Criar primeiro acesso</button><button class="btn ghost" id="adminLogout" style="display:none">Sair</button></div>
   <div class="auth-status warn" id="adminAuthStatus">Backend ainda não configurado. O aplicativo permanece em modo administrativo local.</div>
@@ -489,19 +489,19 @@ const currency=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'
 const initials=n=>n.split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase();
 const SUPA_CONFIG=window.PLP_SUPABASE_CONFIG||{};
 const backendReady=Boolean(window.supabase&&SUPA_CONFIG.url&&SUPA_CONFIG.anonKey);
-let supa=null,isAdmin=!backendReady,currentUser=null,adminUnlocked=!backendReady,remoteClock=null,remoteClockChannel=null,remotePaintTimer=null;
+let supa=null,isAdmin=!backendReady,currentUser=null,remoteClock=null,remoteClockChannel=null,remotePaintTimer=null;
 function setAdminUI(){
   const role=document.getElementById('profileRole'),badge=document.getElementById('backendBadge'),status=document.getElementById('adminAuthStatus'),login=document.getElementById('adminLogin'),create=document.getElementById('adminCreate'),logout=document.getElementById('adminLogout'),controls=document.getElementById('clockControls'),access=document.getElementById('clockAccessStatus'),notice=document.getElementById('adminBackendNotice');
-  if(role)role.textContent=backendReady?(isAdmin?(adminUnlocked?'Administrador • desbloqueado':'Administrador • bloqueado'):'Participante'):'Administrador local';
+  if(role)role.textContent=backendReady?(isAdmin?'Administrador':'Participante'):'Administrador local';
   if(badge){badge.textContent=backendReady?'ONLINE':'LOCAL';badge.className='pill '+(backendReady?'good':'warn')}
-  if(login){login.style.display=backendReady&&(!currentUser||isAdmin)?'block':'none';login.textContent=currentUser&&isAdmin?'Desbloquear Admin':'Entrar'}
+  if(login){login.style.display=backendReady&&!currentUser?'block':'none';login.textContent='Entrar'}
   if(create)create.style.display=backendReady&&!currentUser?'block':'none';
   if(logout)logout.style.display=backendReady&&currentUser?'block':'none';
   if(status){
     status.className='auth-status '+(backendReady&&isAdmin?'good':'warn');
-    status.textContent=!backendReady?'Backend ainda não configurado. O aplicativo permanece em modo administrativo local.':!currentUser?'Entre com a conta administrativa. No primeiro acesso, use “Criar primeiro acesso”.':isAdmin?(adminUnlocked?'Administrador autenticado e área administrativa desbloqueada.':'Conta administrativa autenticada. Digite sua senha para desbloquear cadastros, resultados e relógio.'):'Conta autenticada, mas sem permissão administrativa.';
+    status.textContent=!backendReady?'Backend ainda não configurado. O aplicativo permanece em modo administrativo local.':!currentUser?'Entre com a conta administrativa. No primeiro acesso, use “Criar primeiro acesso”.':isAdmin?'Administrador autenticado. Acesso administrativo liberado até sair da conta.':'Conta autenticada, mas sem permissão administrativa.';
   }
-  if(controls)controls.style.display=(!backendReady||(isAdmin&&adminUnlocked))?'grid':'none';
+  if(controls)controls.style.display=(!backendReady||isAdmin)?'grid':'none';
   if(access){access.textContent=backendReady?'Sincronizado online':'Modo local';access.className=backendReady?'online':'local'}
   const clockNotice=document.getElementById('clockNotice');
   if(clockNotice)clockNotice.textContent=backendReady?(isAdmin?'Você está controlando o relógio oficial. As alterações aparecem para todos os participantes.':'Visualização ao vivo do relógio oficial. Somente administradores podem controlar a contagem.'):'Controle local neste aparelho. Configure o backend para sincronizar o relógio entre todos.';
@@ -553,12 +553,7 @@ async function initBackend(){
 }
 
 function goTo(id){
-  if(backendReady&&['admin','importer'].includes(id)){
-    if(!isAdmin){showToast('Entre como administrador para acessar esta área.');id='profile'}
-    else if(!adminUnlocked){showToast('Digite sua senha para desbloquear a área administrativa.');id='profile';setTimeout(()=>document.getElementById('adminPassword')?.focus(),150)}
-  }
-  const prev=document.querySelector('.screen.active')?.id;
-  if(backendReady&&adminUnlocked&&['admin','importer','clockScreen'].includes(prev)&&!['admin','importer','clockScreen'].includes(id)){adminUnlocked=false;setAdminUI()}
+  if(backendReady&&['admin','importer'].includes(id)&&!isAdmin){showToast('Acesso restrito a administradores. Faça login para continuar.');id='profile'}
   document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id===id));
   document.querySelectorAll('.navbtn').forEach(n=>n.classList.toggle('active',n.dataset.nav===id));
   if(!['home','ranking','tournament','finance','profile'].includes(id)) document.querySelectorAll('.navbtn').forEach(n=>n.classList.remove('active'));
@@ -768,12 +763,14 @@ document.getElementById('financeByBr').innerHTML=['br1','br2','br3','br4'].map(k
 
 document.getElementById('adminLogin').addEventListener('click',async()=>{
   if(!backendReady){showToast('Backend ainda não configurado.');return}
-  const email=(document.getElementById('adminEmail').value.trim()||currentUser?.email||'').toLowerCase(),password=document.getElementById('adminPassword').value;
-  if(!email||!password){showToast('Informe sua senha administrativa.');return}
+  const email=document.getElementById('adminEmail').value.trim().toLowerCase(),password=document.getElementById('adminPassword').value;
+  if(!email||!password){showToast('Informe e-mail e senha.');return}
   const {error}=await supa.auth.signInWithPassword({email,password});
-  if(error){adminUnlocked=false;setAdminUI();showToast('Senha incorreta ou acesso não autorizado.');return}
+  if(error){showToast('Senha incorreta ou acesso não autorizado.');return}
   await refreshAdminRole();
-  if(isAdmin){adminUnlocked=true;document.getElementById('adminPassword').value='';setAdminUI();showToast('Área administrativa desbloqueada.');goTo('admin')}
+  document.getElementById('adminPassword').value='';
+  if(isAdmin){setAdminUI();showToast('Acesso administrativo liberado.');goTo('admin')}
+  else{showToast('Esta conta não possui permissão de administrador.')}
 });
 document.getElementById('adminCreate').addEventListener('click',async()=>{
   if(!backendReady){showToast('Backend ainda não configurado.');return}
@@ -785,7 +782,7 @@ document.getElementById('adminCreate').addEventListener('click',async()=>{
   if(data?.session){await refreshAdminRole();if(isAdmin)showToast('Primeiro administrador criado e autenticado.')}
   else{const st=document.getElementById('adminAuthStatus');if(st){st.className='auth-status good';st.textContent='Cadastro criado. Confirme o e-mail recebido e depois entre no aplicativo.'}showToast('Confira seu e-mail para confirmar o cadastro.')}
 });
-document.getElementById('adminLogout').addEventListener('click',async()=>{if(backendReady){adminUnlocked=false;await supa.auth.signOut();await refreshAdminRole();showToast('Sessão encerrada.')}});
+document.getElementById('adminLogout').addEventListener('click',async()=>{if(backendReady){await supa.auth.signOut();await refreshAdminRole();showToast('Sessão encerrada.')}});
 ensureDataVersion();loadSavedOverrides();renderHome();renderRanking('rankingList',rankSets.geral,'geral');renderFinanceStrip('geral');setChampionshipView('br3',false);setChampionshipView('br3',true);renderClassified();renderPlayers();paintClock();parseSignupText();populateResultStageOptions(false);loadSelectedStageResult();setAdminUI();initBackend();
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}
 </script>
