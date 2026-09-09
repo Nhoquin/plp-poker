@@ -199,6 +199,24 @@ nav{position:fixed;z-index:30;left:50%;bottom:0;transform:translateX(-50%);width
   .stage-unavailable .stage-total-grid{grid-template-columns:1fr}
 }
 
+
+/* ===== PLP V13: realtime clock/auth readiness ===== */
+.live-clock-home{display:none;margin:12px 0 18px;border:1px solid rgba(123,230,179,.34);border-radius:22px;background:linear-gradient(145deg,rgba(12,32,24,.72),rgba(7,13,10,.92));padding:13px 15px;align-items:center;gap:12px;box-shadow:0 14px 30px rgba(0,0,0,.22);backdrop-filter:blur(12px);color:#fff;text-align:left;width:100%}
+.live-clock-home.show{display:grid;grid-template-columns:auto 1fr auto}
+.live-clock-home .live-dot{width:11px;height:11px;border-radius:50%;background:var(--good);box-shadow:0 0 14px var(--good)}
+.live-clock-home b{display:block;font-size:12px;color:#dff8ea}.live-clock-home span{display:block;font-size:9px;color:var(--muted);margin-top:2px}
+.live-clock-home .live-time{font-size:20px;font-weight:950;color:var(--gold2);font-variant-numeric:tabular-nums;text-align:right}
+.clock-access{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;padding:8px 10px;border-radius:13px;border:1px solid var(--line-soft);background:rgba(10,10,8,.62);font-size:9px;color:var(--muted)}
+.clock-access b{color:#fff}.clock-access .online{color:var(--good)}.clock-access .local{color:var(--gold2)}
+.auth-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:11px}
+.auth-fields input{width:100%;border:1px solid var(--line-soft);border-radius:12px;background:#0d0c09;color:#fff;padding:11px 12px;outline:none}
+.auth-fields input:focus{border-color:var(--gold)}
+.auth-actions{display:flex;gap:8px;margin-top:9px}.auth-actions .btn{flex:1}
+.auth-status{margin-top:9px;padding:9px 10px;border-radius:12px;background:rgba(255,255,255,.035);font-size:10px;color:var(--muted)}
+.auth-status.good{border:1px solid rgba(123,230,179,.24);color:#c9f4dc}.auth-status.warn{border:1px solid rgba(244,201,20,.20);color:#f3dfa0}
+.admin-locked{opacity:.56;filter:saturate(.45)}
+@media(max-width:520px){.auth-fields{grid-template-columns:1fr}.live-clock-home.show{grid-template-columns:auto 1fr}.live-clock-home .live-time{grid-column:2;text-align:left}}
+
 </style>
 </head>
 <body>
@@ -221,6 +239,7 @@ nav{position:fixed;z-index:30;left:50%;bottom:0;transform:translateX(-50%);width
       </div>
     </div>
   </div>
+  <button class="live-clock-home" id="liveClockHome" data-go="clockScreen"><span class="live-dot"></span><div><b>Blind Clock ao vivo</b><span id="liveClockHomeLevel">Nível 1 • 100 / 200 • Ante 200</span></div><div class="live-time" id="liveClockHomeTime">20:00</div></button>
   <div class="home-section-title"><span>Painel da Liga</span><small>Dados atualizados até a 11ª Etapa do BR3</small></div>
   <div class="premium-ribbon">
     <div class="premium-stat"><span>Líder geral</span><b>DU • 401 pts</b><small>2º Tchola • 381 pts</small></div>
@@ -276,8 +295,8 @@ nav{position:fixed;z-index:30;left:50%;bottom:0;transform:translateX(-50%);width
 
 <section class="screen" id="clockScreen">
   <div class="screen-top"><div class="screen-top-inner"><img class="mini-logo" src="assets/league-logo.png"><div><h2>Blind Clock</h2><p>Estrutura oficial da etapa</p></div><button class="back-home" data-go="home">⌂</button></div></div>
-  <div class="clock"><div class="lvl" id="levelLabel">NÍVEL 1</div><div class="blinds" id="blindsLabel">100 / 200</div><div class="ante">ANTE <b id="anteLabel">200</b></div><div class="timer" id="timer">20:00</div><div class="progress"><span id="progressBar"></span></div><div class="next">Próximo: <b id="nextBlind">200 / 400</b> • Ante <b id="nextAnte">400</b></div><div class="controls"><button class="btn primary" id="startPause">▶ Iniciar</button><button class="btn" id="addMinute">+1 min</button><button class="btn" id="nextLevel">Próximo</button><button class="btn" id="resetClock">↺ Resetar</button></div></div>
-  <div class="section-title"><h3>Estrutura</h3><span id="clockStatus">Pausado</span></div><div class="notice">Controle do relógio reservado à área administrativa. Nesta versão o relógio ainda funciona localmente neste aparelho; a sincronização ao vivo será ativada quando conectarmos autenticação e banco em tempo real.</div>
+  <div class="clock-access"><span>Sincronização</span><b id="clockAccessStatus" class="local">Modo local</b></div><div class="clock"><div class="lvl" id="levelLabel">NÍVEL 1</div><div class="blinds" id="blindsLabel">100 / 200</div><div class="ante">ANTE <b id="anteLabel">200</b></div><div class="timer" id="timer">20:00</div><div class="progress"><span id="progressBar"></span></div><div class="next">Próximo: <b id="nextBlind">200 / 400</b> • Ante <b id="nextAnte">400</b></div><div class="controls" id="clockControls"><button class="btn primary" id="startPause">▶ Iniciar</button><button class="btn" id="addMinute">+1 min</button><button class="btn" id="nextLevel">Próximo</button><button class="btn" id="resetClock">↺ Resetar</button></div></div>
+  <div class="section-title"><h3>Estrutura</h3><span id="clockStatus">Pausado</span></div><div class="notice" id="clockNotice">Controle do relógio reservado à área administrativa. Quando o backend estiver configurado, todos os participantes verão o mesmo tempo em andamento.</div>
   <div class="card"><div class="row"><span class="muted">Stack inicial</span><b>45K</b></div><div class="row"><span class="muted">Time Chip</span><b>+5K</b></div><div class="row"><span class="muted">Registro tardio</span><b>até nível 5</b></div><div class="row"><span class="muted">Formato</span><b>Freezout</b></div></div>
 </section>
 
@@ -329,7 +348,7 @@ nav{position:fixed;z-index:30;left:50%;bottom:0;transform:translateX(-50%);width
   </div>
   <div class="section-title"><h3>Regra atual de buy-in</h3></div>
   <div class="card"><div class="row"><span class="muted">Buy-in</span><b>R$ 60</b></div><div class="row"><span class="muted">Premiação da etapa</span><b>R$ 50</b></div><div class="row"><span class="muted">Jackpot</span><b>R$ 10</b></div><div class="row"><span class="muted">Anfitrião</span><b>Isento</b></div></div>
-  <div class="notice">Esta versão publicada no GitHub Pages mantém alterações e conferências neste aparelho. A sincronização automática entre todos os administradores será o próximo passo quando conectarmos um banco de dados.</div>
+  <div class="notice" id="adminBackendNotice">Modo local ativo. Após configurar o Supabase, esta área exigirá login de administrador e o Blind Clock ficará sincronizado para todos em tempo real.</div>
 </section>
 
 <section class="screen" id="importer">
@@ -414,8 +433,14 @@ nav{position:fixed;z-index:30;left:50%;bottom:0;transform:translateX(-50%);width
 
 <section class="screen" id="profile">
   <div class="screen-top"><div class="screen-top-inner"><img class="mini-logo" src="assets/league-logo.png"><div><h2>Perfil</h2><p>Acesso ao aplicativo</p></div><button class="back-home" data-go="home">⌂</button></div></div>
-  <div class="card" style="text-align:center;padding:24px"><img class="mini-logo" style="width:86px;height:86px" src="assets/league-logo.png"><h3 style="margin:11px 0 3px">1ª Liga de Poker</h3><div class="muted small">Versão 12 Premium • Temporada 2026</div></div>
-  <div class="card"><div class="row"><span class="muted">Perfil atual</span><b>Administrador</b></div><div class="row"><span class="muted">Temporada</span><b>2026</b></div><div class="row"><span class="muted">Tema</span><b>PLP Preto & Dourado</b></div></div>
+  <div class="card" style="text-align:center;padding:24px"><img class="mini-logo" style="width:86px;height:86px" src="assets/league-logo.png"><h3 style="margin:11px 0 3px">1ª Liga de Poker</h3><div class="muted small">Versão 13 Premium • Temporada 2026</div></div>
+  <div class="card"><div class="row"><span class="muted">Perfil atual</span><b id="profileRole">Administrador local</b></div><div class="row"><span class="muted">Temporada</span><b>2026</b></div><div class="row"><span class="muted">Tema</span><b>PLP Preto & Dourado</b></div></div>
+<div class="card" id="authCard">
+  <div class="row"><div><b>Acesso administrativo</b><div class="small muted">Login para controlar relógio e lançamentos quando a sincronização online estiver ativa.</div></div><span class="pill warn" id="backendBadge">LOCAL</span></div>
+  <div class="auth-fields"><input id="adminEmail" type="email" autocomplete="username" placeholder="E-mail do administrador"><input id="adminPassword" type="password" autocomplete="current-password" placeholder="Senha"></div>
+  <div class="auth-actions"><button class="btn gold" id="adminLogin">Entrar</button><button class="btn ghost" id="adminLogout" style="display:none">Sair</button></div>
+  <div class="auth-status warn" id="adminAuthStatus">Backend ainda não configurado. O aplicativo permanece em modo administrativo local.</div>
+</div>
 <div class="card" style="margin-top:10px"><div class="row"><span class="muted">Instalação</span><b>PWA • Desktop • Android • iPhone</b></div><div class="small muted" style="margin-top:8px">Para compartilhar corretamente, publique este app em um link HTTPS. No Windows e Android ele instala como aplicativo; no iPhone a instalação é feita pelo Safari em “Adicionar à Tela de Início”.</div></div>
 
 </section>
@@ -429,6 +454,8 @@ nav{position:fixed;z-index:30;left:50%;bottom:0;transform:translateX(-50%);width
 </nav>
 <div class="toast" id="toast"></div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
 <script src="stages.js"></script>
 <script>
 const rankingFinancials={
@@ -440,7 +467,7 @@ const rankSets={
  ].map(([name,pts,discard,prize,status])=>({name,pts,discard,prize,status})),
  br1:[['DU',172,'R$ 60,00'],['NETO',151],['JUNINHO',125],['TCHOLA',118],['GEIO',112],['CHARLES',110],['FABETA',102],['JUNIOR',99],['GUSTAVO',93],['PAULO',88],['BRUNO',77],['GUILHERME',73],['CAZELE',64],['ARTHUR',64],['SAMUKA',62],['BRUNO L',46],['RAFAEL',38],['JOÃO',32],['GUI MENEGA',19],['MAURÍCIO',15],['PITUCO',12],['KAWE',11],['CAIO',11],['THIAGO',9],['ZE',7],['FLAVIO',5],['RODRIGO',4],['LEONARDO',4],['JOÃO CARLOS',1]].map(([name,pts,prize])=>({name,pts,prize})),
  br2:[['TCHOLA',131,'R$ 60,00'],['DU',127],['FABETA',97],['GEIO',94],['NETO',89],['CHARLES',88],['JUNINHO',72],['PAULO',43],['RAFAEL',41],['CAIO',36],['CAZELE',35],['DIEGO',32],['GUILHERME',28],['MAURÍCIO',22],['MURILO',15],['ARTHUR',13],['ZE',13],['WALL',13],['MONAN',12],['ANTONIO',12],['BRUNO',11],['JUNIOR',6],['THIAGO',6],['GUSTAVO',5],['FLAVIO',2]].map(([name,pts,prize])=>({name,pts,prize})),
- br3:[['TCHOLA',132,'R$ 60,00'],['GEIO',94],['FABETA',91],['CAIO',89],['DU',103],['JUNINHO',73],['NETO',71],['BRUNO',45],['CHARLES',44],['PAULO',40],['RAFAEL',36],['CAFU',33],['MAURÍCIO',28],['CHUCK',23],['NHONHO',19],['CAZELE',18],['DANIEL',18],['XIMBA',16],['TOT',14],['GUI MENEGA',12],['THIAGO',9],['OSNI',8],['PEKENOR',7],['CHICO',5],['JUNIOR',4],['GUILHERME',3]].map(([name,pts,prize])=>({name,pts,prize})),
+ br3:[['TCHOLA',132,'R$ 60,00'],['DU',103],['GEIO',94],['FABETA',91],['CAIO',89],['JUNINHO',73],['NETO',71],['BRUNO',45],['CHARLES',44],['PAULO',40],['RAFAEL',36],['CAFU',33],['MAURÍCIO',28],['CHUCK',23],['NHONHO',19],['CAZELE',18],['DANIEL',18],['XIMBA',16],['TOT',14],['GUI MENEGA',12],['THIAGO',9],['OSNI',8],['PEKENOR',7],['CHICO',5],['JUNIOR',4],['GUILHERME',3]].map(([name,pts,prize])=>({name,pts,prize})),
  br4:[]
 };
 const br3Stages=[
@@ -460,7 +487,68 @@ const stageSets=window.PLP_STAGE_SETS||{br1:[],br2:[],br3:br3Stages,br4:[]};
 
 const currency=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(v||0);
 const initials=n=>n.split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase();
+const SUPA_CONFIG=window.PLP_SUPABASE_CONFIG||{};
+const backendReady=Boolean(window.supabase&&SUPA_CONFIG.url&&SUPA_CONFIG.anonKey);
+let supa=null,isAdmin=!backendReady,currentUser=null,remoteClock=null,remoteClockChannel=null,remotePaintTimer=null;
+function setAdminUI(){
+  const role=document.getElementById('profileRole'),badge=document.getElementById('backendBadge'),status=document.getElementById('adminAuthStatus'),login=document.getElementById('adminLogin'),logout=document.getElementById('adminLogout'),controls=document.getElementById('clockControls'),access=document.getElementById('clockAccessStatus'),notice=document.getElementById('adminBackendNotice');
+  if(role)role.textContent=backendReady?(isAdmin?'Administrador':'Participante'):'Administrador local';
+  if(badge){badge.textContent=backendReady?'ONLINE':'LOCAL';badge.className='pill '+(backendReady?'good':'warn')}
+  if(login)login.style.display=backendReady&&!currentUser?'block':'none';
+  if(logout)logout.style.display=backendReady&&currentUser?'block':'none';
+  if(status){
+    status.className='auth-status '+(backendReady&&isAdmin?'good':'warn');
+    status.textContent=!backendReady?'Backend ainda não configurado. O aplicativo permanece em modo administrativo local.':!currentUser?'Entre com uma conta autorizada para administrar a Liga.':isAdmin?'Administrador autenticado. Controles e lançamentos liberados.':'Conta autenticada, mas sem permissão administrativa.';
+  }
+  if(controls)controls.style.display=(!backendReady||isAdmin)?'grid':'none';
+  if(access){access.textContent=backendReady?'Sincronizado online':'Modo local';access.className=backendReady?'online':'local'}
+  const clockNotice=document.getElementById('clockNotice');
+  if(clockNotice)clockNotice.textContent=backendReady?(isAdmin?'Você está controlando o relógio oficial. As alterações aparecem para todos os participantes.':'Visualização ao vivo do relógio oficial. Somente administradores podem controlar a contagem.'):'Controle local neste aparelho. Configure o backend para sincronizar o relógio entre todos.';
+  if(notice)notice.textContent=backendReady?(isAdmin?'Backend online e autenticação ativa. Alterações do relógio são compartilhadas em tempo real.':'Área administrativa protegida por login.'):'Modo local ativo. Configure o Supabase para autenticação e sincronização online.';
+}
+async function refreshAdminRole(){
+  if(!backendReady){isAdmin=true;setAdminUI();return}
+  const {data:{session}}=await supa.auth.getSession();currentUser=session?.user||null;isAdmin=false;
+  if(currentUser){
+    const {data,error}=await supa.from('admin_users').select('user_id').eq('user_id',currentUser.id).maybeSingle();
+    if(!error&&data)isAdmin=true;
+  }
+  setAdminUI();
+}
+function derivedRemoteClock(state=remoteClock){
+  if(!state)return {level:0,remaining:1200,running:false};
+  let level=Math.max(0,Math.min(blinds.length-1,Number(state.level)||0));
+  let remaining=Math.max(0,Number(state.remaining_seconds)||0);
+  if(!state.running||!state.started_at)return {level,remaining,running:false};
+  let elapsed=Math.max(0,Math.floor((Date.now()-Date.parse(state.started_at))/1000));
+  while(elapsed>=remaining&&level<blinds.length-1){elapsed-=remaining;level++;remaining=1200}
+  if(level===blinds.length-1&&elapsed>=remaining)return {level,remaining:0,running:false};
+  return {level,remaining:Math.max(0,remaining-elapsed),running:true};
+}
+async function loadRemoteClock(){
+  if(!backendReady)return;
+  const {data,error}=await supa.from('clock_state').select('*').eq('id','main').single();
+  if(!error&&data){remoteClock=data;paintClock()}
+}
+async function saveRemoteClock(next){
+  if(!backendReady)return false;
+  if(!isAdmin){showToast('Somente administradores podem controlar o relógio.');return false}
+  const payload={level:next.level,remaining_seconds:next.remaining,running:next.running,started_at:next.running?new Date().toISOString():null,updated_at:new Date().toISOString(),updated_by:currentUser?.id||null};
+  const {data,error}=await supa.from('clock_state').update(payload).eq('id','main').select().single();
+  if(error){showToast('Não foi possível sincronizar o relógio.');return false}
+  remoteClock=data;paintClock();return true;
+}
+async function initBackend(){
+  if(!backendReady){setAdminUI();return}
+  supa=window.supabase.createClient(SUPA_CONFIG.url,SUPA_CONFIG.anonKey);
+  await refreshAdminRole();await loadRemoteClock();
+  remoteClockChannel=supa.channel('plp-clock-live').on('postgres_changes',{event:'UPDATE',schema:'public',table:'clock_state',filter:'id=eq.main'},payload=>{remoteClock=payload.new;paintClock()}).subscribe();
+  supa.auth.onAuthStateChange(async()=>{await refreshAdminRole()});
+  remotePaintTimer=setInterval(()=>paintClock(),1000);
+}
+
 function goTo(id){
+  if(backendReady&&['admin','importer'].includes(id)&&!isAdmin){showToast('Entre como administrador para acessar esta área.');id='profile'}
   document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id===id));
   document.querySelectorAll('.navbtn').forEach(n=>n.classList.toggle('active',n.dataset.nav===id));
   if(!['home','ranking','tournament','finance','profile'].includes(id)) document.querySelectorAll('.navbtn').forEach(n=>n.classList.remove('active'));
@@ -638,13 +726,44 @@ document.getElementById('sourceFile').addEventListener('change',e=>{const f=e.ta
 
 const blinds=[['100 / 200','200'],['200 / 400','400'],['300 / 600','600'],['400 / 800','800'],['500 / 1.000','1.000'],['750 / 1.500','1.500'],['1.000 / 2.000','2.000'],['1.500 / 3.000','3.000'],['2.000 / 4.000','4.000'],['2.500 / 5.000','5.000'],['3.000 / 6.000','6.000'],['4.000 / 8.000','8.000'],['5.000 / 10.000','10.000'],['7.500 / 15.000','15.000'],['10.000 / 20.000','20.000']];
 let lvl=0,remaining=1200,running=false,tick=null;
-function paintClock(){document.getElementById('levelLabel').textContent=`NÍVEL ${lvl+1}`;document.getElementById('blindsLabel').textContent=blinds[lvl][0];document.getElementById('anteLabel').textContent=blinds[lvl][1];const m=Math.floor(remaining/60),s=remaining%60;document.getElementById('timer').textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;document.getElementById('progressBar').style.width=`${Math.max(0,Math.min(100,remaining/1200*100))}%`;const n=Math.min(lvl+1,blinds.length-1);document.getElementById('nextBlind').textContent=blinds[n][0];document.getElementById('nextAnte').textContent=blinds[n][1];document.getElementById('clockStatus').textContent=running?'Rodando':'Pausado';document.getElementById('startPause').textContent=running?'⏸ Pausar':'▶ Iniciar'}
-function nextLevel(){lvl=Math.min(lvl+1,blinds.length-1);remaining=1200;paintClock()}
-document.getElementById('startPause').addEventListener('click',()=>{running=!running;if(running){tick=setInterval(()=>{remaining--;if(remaining<=0){if(lvl<blinds.length-1)nextLevel();else{remaining=0;running=false;clearInterval(tick)}}paintClock()},1000)}else clearInterval(tick);paintClock()});document.getElementById('addMinute').addEventListener('click',()=>{remaining+=60;paintClock()});document.getElementById('nextLevel').addEventListener('click',nextLevel);document.getElementById('resetClock').addEventListener('click',()=>{clearInterval(tick);tick=null;running=false;lvl=0;remaining=1200;paintClock();showToast('Blind Clock resetado para o Nível 1 • 20:00.');});
+function currentClockView(){return backendReady?derivedRemoteClock():{level:lvl,remaining,running}}
+function paintClock(){
+  const view=currentClockView();const level=Math.max(0,Math.min(blinds.length-1,view.level));const rem=Math.max(0,view.remaining);
+  document.getElementById('levelLabel').textContent=`NÍVEL ${level+1}`;document.getElementById('blindsLabel').textContent=blinds[level][0];document.getElementById('anteLabel').textContent=blinds[level][1];
+  const m=Math.floor(rem/60),s=rem%60;document.getElementById('timer').textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;document.getElementById('progressBar').style.width=`${Math.max(0,Math.min(100,rem/1200*100))}%`;
+  const n=Math.min(level+1,blinds.length-1);document.getElementById('nextBlind').textContent=blinds[n][0];document.getElementById('nextAnte').textContent=blinds[n][1];document.getElementById('clockStatus').textContent=view.running?'Rodando':'Pausado';document.getElementById('startPause').textContent=view.running?'⏸ Pausar':'▶ Iniciar';
+  const live=document.getElementById('liveClockHome');if(live){live.classList.toggle('show',backendReady&&view.running);document.getElementById('liveClockHomeLevel').textContent=`Nível ${level+1} • ${blinds[level][0]} • Ante ${blinds[level][1]}`;document.getElementById('liveClockHomeTime').textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`}
+}
+function startLocalTick(){clearInterval(tick);if(running)tick=setInterval(()=>{remaining--;if(remaining<=0){if(lvl<blinds.length-1){lvl++;remaining=1200}else{remaining=0;running=false;clearInterval(tick)}}paintClock()},1000)}
+document.getElementById('startPause').addEventListener('click',async()=>{
+  if(backendReady){const v=derivedRemoteClock();await saveRemoteClock({level:v.level,remaining:v.remaining,running:!v.running});return}
+  running=!running;startLocalTick();paintClock()
+});
+document.getElementById('addMinute').addEventListener('click',async()=>{
+  if(backendReady){const v=derivedRemoteClock();await saveRemoteClock({level:v.level,remaining:v.remaining+60,running:v.running});return}
+  remaining+=60;paintClock()
+});
+document.getElementById('nextLevel').addEventListener('click',async()=>{
+  if(backendReady){const v=derivedRemoteClock();await saveRemoteClock({level:Math.min(v.level+1,blinds.length-1),remaining:1200,running:v.running});return}
+  lvl=Math.min(lvl+1,blinds.length-1);remaining=1200;paintClock()
+});
+document.getElementById('resetClock').addEventListener('click',async()=>{
+  if(backendReady){if(await saveRemoteClock({level:0,remaining:1200,running:false}))showToast('Blind Clock resetado para o Nível 1 • 20:00.');return}
+  clearInterval(tick);tick=null;running=false;lvl=0;remaining=1200;paintClock();showToast('Blind Clock resetado para o Nível 1 • 20:00.')
+});
+
 function renderClassified(){const d=rankSets.geral.filter(x=>x.status);document.getElementById('classifiedList').innerHTML=d.map((p,i)=>`<div class="class-card"><div class="class-badge">${i+1}</div><div class="grow"><b>${p.name}</b><p>${p.status==='classified'?'Classificado para a Libertadores':'Classificando para a Libertadores'} • ${p.pts} pontos</p></div><span class="status ${p.status}">${p.status==='classified'?'GARANTIDO':'PARCIAL'}</span></div>`).join('')}
 function renderPlayers(){document.getElementById('playerGrid').innerHTML=rankSets.geral.map((p,i)=>`<div class="player-card"><div class="avatar">${initials(p.name)}</div><div><b>${p.name}</b><br><span>${i+1}º geral • ${p.pts} pts</span></div></div>`).join('')}
-document.getElementById('financeByBr').innerHTML=['br1','br2','br3'].map(k=>{const f=rankingFinancials[k];return `<div class="row"><div><b>${k.toUpperCase()}</b><div class="small muted">Arrec. ${currency(f.arrec)} • Prêmios ${currency(f.premios)}${f.confirmedArrec!=null?' • inclui projeção':''}</div></div><b class="gold-text">Jackpot ${currency(f.jackpot)}</b></div>`}).join('');
-ensureDataVersion();loadSavedOverrides();renderHome();renderRanking('rankingList',rankSets.geral,'geral');renderFinanceStrip('geral');setChampionshipView('br3',false);setChampionshipView('br3',true);renderClassified();renderPlayers();paintClock();parseSignupText();populateResultStageOptions(false);loadSelectedStageResult();
+document.getElementById('financeByBr').innerHTML=['br1','br2','br3','br4'].map(k=>{const f=rankingFinancials[k];return `<div class="row"><div><b>${k.toUpperCase()}</b><div class="small muted">Arrec. ${currency(f.arrec)} • Prêmios ${currency(f.premios)}${f.confirmedArrec!=null?' • inclui projeção':''}</div></div><b class="gold-text">Jackpot ${currency(f.jackpot)}</b></div>`}).join('');
+
+document.getElementById('adminLogin').addEventListener('click',async()=>{
+  if(!backendReady){showToast('Backend ainda não configurado.');return}
+  const email=document.getElementById('adminEmail').value.trim(),password=document.getElementById('adminPassword').value;
+  if(!email||!password){showToast('Informe e-mail e senha.');return}
+  const {error}=await supa.auth.signInWithPassword({email,password});if(error){showToast('Login não autorizado.');return}await refreshAdminRole();if(isAdmin)showToast('Acesso administrativo liberado.')
+});
+document.getElementById('adminLogout').addEventListener('click',async()=>{if(backendReady){await supa.auth.signOut();await refreshAdminRole();showToast('Sessão encerrada.')}});
+ensureDataVersion();loadSavedOverrides();renderHome();renderRanking('rankingList',rankSets.geral,'geral');renderFinanceStrip('geral');setChampionshipView('br3',false);setChampionshipView('br3',true);renderClassified();renderPlayers();paintClock();parseSignupText();populateResultStageOptions(false);loadSelectedStageResult();setAdminUI();initBackend();
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}
 </script>
 </body>
