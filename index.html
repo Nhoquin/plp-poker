@@ -478,7 +478,7 @@ const championshipInfo={
 };
 function renderUnavailableStage(br,n,target){
   const info=championshipInfo[br];
-  const stageText=n?info.label+' • '+n+'ª Etapa:info.label;
+  const stageText=n?info.label+' • '+n+'ª Etapa':info.label;
   const reason=br==='br4'?'O BR4 ainda não começou.':'O calendário deste campeonato está cadastrado, mas o detalhamento etapa a etapa ainda não foi importado para o aplicativo.';
   document.getElementById(target).innerHTML=`<div class="stage-unavailable"><div class="stage-big">${stageText}</div><p>${reason}</p>${br!=='br4'?'<div class="stage-total-grid"><div><span>Arrecadação do '+info.label+'</span><b>'+currency(info.arrec)+'</b></div><div><span>Jackpot do '+info.label+'</span><b>'+currency(info.jackpot)+'</b></div><div><span>Premiação paga</span><b>'+currency(info.premios)+'</b></div></div>':''}</div>`;
 }
