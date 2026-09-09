@@ -348,7 +348,7 @@ nav{position:fixed;z-index:30;left:50%;bottom:0;transform:translateX(-50%);width
   </div>
   <div class="section-title"><h3>Regra atual de buy-in</h3></div>
   <div class="card"><div class="row"><span class="muted">Buy-in</span><b>R$ 60</b></div><div class="row"><span class="muted">Premiação da etapa</span><b>R$ 50</b></div><div class="row"><span class="muted">Jackpot</span><b>R$ 10</b></div><div class="row"><span class="muted">Anfitrião</span><b>Isento</b></div></div>
-  <div class="notice" id="adminBackendNotice">Modo local ativo. Após configurar o Supabase, esta área exigirá login de administrador e o Blind Clock ficará sincronizado para todos em tempo real.</div>
+  <div class="notice" id="adminBackendNotice">Supabase conectado. A área administrativa exige login e o Blind Clock é sincronizado para todos em tempo real.</div>
 </section>
 
 <section class="screen" id="importer">
@@ -433,12 +433,12 @@ nav{position:fixed;z-index:30;left:50%;bottom:0;transform:translateX(-50%);width
 
 <section class="screen" id="profile">
   <div class="screen-top"><div class="screen-top-inner"><img class="mini-logo" src="assets/league-logo.png"><div><h2>Perfil</h2><p>Acesso ao aplicativo</p></div><button class="back-home" data-go="home">⌂</button></div></div>
-  <div class="card" style="text-align:center;padding:24px"><img class="mini-logo" style="width:86px;height:86px" src="assets/league-logo.png"><h3 style="margin:11px 0 3px">1ª Liga de Poker</h3><div class="muted small">Versão 13 Premium • Temporada 2026</div></div>
+  <div class="card" style="text-align:center;padding:24px"><img class="mini-logo" style="width:86px;height:86px" src="assets/league-logo.png"><h3 style="margin:11px 0 3px">1ª Liga de Poker</h3><div class="muted small">Versão 14 Premium • Temporada 2026</div></div>
   <div class="card"><div class="row"><span class="muted">Perfil atual</span><b id="profileRole">Administrador local</b></div><div class="row"><span class="muted">Temporada</span><b>2026</b></div><div class="row"><span class="muted">Tema</span><b>PLP Preto & Dourado</b></div></div>
 <div class="card" id="authCard">
   <div class="row"><div><b>Acesso administrativo</b><div class="small muted">Login para controlar relógio e lançamentos quando a sincronização online estiver ativa.</div></div><span class="pill warn" id="backendBadge">LOCAL</span></div>
-  <div class="auth-fields"><input id="adminEmail" type="email" autocomplete="username" placeholder="E-mail do administrador"><input id="adminPassword" type="password" autocomplete="current-password" placeholder="Senha"></div>
-  <div class="auth-actions"><button class="btn gold" id="adminLogin">Entrar</button><button class="btn ghost" id="adminLogout" style="display:none">Sair</button></div>
+  <div class="auth-fields"><input id="adminEmail" type="email" autocomplete="username" placeholder="E-mail do administrador" value="franmfilho@gmail.com"><input id="adminPassword" type="password" autocomplete="current-password" placeholder="Senha"></div>
+  <div class="auth-actions"><button class="btn gold" id="adminLogin">Entrar</button><button class="btn ghost" id="adminCreate">Criar primeiro acesso</button><button class="btn ghost" id="adminLogout" style="display:none">Sair</button></div>
   <div class="auth-status warn" id="adminAuthStatus">Backend ainda não configurado. O aplicativo permanece em modo administrativo local.</div>
 </div>
 <div class="card" style="margin-top:10px"><div class="row"><span class="muted">Instalação</span><b>PWA • Desktop • Android • iPhone</b></div><div class="small muted" style="margin-top:8px">Para compartilhar corretamente, publique este app em um link HTTPS. No Windows e Android ele instala como aplicativo; no iPhone a instalação é feita pelo Safari em “Adicionar à Tela de Início”.</div></div>
@@ -491,14 +491,15 @@ const SUPA_CONFIG=window.PLP_SUPABASE_CONFIG||{};
 const backendReady=Boolean(window.supabase&&SUPA_CONFIG.url&&SUPA_CONFIG.anonKey);
 let supa=null,isAdmin=!backendReady,currentUser=null,remoteClock=null,remoteClockChannel=null,remotePaintTimer=null;
 function setAdminUI(){
-  const role=document.getElementById('profileRole'),badge=document.getElementById('backendBadge'),status=document.getElementById('adminAuthStatus'),login=document.getElementById('adminLogin'),logout=document.getElementById('adminLogout'),controls=document.getElementById('clockControls'),access=document.getElementById('clockAccessStatus'),notice=document.getElementById('adminBackendNotice');
+  const role=document.getElementById('profileRole'),badge=document.getElementById('backendBadge'),status=document.getElementById('adminAuthStatus'),login=document.getElementById('adminLogin'),create=document.getElementById('adminCreate'),logout=document.getElementById('adminLogout'),controls=document.getElementById('clockControls'),access=document.getElementById('clockAccessStatus'),notice=document.getElementById('adminBackendNotice');
   if(role)role.textContent=backendReady?(isAdmin?'Administrador':'Participante'):'Administrador local';
   if(badge){badge.textContent=backendReady?'ONLINE':'LOCAL';badge.className='pill '+(backendReady?'good':'warn')}
   if(login)login.style.display=backendReady&&!currentUser?'block':'none';
+  if(create)create.style.display=backendReady&&!currentUser?'block':'none';
   if(logout)logout.style.display=backendReady&&currentUser?'block':'none';
   if(status){
     status.className='auth-status '+(backendReady&&isAdmin?'good':'warn');
-    status.textContent=!backendReady?'Backend ainda não configurado. O aplicativo permanece em modo administrativo local.':!currentUser?'Entre com uma conta autorizada para administrar a Liga.':isAdmin?'Administrador autenticado. Controles e lançamentos liberados.':'Conta autenticada, mas sem permissão administrativa.';
+    status.textContent=!backendReady?'Backend ainda não configurado. O aplicativo permanece em modo administrativo local.':!currentUser?'Entre com a conta administrativa. No primeiro acesso, use “Criar primeiro acesso”.':isAdmin?'Administrador autenticado. Controles e lançamentos liberados.':'Conta autenticada, mas sem permissão administrativa.';
   }
   if(controls)controls.style.display=(!backendReady||isAdmin)?'grid':'none';
   if(access){access.textContent=backendReady?'Sincronizado online':'Modo local';access.className=backendReady?'online':'local'}
@@ -510,8 +511,12 @@ async function refreshAdminRole(){
   if(!backendReady){isAdmin=true;setAdminUI();return}
   const {data:{session}}=await supa.auth.getSession();currentUser=session?.user||null;isAdmin=false;
   if(currentUser){
-    const {data,error}=await supa.from('admin_users').select('user_id').eq('user_id',currentUser.id).maybeSingle();
-    if(!error&&data)isAdmin=true;
+    let {data,error}=await supa.from('admin_users').select('user_id').eq('user_id',currentUser.id).maybeSingle();
+    if(!error&&data){isAdmin=true}
+    else if(String(currentUser.email||'').toLowerCase()==='franmfilho@gmail.com'){
+      const ins=await supa.from('admin_users').insert({user_id:currentUser.id}).select('user_id').maybeSingle();
+      if(!ins.error&&ins.data)isAdmin=true;
+    }
   }
   setAdminUI();
 }
@@ -761,6 +766,16 @@ document.getElementById('adminLogin').addEventListener('click',async()=>{
   const email=document.getElementById('adminEmail').value.trim(),password=document.getElementById('adminPassword').value;
   if(!email||!password){showToast('Informe e-mail e senha.');return}
   const {error}=await supa.auth.signInWithPassword({email,password});if(error){showToast('Login não autorizado.');return}await refreshAdminRole();if(isAdmin)showToast('Acesso administrativo liberado.')
+});
+document.getElementById('adminCreate').addEventListener('click',async()=>{
+  if(!backendReady){showToast('Backend ainda não configurado.');return}
+  const email=document.getElementById('adminEmail').value.trim().toLowerCase(),password=document.getElementById('adminPassword').value;
+  if(email!=='franmfilho@gmail.com'){showToast('O primeiro administrador deve usar o e-mail autorizado.');return}
+  if(!password||password.length<6){showToast('Crie uma senha com pelo menos 6 caracteres.');return}
+  const {data,error}=await supa.auth.signUp({email,password,options:{emailRedirectTo:location.origin+location.pathname}});
+  if(error){showToast(error.message?.includes('already')?'Este acesso já existe. Use Entrar.':'Não foi possível criar o acesso.');return}
+  if(data?.session){await refreshAdminRole();if(isAdmin)showToast('Primeiro administrador criado e autenticado.')}
+  else{const st=document.getElementById('adminAuthStatus');if(st){st.className='auth-status good';st.textContent='Cadastro criado. Confirme o e-mail recebido e depois entre no aplicativo.'}showToast('Confira seu e-mail para confirmar o cadastro.')}
 });
 document.getElementById('adminLogout').addEventListener('click',async()=>{if(backendReady){await supa.auth.signOut();await refreshAdminRole();showToast('Sessão encerrada.')}});
 ensureDataVersion();loadSavedOverrides();renderHome();renderRanking('rankingList',rankSets.geral,'geral');renderFinanceStrip('geral');setChampionshipView('br3',false);setChampionshipView('br3',true);renderClassified();renderPlayers();paintClock();parseSignupText();populateResultStageOptions(false);loadSelectedStageResult();setAdminUI();initBackend();
