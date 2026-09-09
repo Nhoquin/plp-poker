@@ -1,16 +1,24 @@
 {
-  "id":"./",
-  "name":"1ª Liga de Poker 2026",
-  "short_name":"PLP 2026",
-  "description":"Ranking, etapas, financeiro e blind clock da Primeira Liga de Poker.",
-  "start_url":"./index.html",
-  "scope":"./",
-  "display":"standalone",
-  "orientation":"portrait",
-  "background_color":"#050504",
-  "theme_color":"#080704",
-  "icons":[
-    {"src":"assets/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
-    {"src":"assets/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
+  "name": "1ª Liga de Poker",
+  "short_name": "Liga Poker",
+  "description": "Painel premium da 1ª Liga de Poker",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#050504",
+  "theme_color": "#080704",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
   ]
 }
