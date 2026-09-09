@@ -217,6 +217,26 @@ nav{position:fixed;z-index:30;left:50%;bottom:0;transform:translateX(-50%);width
 .admin-locked{opacity:.56;filter:saturate(.45)}
 @media(max-width:520px){.auth-fields{grid-template-columns:1fr}.live-clock-home.show{grid-template-columns:auto 1fr}.live-clock-home .live-time{grid-column:2;text-align:left}}
 
+
+/* ===== PLP V17: marcação em lote ===== */
+.batch-bar{margin:12px 0 6px;padding:12px;border:1px solid rgba(244,201,20,.22);border-radius:17px;background:linear-gradient(145deg,rgba(27,23,13,.72),rgba(9,9,7,.92))}
+.batch-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}
+.batch-head b{font-size:11px;color:var(--gold2)}.batch-head span{font-size:9px;color:var(--muted)}
+.batch-select-actions{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:9px}
+.batch-mini{border:1px solid var(--line-soft);border-radius:999px;background:#0e0d0a;color:#e9e2d1;padding:6px 9px;font-size:9px}
+.batch-mini.active{border-color:var(--gold);color:var(--gold2);background:rgba(244,201,20,.08)}
+.batch-controls{display:grid;grid-template-columns:1fr 1fr auto;gap:7px}
+.batch-controls .status-select{min-height:38px}.batch-apply{white-space:nowrap;padding-left:14px;padding-right:14px}
+.parse-row{grid-template-columns:28px 30px minmax(92px,1fr) 110px}
+.parse-row .batch-cell{display:grid;place-items:center}
+.batch-check{width:20px;height:20px;accent-color:var(--gold);cursor:pointer}
+.parse-row .presence-wrap{grid-column:3/5}
+@media(max-width:560px){
+  .batch-controls{grid-template-columns:1fr 1fr}
+  .batch-apply{grid-column:1/3;width:100%}
+  .parse-row{grid-template-columns:25px 30px minmax(80px,1fr) 104px;gap:6px}
+}
+
 </style>
 </head>
 <body>
@@ -433,7 +453,7 @@ nav{position:fixed;z-index:30;left:50%;bottom:0;transform:translateX(-50%);width
 
 <section class="screen" id="profile">
   <div class="screen-top"><div class="screen-top-inner"><img class="mini-logo" src="assets/league-logo.png"><div><h2>Perfil</h2><p>Acesso ao aplicativo</p></div><button class="back-home" data-go="home">⌂</button></div></div>
-  <div class="card" style="text-align:center;padding:24px"><img class="mini-logo" style="width:86px;height:86px" src="assets/league-logo.png"><h3 style="margin:11px 0 3px">1ª Liga de Poker</h3><div class="muted small">Versão 16 Premium • Temporada 2026</div></div>
+  <div class="card" style="text-align:center;padding:24px"><img class="mini-logo" style="width:86px;height:86px" src="assets/league-logo.png"><h3 style="margin:11px 0 3px">1ª Liga de Poker</h3><div class="muted small">Versão 17 Premium • Temporada 2026</div></div>
   <div class="card"><div class="row"><span class="muted">Perfil atual</span><b id="profileRole">Administrador local</b></div><div class="row"><span class="muted">Temporada</span><b>2026</b></div><div class="row"><span class="muted">Tema</span><b>PLP Preto & Dourado</b></div></div>
 <div class="card" id="authCard">
   <div class="row"><div><b>Acesso administrativo</b><div class="small muted">Somente contas cadastradas como administradoras podem acessar cadastros, resultados e controles administrativos.</div></div><span class="pill warn" id="backendBadge">LOCAL</span></div>
@@ -617,7 +637,7 @@ function setChampionshipView(br,history=false){
 document.querySelectorAll('[data-champ]').forEach(btn=>btn.addEventListener('click',()=>setChampionshipView(btn.dataset.champ,false)));
 document.querySelectorAll('[data-history-champ]').forEach(btn=>btn.addEventListener('click',()=>setChampionshipView(btn.dataset.historyChamp,true)));
 const signupAlias={'TCHÔLA':'TCHOLA','TCHOLA':'TCHOLA','RAFA':'RAFAEL','RAFAEL':'RAFAEL','GUI FURLAN':'GUI FURLAN','GUILHERME':'GUILHERME'};
-let signupParsed=[];
+let signupParsed=[];let signupSelected=new Set();let signupMeta={};
 function normalizePlayerName(name){let v=name.trim().replace(/\s+/g,' ');const key=v.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase();const aliases={'TCHOLA':'TCHOLA','RAFA':'RAFAEL','RAFAEL':'RAFAEL','TAVARES':'DU','DU':'DU'};return aliases[key]||v.replace(/\b\w/g,c=>c.toUpperCase())}
 function extractMoney(text,re){const m=text.match(re);return m?Number(m[1].replace('.','').replace(',','.')):null}
 function parseSignupText(){
@@ -631,7 +651,7 @@ function parseSignupText(){
   const pixName=(text.match(/Pix\s+([A-Za-zÀ-ÿ ]+)(?:\n|\r)/i)||[])[1]?.trim();
   const pixPhone=(text.match(/(?:📲\s*)?(\d{10,13})/)||[])[1];
   const lines=text.split(/\r?\n/);
-  signupParsed=[];
+  signupParsed=[];signupSelected.clear();
   for(const line of lines){
     const m=line.match(/^\s*(\d{1,2})\s*[-.)–—:]\s*(.+?)\s*$/);
     if(!m) continue;
@@ -649,11 +669,32 @@ function parseSignupText(){
   renderSignupOutput({br,date,stage,buyin,stack,host,pixName,pixPhone});
 }
 function renderSignupOutput(meta={}){
+  signupMeta=meta&&Object.keys(meta).length?meta:signupMeta;
   const host=document.getElementById('signupOutput');
-  const rows=signupParsed.map((p,i)=>`<div class="parse-row" data-signup-index="${i}"><div class="num">${p.n}</div><div class="who"><b>${p.name}</b><span>${p.payment==='isento'?'anfitrião / isento':p.payment==='informado'?'marcou “pix pg”':'sem indicação de pagamento'}</span></div><select class="status-select payment-select"><option value="informado" ${p.payment==='informado'?'selected':''}>🟡 Informou pg</option><option value="conferido" ${p.payment==='conferido'?'selected':''}>🟢 Pago conferido</option><option value="pendente" ${p.payment==='pendente'?'selected':''}>🔴 Pendente</option><option value="isento" ${p.payment==='isento'?'selected':''}>⚪ Isento</option></select><div class="presence-wrap"><button class="presence ${p.presence==='presente'?'active-present':''}" data-presence="presente">✓ Presente</button><button class="presence ${p.presence==='faltou'?'active-absent':''}" data-presence="faltou">✕ Faltou</button><button class="presence ${p.presence==='nao_conferido'?'active':''}" data-presence="nao_conferido">• Não conferido</button></div></div>`).join('');
-  host.innerHTML=`<div class="import-meta"><div class="meta-box"><span>Campeonato</span><b>${meta.br?'BR'+meta.br:'—'}</b></div><div class="meta-box"><span>Etapa / data</span><b>${meta.stage?'Etapa '+meta.stage:'—'} • ${meta.date||'—'}</b></div><div class="meta-box"><span>Buy-in / stack</span><b>${meta.buyin?currency(meta.buyin):'—'} • ${meta.stack||'—'}</b></div><div class="meta-box"><span>Local</span><b>${meta.host||'—'}</b></div></div><div class="review-banner"><span>!</span><div><b>${signupParsed.filter(x=>x.payment==='informado').length} pagamentos informados.</b> Eles não entram como “conferidos” até o responsável validar. Confirmado também é diferente de presente.</div></div><div class="parse-list">${rows}</div><button class="btn gold" style="width:100%;margin-top:10px" id="saveSignupState">Salvar conferência neste aparelho</button>`;
+  const selectedCount=signupSelected.size;
+  const rows=signupParsed.map((p,i)=>`<div class="parse-row" data-signup-index="${i}"><div class="batch-cell"><input class="batch-check" type="checkbox" aria-label="Selecionar ${p.name}" ${signupSelected.has(i)?'checked':''}></div><div class="num">${p.n}</div><div class="who"><b>${p.name}</b><span>${p.payment==='isento'?'anfitrião / isento':p.payment==='informado'?'marcou “pix pg”':p.payment==='conferido'?'pagamento conferido':'sem indicação de pagamento'}</span></div><select class="status-select payment-select"><option value="informado" ${p.payment==='informado'?'selected':''}>🟡 Informou pg</option><option value="conferido" ${p.payment==='conferido'?'selected':''}>🟢 Pago conferido</option><option value="pendente" ${p.payment==='pendente'?'selected':''}>🔴 Pendente</option><option value="isento" ${p.payment==='isento'?'selected':''}>⚪ Isento</option></select><div class="presence-wrap"><button class="presence ${p.presence==='presente'?'active-present':''}" data-presence="presente">✓ Presente</button><button class="presence ${p.presence==='faltou'?'active-absent':''}" data-presence="faltou">✕ Faltou</button><button class="presence ${p.presence==='nao_conferido'?'active':''}" data-presence="nao_conferido">• Não conferido</button></div></div>`).join('');
+  host.innerHTML=`<div class="import-meta"><div class="meta-box"><span>Campeonato</span><b>${signupMeta.br?'BR'+signupMeta.br:'—'}</b></div><div class="meta-box"><span>Etapa / data</span><b>${signupMeta.stage?'Etapa '+signupMeta.stage:'—'} • ${signupMeta.date||'—'}</b></div><div class="meta-box"><span>Buy-in / stack</span><b>${signupMeta.buyin?currency(signupMeta.buyin):'—'} • ${signupMeta.stack||'—'}</b></div><div class="meta-box"><span>Local</span><b>${signupMeta.host||'—'}</b></div></div><div class="review-banner"><span>!</span><div><b>${signupParsed.filter(x=>x.payment==='informado').length} pagamentos informados.</b> Eles não entram como “conferidos” até o responsável validar. Confirmado também é diferente de presente.</div></div>
+  <div class="batch-bar">
+    <div class="batch-head"><b>Marcação em lote</b><span id="batchSelectedCount">${selectedCount} selecionado${selectedCount===1?'':'s'}</span></div>
+    <div class="batch-select-actions"><button class="batch-mini" id="selectAllSignup">Selecionar todos</button><button class="batch-mini" id="selectPayersSignup">Selecionar pagantes</button><button class="batch-mini" id="clearSignupSelection">Limpar seleção</button></div>
+    <div class="batch-controls">
+      <select class="status-select" id="batchPayment"><option value="">Pagamento: não alterar</option><option value="conferido">🟢 Pago conferido</option><option value="informado">🟡 Informou pg</option><option value="pendente">🔴 Pendente</option><option value="isento">⚪ Isento</option></select>
+      <select class="status-select" id="batchPresence"><option value="">Presença: não alterar</option><option value="presente">✓ Presente</option><option value="faltou">✕ Faltou</option><option value="nao_conferido">• Não conferido</option></select>
+      <button class="btn gold batch-apply" id="applySignupBatch">Aplicar</button>
+    </div>
+  </div>
+  <div class="parse-list">${rows}</div><button class="btn gold" style="width:100%;margin-top:10px" id="saveSignupState">Salvar conferência neste aparelho</button>`;
+
+  function updateBatchCount(){
+    const el=document.getElementById('batchSelectedCount');if(el)el.textContent=`${signupSelected.size} selecionado${signupSelected.size===1?'':'s'}`;
+  }
+  host.querySelectorAll('.batch-check').forEach(ch=>ch.addEventListener('change',e=>{const i=Number(e.target.closest('[data-signup-index]').dataset.signupIndex);if(e.target.checked)signupSelected.add(i);else signupSelected.delete(i);updateBatchCount()}));
   host.querySelectorAll('.payment-select').forEach(sel=>sel.addEventListener('change',e=>{const i=Number(e.target.closest('[data-signup-index]').dataset.signupIndex);signupParsed[i].payment=e.target.value}));
   host.querySelectorAll('[data-presence]').forEach(btn=>btn.addEventListener('click',e=>{const row=e.target.closest('[data-signup-index]');const i=Number(row.dataset.signupIndex);signupParsed[i].presence=e.target.dataset.presence;row.querySelectorAll('[data-presence]').forEach(b=>b.classList.remove('active-present','active-absent','active'));if(e.target.dataset.presence==='presente')e.target.classList.add('active-present');else if(e.target.dataset.presence==='faltou')e.target.classList.add('active-absent');else e.target.classList.add('active')}));
+  document.getElementById('selectAllSignup').addEventListener('click',()=>{signupSelected=new Set(signupParsed.map((_,i)=>i));renderSignupOutput(signupMeta)});
+  document.getElementById('selectPayersSignup').addEventListener('click',()=>{signupSelected=new Set(signupParsed.map((p,i)=>p.payment!=='isento'?i:null).filter(i=>i!==null));renderSignupOutput(signupMeta)});
+  document.getElementById('clearSignupSelection').addEventListener('click',()=>{signupSelected.clear();renderSignupOutput(signupMeta)});
+  document.getElementById('applySignupBatch').addEventListener('click',()=>{if(!signupSelected.size){showToast('Selecione pelo menos um jogador.');return}const pay=document.getElementById('batchPayment').value,pres=document.getElementById('batchPresence').value;if(!pay&&!pres){showToast('Escolha o que deseja alterar em lote.');return}for(const i of signupSelected){if(signupParsed[i]){if(pay)signupParsed[i].payment=pay;if(pres)signupParsed[i].presence=pres}}const qtd=signupSelected.size;renderSignupOutput(signupMeta);showToast(`${qtd} jogador${qtd===1?'':'es'} atualizado${qtd===1?'':'s'} em lote.`)});
   document.getElementById('saveSignupState').addEventListener('click',()=>{localStorage.setItem('plpEtapa11Signup',JSON.stringify(signupParsed));showToast('Conferência salva neste aparelho.')});
 }
 let resultParsed=[];
@@ -723,7 +764,7 @@ function loadSelectedStageResult(){
   else{document.getElementById('resultInput').value='';document.getElementById('resultOutput').innerHTML='<div class="notice">Esta etapa ainda não possui resultado. Cole a classificação para iniciar o lançamento.</div>'}
 }
 document.getElementById('parseSignup').addEventListener('click',parseSignupText);
-document.getElementById('clearSignup').addEventListener('click',()=>{document.getElementById('whatsappInput').value='';document.getElementById('signupOutput').innerHTML=''});
+document.getElementById('clearSignup').addEventListener('click',()=>{document.getElementById('whatsappInput').value='';document.getElementById('signupOutput').innerHTML='';signupSelected.clear();signupMeta={}});
 document.getElementById('parseResult').addEventListener('click',parseResultText);
 document.getElementById('resultChamp').addEventListener('change',()=>populateResultStageOptions(true));document.getElementById('resultStage').addEventListener('change',loadSelectedStageResult);
 document.getElementById('loadSimpleExample').addEventListener('click',()=>{document.getElementById('resultInput').value='1- Cafu\n2- Juninho\n3- Fabeta\n4- Rafa\n5- Neto\n6- Tchola\n7- Du\n8- Caio\n9- Paulão\n10- Geio';parseResultText()});
