@@ -119,6 +119,48 @@ nav{position:fixed;z-index:30;left:50%;bottom:0;transform:translateX(-50%);width
 @media(min-width:1024px){
   .glass-head{padding:15px 17px}.glass-body{padding:12px 17px 15px}
 }
+
+/* ===== PLP PREMIUM V9 ===== */
+.home-section-title{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:20px 2px 10px}
+.home-section-title span{font-size:11px;font-weight:900;letter-spacing:1.4px;color:var(--gold2);text-transform:uppercase}
+.home-section-title small{font-size:9px;color:var(--muted);text-align:right}
+.premium-ribbon{margin-top:0}
+.premium-stat{position:relative;overflow:hidden;min-height:98px}
+.premium-stat::after{content:"";position:absolute;right:-26px;top:-26px;width:84px;height:84px;border-radius:50%;background:radial-gradient(circle,rgba(244,201,20,.13),transparent 68%);pointer-events:none}
+.quick{position:relative;overflow:hidden}
+.quick::after{content:"";position:absolute;inset:auto -28px -42px auto;width:90px;height:90px;border-radius:50%;background:radial-gradient(circle,rgba(244,201,20,.08),transparent 68%);pointer-events:none}
+.quick .ico{position:relative;z-index:1}
+.admin-hero{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;padding:15px;margin-bottom:12px;border:1px solid rgba(244,201,20,.16);border-radius:22px;background:linear-gradient(145deg,rgba(22,19,13,.76),rgba(8,8,7,.9));backdrop-filter:blur(12px)}
+.admin-hero .badge{width:50px;height:50px;border-radius:17px;display:grid;place-items:center;background:linear-gradient(145deg,#ffe36a,#b78200);color:#111;box-shadow:0 10px 24px rgba(244,201,20,.14)}
+.admin-hero .badge svg{width:27px;height:27px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.admin-hero b{display:block;font-size:14px}.admin-hero span{display:block;margin-top:3px;font-size:10px;color:var(--muted);line-height:1.4}
+.admin-grid{gap:10px}
+.admin-action{position:relative;min-height:112px;border-color:rgba(244,201,20,.14);box-shadow:0 12px 24px rgba(0,0,0,.16);transition:.18s transform,.18s border-color,.18s background;overflow:hidden}
+.admin-action:hover{transform:translateY(-1px);border-color:rgba(255,227,106,.38);background:linear-gradient(145deg,rgba(36,29,16,.84),rgba(9,9,8,.94))}
+.admin-action::after{content:"›";position:absolute;right:12px;top:11px;color:var(--gold2);font-size:20px}
+.admin-action .ico{width:34px;height:34px;display:grid;place-items:center;color:var(--gold2)}
+.admin-action .ico svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.admin-action>span:last-child{padding-right:12px}
+.admin-action b{font-size:12px;letter-spacing:.2px}
+.admin-action span span{display:block;margin-top:4px;line-height:1.35}
+.update-stage-box{position:relative;margin-top:14px;padding:14px;border:1px solid rgba(123,230,179,.34);border-radius:18px;background:linear-gradient(145deg,rgba(17,38,29,.34),rgba(8,18,14,.5));box-shadow:0 14px 32px rgba(0,0,0,.18)}
+.update-stage-box::before{content:"✓";position:absolute;right:14px;top:12px;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:rgba(123,230,179,.12);color:var(--good);font-weight:900}
+.update-stage-box .save-title{display:block;padding-right:36px;font-size:13px;color:#eafbf2}
+.update-stage-box .save-sub{margin-top:5px;padding-right:38px;font-size:10px;color:var(--muted);line-height:1.4}
+.update-stage-box .save-impact{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.update-stage-box .save-impact span{padding:5px 8px;border-radius:999px;background:rgba(123,230,179,.07);border:1px solid rgba(123,230,179,.18);font-size:8px;color:#bff4d8}
+.update-stage-box .btn{width:100%;margin-top:12px;min-height:46px;font-size:12px;letter-spacing:.4px;box-shadow:0 10px 22px rgba(244,201,20,.13)}
+.update-stage-box .btn:active{transform:scale(.99)}
+@media(max-width:420px){
+  .home-section-title{margin-top:17px}
+  .home-section-title small{max-width:130px}
+  .admin-grid{grid-template-columns:1fr}
+  .admin-action{min-height:92px}
+}
+@media(min-width:760px){
+  .admin-grid{grid-template-columns:repeat(3,1fr)}
+}
+
 </style>
 </head>
 <body>
@@ -142,12 +184,14 @@ nav{position:fixed;z-index:30;left:50%;bottom:0;transform:translateX(-50%);width
       </div>
     </div>
   </div>
+  <div class="home-section-title"><span>Painel da Liga</span><small>Dados atualizados até a 11ª Etapa do BR3</small></div>
   <div class="premium-ribbon">
     <div class="premium-stat"><span>Líder geral</span><b>DU • 401 pts</b><small>2º Tchola • 381 pts</small></div>
     <div class="premium-stat"><span>Jackpot</span><b>R$ 3.760</b><small>Premiação já paga: R$ 1.880</small></div>
     <div class="premium-stat"><span>BR3 • etapa atual</span><b>11ª Etapa</b><small>08/set • 10 jogadores</small></div>
     <div class="premium-stat"><span>Próximo destaque</span><b>Blind Clock</b><small>Estrutura oficial pronta para uso</small></div>
   </div>
+  <div class="home-section-title"><span>Acessos rápidos</span><small>Ranking, rodadas, financeiro e gestão</small></div>
   <div class="quick-grid">
     <button class="quick" data-go="ranking"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8v3a4 4 0 0 1-8 0V4z"/><path d="M9 14h6"/><path d="M12 11v3"/><path d="M8 20h8"/><path d="M6 5H4a2 2 0 0 0 2 4h1"/><path d="M18 5h2a2 2 0 0 1-2 4h-1"/></svg></span><b>RANKING</b><div class="quick-foot"><span>Visão geral</span><span>›</span></div></button>
     <button class="quick" data-go="tournament"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/></svg></span><b>RODADAS</b><div class="quick-foot"><span>Resultados</span><span>›</span></div></button>
@@ -216,18 +260,19 @@ nav{position:fixed;z-index:30;left:50%;bottom:0;transform:translateX(-50%);width
 </section>
 
 <section class="screen" id="admin">
-  <div class="screen-top"><div class="screen-top-inner"><img class="mini-logo" src="assets/league-logo.png"><div><h2>Administração</h2><p>Gestão da Liga</p></div><button class="back-home" data-go="home">⌂</button></div></div>
+  <div class="screen-top"><div class="screen-top-inner"><img class="mini-logo" src="assets/league-logo.png"><div><h2>Administração</h2><p>Central de gestão da Liga</p></div><button class="back-home" data-go="home">⌂</button></div></div>
+  <div class="admin-hero"><div class="badge"><svg viewBox="0 0 24 24"><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/><circle cx="12" cy="12" r="4"/><path d="M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/></svg></div><div><b>Central administrativa</b><span>Importe listas, confira pagamentos, corrija resultados e acompanhe a temporada em um único lugar.</span></div></div>
   <div class="admin-grid">
-    <button class="admin-action" data-go="importer"><span class="ico">✦</span><span><b>Importar / interpretar</b><br><span>WhatsApp, foto ou documento</span></span></button>
-    <button class="admin-action" data-go="importer"><span class="ico">▤</span><span><b>Pagamentos</b><br><span>Informado, conferido, pendente e isento</span></span></button>
-    <button class="admin-action" data-go="importer"><span class="ico">🏆</span><span><b>Resultados</b><br><span>Colar classificação ou anexar foto</span></span></button>
-    <button class="admin-action" data-toast="As regras serão configuráveis por temporada, sem alterar o código."><span class="ico">∑</span><span><b>Regras</b><br><span>Pontos, prêmio e critérios</span></span></button>
-    <button class="admin-action" data-go="classified"><span class="ico">👥</span><span><b>Classificados</b><br><span>Vagas dos torneios finais</span></span></button>
-    <button class="admin-action" data-toast="O sistema permitirá criar temporadas e BRs independentes."><span class="ico">▣</span><span><b>Temporadas</b><br><span>Calendário e descartes</span></span></button>
+    <button class="admin-action" data-go="importer"><span class="ico"><svg viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m8 11 4 4 4-4"/><path d="M5 19h14"/></svg></span><span><b>Importar / interpretar</b><span>WhatsApp, lista, foto ou documento</span></span></button>
+    <button class="admin-action" data-go="importer"><span class="ico"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h5M8 17h3"/></svg></span><span><b>Pagamentos</b><span>Informado, conferido, pendente e isento</span></span></button>
+    <button class="admin-action" data-go="importer"><span class="ico"><svg viewBox="0 0 24 24"><path d="M8 4h8v3a4 4 0 0 1-8 0V4z"/><path d="M12 11v4M8 20h8"/><path d="M6 5H4a2 2 0 0 0 2 4h1M18 5h2a2 2 0 0 1-2 4h-1"/></svg></span><span><b>Resultados</b><span>Corrigir colocação, pontos e salvar rodada</span></span></button>
+    <button class="admin-action" data-toast="As regras serão configuráveis por temporada, sem alterar o código."><span class="ico"><svg viewBox="0 0 24 24"><path d="M6 7h12M6 12h12M6 17h12"/><circle cx="9" cy="7" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="11" cy="17" r="1.5"/></svg></span><span><b>Regras</b><span>Pontos, prêmio, descartes e critérios</span></span></button>
+    <button class="admin-action" data-go="classified"><span class="ico"><svg viewBox="0 0 24 24"><circle cx="9" cy="9" r="3"/><circle cx="16" cy="10" r="2.5"/><path d="M4 19a5 5 0 0 1 10 0M13 19a4 4 0 0 1 7 0"/></svg></span><span><b>Classificados</b><span>Vagas e status dos torneios finais</span></span></button>
+    <button class="admin-action" data-toast="O sistema permitirá criar temporadas e BRs independentes."><span class="ico"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg></span><span><b>Temporadas</b><span>Calendário, BRs e histórico anual</span></span></button>
   </div>
   <div class="section-title"><h3>Regra atual de buy-in</h3></div>
   <div class="card"><div class="row"><span class="muted">Buy-in</span><b>R$ 60</b></div><div class="row"><span class="muted">Premiação da etapa</span><b>R$ 50</b></div><div class="row"><span class="muted">Jackpot</span><b>R$ 10</b></div><div class="row"><span class="muted">Anfitrião</span><b>Isento</b></div></div>
-  <div class="notice">O protótipo continua local, mas a nova tela de importação já interpreta listas e resultados colados e mantém os estados de presença/pagamento no navegador. Leitura automática de foto/PDF será ligada ao backend de IA na versão online.</div>
+  <div class="notice">Esta versão publicada no GitHub Pages mantém alterações e conferências neste aparelho. A sincronização automática entre todos os administradores será o próximo passo quando conectarmos um banco de dados.</div>
 </section>
 
 <section class="screen" id="importer">
@@ -310,7 +355,7 @@ nav{position:fixed;z-index:30;left:50%;bottom:0;transform:translateX(-50%);width
 
 <section class="screen" id="profile">
   <div class="screen-top"><div class="screen-top-inner"><img class="mini-logo" src="assets/league-logo.png"><div><h2>Perfil</h2><p>Acesso ao aplicativo</p></div><button class="back-home" data-go="home">⌂</button></div></div>
-  <div class="card" style="text-align:center;padding:24px"><img class="mini-logo" style="width:86px;height:86px" src="assets/league-logo.png"><h3 style="margin:11px 0 3px">1ª Liga de Poker</h3><div class="muted small">Versão 6 • Temporada 2026</div></div>
+  <div class="card" style="text-align:center;padding:24px"><img class="mini-logo" style="width:86px;height:86px" src="assets/league-logo.png"><h3 style="margin:11px 0 3px">1ª Liga de Poker</h3><div class="muted small">Versão 9 Premium • Temporada 2026</div></div>
   <div class="card"><div class="row"><span class="muted">Perfil atual</span><b>Administrador</b></div><div class="row"><span class="muted">Temporada</span><b>2026</b></div><div class="row"><span class="muted">Tema</span><b>PLP Preto & Dourado</b></div></div>
 <div class="card" style="margin-top:10px"><div class="row"><span class="muted">Instalação</span><b>PWA • Desktop • Android • iPhone</b></div><div class="small muted" style="margin-top:8px">Para compartilhar corretamente, publique este app em um link HTTPS. No Windows e Android ele instala como aplicativo; no iPhone a instalação é feita pelo Safari em “Adicionar à Tela de Início”.</div></div>
 
@@ -429,7 +474,7 @@ function renderEditableResult(){
   const signedOnly=signupParsed.filter(x=>!finished.has(key(x.name))).map(x=>x.name),resultOnly=resultParsed.filter(x=>!signed.has(key(x.name))).map(x=>x.name);
   const diff=(signedOnly.length||resultOnly.length)?`<div class="review-banner"><span>!</span><div><b>Divergências para conferir:</b>${signedOnly.length?` confirmaram e não aparecem no resultado: <strong>${signedOnly.join(', ')}</strong>.`:''}${resultOnly.length?` aparecem no resultado mas não estavam na lista: <strong>${resultOnly.join(', ')}</strong>.`:''} O app não altera presença automaticamente.</div></div>`:'';
   const stageNo=Number(document.getElementById('resultStage')?.value||11);
-  document.getElementById('resultOutput').innerHTML=`<div class="review-banner"><span>✓</span><div><b>${resultParsed.length} colocações interpretadas.</b> Você pode corrigir nome e pontos diretamente abaixo. “Tavares” é reconhecido como <b>DU</b>.</div></div>${diff}<div class="parse-list">${resultParsed.map((r,i)=>`<div class="result-row" data-result-index="${i}"><b>${r.pos}º</b><input class="result-edit result-name" value="${r.name.replace(/"/g,'&quot;')}" aria-label="Jogador ${r.pos}"><input class="result-edit result-points" type="number" min="1" value="${r.pts??calcPointsForField(r.pos,p)}" aria-label="Pontos ${r.pos}"><span class="result-prize">${resultPrizeFor(r.pos,p)!=null?currency(resultPrizeFor(r.pos,p)):'—'}</span></div>`).join('')}</div><div class="update-stage-box"><b>Atualizar ${stageNo}ª Etapa</b><div class="small muted" style="margin-top:4px">Ao salvar, a rodada, o BR3 e o Ranking Geral são atualizados neste aparelho.</div><button class="btn gold" id="applyStageResult">Salvar resultado e atualizar rodada</button></div>`;
+  document.getElementById('resultOutput').innerHTML=`<div class="review-banner"><span>✓</span><div><b>${resultParsed.length} colocações interpretadas.</b> Você pode corrigir nome e pontos diretamente abaixo. “Tavares” é reconhecido como <b>DU</b>.</div></div>${diff}<div class="parse-list">${resultParsed.map((r,i)=>`<div class="result-row" data-result-index="${i}"><b>${r.pos}º</b><input class="result-edit result-name" value="${r.name.replace(/"/g,'&quot;')}" aria-label="Jogador ${r.pos}"><input class="result-edit result-points" type="number" min="1" value="${r.pts??calcPointsForField(r.pos,p)}" aria-label="Pontos ${r.pos}"><span class="result-prize">${resultPrizeFor(r.pos,p)!=null?currency(resultPrizeFor(r.pos,p)):'—'}</span></div>`).join('')}</div><div class="update-stage-box"><b class="save-title">Confirmar e atualizar ${stageNo}ª Etapa</b><div class="save-sub">Revise os nomes e pontos acima. Esta ação grava o resultado corrigido e recalcula automaticamente os rankings neste aparelho.</div><div class="save-impact"><span>Rodada</span><span>BR3</span><span>Ranking Geral</span></div><button class="btn gold" id="applyStageResult">✓ SALVAR E ATUALIZAR A RODADA</button></div>`;
   document.querySelectorAll('.result-name').forEach(el=>el.addEventListener('change',e=>{const i=Number(e.target.closest('[data-result-index]').dataset.resultIndex);resultParsed[i].name=normalizePlayerName(e.target.value);e.target.value=resultParsed[i].name}));
   document.querySelectorAll('.result-points').forEach(el=>el.addEventListener('change',e=>{const i=Number(e.target.closest('[data-result-index]').dataset.resultIndex);resultParsed[i].pts=Math.max(1,Number(e.target.value)||1)}));
   document.getElementById('applyStageResult').addEventListener('click',applyStageResult);
