@@ -1,7 +1,7 @@
 // PLP Poker • Supabase public configuration
-// Preencha apenas com a URL do projeto e a chave pública (anon/publishable).
+// Esta chave é pública/publishable e pode ser usada no frontend.
 // Nunca coloque service_role ou qualquer chave secreta neste arquivo.
 window.PLP_SUPABASE_CONFIG = {
-  url: "",
-  anonKey: ""
+  url: "https://rhgpecujwbsjhtawcoac.supabase.co",
+  anonKey: "sb_publishable_elNr5qi_sEYm2ddiZZ9dLg_s_T4oCZM"
 };
