@@ -1,7 +1,7 @@
 {
   "name": "1ª Liga de Poker",
   "short_name": "Liga Poker",
-  "description": "Painel premium da 1ª Liga de Poker",
+  "description": "Painel premium V9 da 1ª Liga de Poker",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#050504",
