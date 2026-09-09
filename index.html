@@ -376,8 +376,10 @@ nav{position:fixed;z-index:30;left:50%;bottom:0;transform:translateX(-50%);width
   <div class="import-card">
     <h3>2. Colar resultado</h3>
     <p>Funciona com listas simples copiadas do WhatsApp, como “1- Cafu, 2- Juninho...” e também aceita pontos digitados após o nome.</p>
-    <label class="field-label" for="resultStage">Rodada que será atualizada</label>
-    <select class="status-select" id="resultStage" style="max-width:220px"><option value="1">1ª Etapa</option><option value="2">2ª Etapa</option><option value="3">3ª Etapa</option><option value="4">4ª Etapa</option><option value="5">5ª Etapa</option><option value="6">6ª Etapa</option><option value="7">7ª Etapa</option><option value="8">8ª Etapa</option><option value="9">9ª Etapa</option><option value="10">10ª Etapa</option><option value="11" selected>11ª Etapa</option></select>
+    <div class="action-row" style="margin-top:0">
+      <div><label class="field-label" for="resultChamp">Campeonato</label><select class="status-select" id="resultChamp"><option value="br1">BR1</option><option value="br2">BR2</option><option value="br3" selected>BR3</option><option value="br4">BR4</option></select></div>
+      <div><label class="field-label" for="resultStage">Rodada que será atualizada</label><select class="status-select" id="resultStage"></select></div>
+    </div>
     <label class="field-label" for="resultInput">Classificação</label>
     <textarea class="text-area short" id="resultInput">1- Du 18
 2- Rafa 14
@@ -412,7 +414,7 @@ nav{position:fixed;z-index:30;left:50%;bottom:0;transform:translateX(-50%);width
 
 <section class="screen" id="profile">
   <div class="screen-top"><div class="screen-top-inner"><img class="mini-logo" src="assets/league-logo.png"><div><h2>Perfil</h2><p>Acesso ao aplicativo</p></div><button class="back-home" data-go="home">⌂</button></div></div>
-  <div class="card" style="text-align:center;padding:24px"><img class="mini-logo" style="width:86px;height:86px" src="assets/league-logo.png"><h3 style="margin:11px 0 3px">1ª Liga de Poker</h3><div class="muted small">Versão 11 Premium • Temporada 2026</div></div>
+  <div class="card" style="text-align:center;padding:24px"><img class="mini-logo" style="width:86px;height:86px" src="assets/league-logo.png"><h3 style="margin:11px 0 3px">1ª Liga de Poker</h3><div class="muted small">Versão 12 Premium • Temporada 2026</div></div>
   <div class="card"><div class="row"><span class="muted">Perfil atual</span><b>Administrador</b></div><div class="row"><span class="muted">Temporada</span><b>2026</b></div><div class="row"><span class="muted">Tema</span><b>PLP Preto & Dourado</b></div></div>
 <div class="card" style="margin-top:10px"><div class="row"><span class="muted">Instalação</span><b>PWA • Desktop • Android • iPhone</b></div><div class="small muted" style="margin-top:8px">Para compartilhar corretamente, publique este app em um link HTTPS. No Windows e Android ele instala como aplicativo; no iPhone a instalação é feita pelo Safari em “Adicionar à Tela de Início”.</div></div>
 
@@ -427,6 +429,7 @@ nav{position:fixed;z-index:30;left:50%;bottom:0;transform:translateX(-50%);width
 </nav>
 <div class="toast" id="toast"></div>
 </div>
+<script src="stages.js"></script>
 <script>
 const rankingFinancials={
   geral:{arrec:23100,jackpot:3850,premios:19250,confirmedArrec:22560,confirmedJackpot:3760,confirmedPremios:18800},br1:{arrec:9360,jackpot:1560,premios:7800},br2:{arrec:6900,jackpot:1150,premios:5750},br3:{arrec:6840,jackpot:1140,premios:5700,confirmedArrec:6300,confirmedJackpot:1050,confirmedPremios:5250},br4:{arrec:0,jackpot:0,premios:0}
@@ -453,6 +456,8 @@ const br3Stages=[
  {n:10,date:'01/set',arrec:540,jackpot:90,premios:450,results:[['Cafu',18,210],['Juninho',14,135],['Fabeta',11,105],['Rafael',9],['Neto',7],['Tchola',5],['Du',4],['Caio',3],['Paulo',2],['Geio',1]]},
  {n:11,date:'08/set',arrec:540,jackpot:90,premios:450,projected:true,results:[['DU',18,210],['Rafael',14,135],['Juninho',11,105],['Fabeta',9],['Tchola',7],['Chico',5],['Caio',4],['Guilherme',3],['Geio',2],['Neto',1]]}
 ];
+const stageSets=window.PLP_STAGE_SETS||{br1:[],br2:[],br3:br3Stages,br4:[]};
+
 const currency=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(v||0);
 const initials=n=>n.split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase();
 function goTo(id){
@@ -465,7 +470,7 @@ document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g
 function showToast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>el.classList.remove('show'),2600)}
 function renderHome(){
   document.getElementById('homeRankingMini').innerHTML=rankSets.geral.slice(0,3).map((p,i)=>`<div class="mini-row"><span class="medal ${i===0?'gold':i===2?'bronze':''}">${i+1}</span><b>${p.name}</b><b class="gold-text">${p.pts}</b></div>`).join('');
-  const recent=[8,9,10,11].map(n=>br3Stages.find(s=>s.n===n));
+  const recent=stageSets.br3.slice(-4);
   document.getElementById('latestStages').innerHTML=recent.map(s=>`<div class="mini-row"><b>${s.n}ª</b><span>${s.date} ${s.results.length?'• '+s.results[0][0]:'• resultado não informado'}</span><b>${s.results.length?s.results[0][1]+' pts':'—'}</b></div>`).join('');
 }
 function renderFinanceStrip(key){const f=rankingFinancials[key];const projected=f.confirmedArrec!=null;document.getElementById('rankingFinance').innerHTML=`<div class="finance-mini"><span>Arrecadação${projected?' projetada':''}</span><b>${currency(f.arrec)}</b></div><div class="finance-mini"><span>Jackpot${projected?' projetado':''}</span><b>${currency(f.jackpot)}</b></div><div class="finance-mini"><span>Premiação${projected?' calculada':''}</span><b>${currency(f.premios)}</b></div>`}
@@ -475,48 +480,46 @@ function renderRanking(target,data,key='geral'){
 }
 document.querySelectorAll('.tab[data-rank]').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.tab[data-rank]').forEach(x=>x.classList.remove('active'));btn.classList.add('active');renderRanking('rankingList',rankSets[btn.dataset.rank],btn.dataset.rank);renderFinanceStrip(btn.dataset.rank)}));
 const championshipInfo={
-  br1:{label:'BR1',count:12,period:'13/jan a 31/mar',arrec:9360,jackpot:1560,premios:7800,stages:null},
-  br2:{label:'BR2',count:12,period:'07/abr a 23/jun',arrec:6900,jackpot:1150,premios:5750,stages:null},
-  br3:{label:'BR3',count:11,period:'30/jun a 08/set',arrec:6300,jackpot:1050,premios:5250,stages:br3Stages},
-  br4:{label:'BR4',count:0,period:'início previsto em 15/set',arrec:0,jackpot:0,premios:0,stages:null}
+  br1:{label:'BR1',period:'13/jan a 31/mar'},
+  br2:{label:'BR2',period:'07/abr a 23/jun'},
+  br3:{label:'BR3',period:'30/jun a 08/set'},
+  br4:{label:'BR4',period:'15/set a 24/nov'}
 };
-function renderUnavailableStage(br,n,target){
-  const info=championshipInfo[br];
-  const stageText=n?info.label+' • '+n+'ª Etapa':info.label;
-  const reason=br==='br4'?'O BR4 ainda não começou.':'O calendário deste campeonato está cadastrado, mas o detalhamento etapa a etapa ainda não foi importado para o aplicativo.';
-  document.getElementById(target).innerHTML=`<div class="stage-unavailable"><div class="stage-big">${stageText}</div><p>${reason}</p>${br!=='br4'?'<div class="stage-total-grid"><div><span>Arrecadação do '+info.label+'</span><b>'+currency(info.arrec)+'</b></div><div><span>Jackpot do '+info.label+'</span><b>'+currency(info.jackpot)+'</b></div><div><span>Premiação paga</span><b>'+currency(info.premios)+'</b></div></div>':''}</div>`;
-}
+function getChampStages(br){return stageSets[br]||[]}
 function renderStageTabs(target,detailsTarget,active=1,br='br3'){
-  const host=document.getElementById(target),info=championshipInfo[br];
-  const count=info.stages?info.stages.length:info.count;
-  if(!count){host.innerHTML='';renderUnavailableStage(br,null,detailsTarget);return}
-  const safeActive=Math.max(1,Math.min(active,count));
-  host.innerHTML=Array.from({length:count},(_,i)=>i+1).map(n=>`<button class="tab ${n===safeActive?'active':''}" data-stage="${n}">${n}ª</button>`).join('');
+  const host=document.getElementById(target),stages=getChampStages(br);
+  if(!stages.length){host.innerHTML='';document.getElementById(detailsTarget).innerHTML='<div class="empty-state">Nenhuma etapa cadastrada.</div>';return}
+  const safe=stages.some(s=>s.n===active)?active:stages[0].n;
+  host.innerHTML=stages.map(s=>`<button class="tab ${s.n===safe?'active':''}" data-stage="${s.n}">${s.n}ª</button>`).join('');
   host.querySelectorAll('[data-stage]').forEach(btn=>btn.addEventListener('click',()=>{host.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active');renderStage(Number(btn.dataset.stage),detailsTarget,br)}));
-  renderStage(safeActive,detailsTarget,br)
+  renderStage(safe,detailsTarget,br)
 }
 function renderStage(n,target,br='br3'){
-  const info=championshipInfo[br];
-  if(br!=='br3'||!info.stages){renderUnavailableStage(br,n,target);return}
-  const s=br3Stages.find(x=>x.n===n);
-  if(!s){renderUnavailableStage(br,n,target);return}
-  if(!s.results.length){document.getElementById(target).innerHTML=`<div class="stage-head"><div><h4>${s.n}ª Etapa • ${s.date}</h4><p>BR3</p></div><span class="status prize">SEM RESULTADO</span></div><div class="empty-state">A etapa aparece programada na planilha, mas os dados recebidos não mostram jogadores, arrecadação ou premiação.</div>`;return}
+  const s=getChampStages(br).find(x=>x.n===n),label=championshipInfo[br]?.label||br.toUpperCase();
+  if(!s){document.getElementById(target).innerHTML='<div class="empty-state">Etapa não encontrada.</div>';return}
+  if(!s.results?.length){
+    const badge=s.planned?'AGENDADA':'SEM RESULTADO';
+    document.getElementById(target).innerHTML=`<div class="stage-head"><div><h4>${label} • ${s.n}ª Etapa • ${s.date}</h4><p>Temporada 2026</p></div><span class="status prize">${badge}</span></div><div class="empty-state">${s.planned?'Etapa prevista no calendário oficial. Os resultados aparecerão aqui após o lançamento pelo administrador.':'Ainda não há resultado lançado para esta etapa.'}</div>`;
+    return
+  }
   const rows=s.results.map((r,i)=>`<div class="result-row"><b>${i+1}º</b><b>${r[0]}</b><span>${r[1]} pts</span><span class="result-prize">${r[2]!=null?currency(r[2]):'—'}</span></div>`).join('');
-  document.getElementById(target).innerHTML=`<div class="stage-head"><div><h4>BR3 • ${s.n}ª Etapa • ${s.date}</h4><p>${s.results.length} jogadores listados</p></div><span class="status prize">${s.results[0][0]} • 1º</span></div><div class="stage-summary"><div><span>Arrecadação${s.projected?' projetada':''}</span><b>${currency(s.arrec)}</b></div><div><span>Jackpot${s.projected?' projetado':''}</span><b>${currency(s.jackpot)}</b></div><div><span>Premiação</span><b>${currency(s.premios)}</b></div></div>${s.projected?'<div class="review-banner"><span>!</span><div><b>Financeiro pendente de conferência:</b> a lista do WhatsApp marcou 9 pagamentos, mas eles continuam como “informados” até conferência do responsável.</div></div>':''}<div style="margin-top:9px">${rows}</div>`;
+  document.getElementById(target).innerHTML=`<div class="stage-head"><div><h4>${label} • ${s.n}ª Etapa • ${s.date}</h4><p>${s.results.length} jogadores listados</p></div><span class="status prize">${s.results[0][0]} • 1º</span></div><div class="stage-summary"><div><span>Arrecadação${s.projected?' projetada':''}</span><b>${s.arrec!=null?currency(s.arrec):'—'}</b></div><div><span>Jackpot${s.projected?' projetado':''}</span><b>${s.jackpot!=null?currency(s.jackpot):'—'}</b></div><div><span>Premiação</span><b>${s.premios!=null?currency(s.premios):'—'}</b></div></div>${s.projected?'<div class="review-banner"><span>!</span><div><b>Financeiro pendente de conferência:</b> os valores continuam projetados até a conferência do responsável.</div></div>':''}<div style="margin-top:9px">${rows}</div>`;
 }
 function setChampionshipView(br,history=false){
-  const info=championshipInfo[br],prefix=history?'history':'stage';
+  const info=championshipInfo[br],stages=getChampStages(br);
   const champHost=document.getElementById(history?'historyChampionshipTabs':'championshipTabs');
   champHost.querySelectorAll('.champ-tab').forEach(b=>b.classList.toggle('active',(history?b.dataset.historyChamp:b.dataset.champ)===br));
   const title=document.getElementById(history?'historyChampTitle':'stageChampTitle');
   const meta=document.getElementById(history?'historyChampMeta':'stageChampMeta');
+  const completed=stages.filter(s=>s.results?.length).length;
   if(title)title.textContent=`${info.label} • temporada 2026`;
-  if(meta)meta.textContent=`${info.period}${info.count?' • '+info.count+' etapas':''}`;
+  if(meta)meta.textContent=`${info.period} • ${stages.length} etapas`;
   if(!history){
     document.getElementById('stageSectionTitle').textContent=`Etapas do ${info.label}`;
-    document.getElementById('stageCountLabel').textContent=br==='br3'?'11 com resultado':info.count?info.count+' previstas':'a iniciar';
+    document.getElementById('stageCountLabel').textContent=completed?`${completed} com resultado`:'a iniciar';
   }
-  renderStageTabs(history?'historyTabs':'stageTabs',history?'historyDetails':'stageDetails',br==='br3'?11:1,br);
+  const defaultStage=completed?stages.filter(s=>s.results?.length).slice(-1)[0].n:(stages[0]?.n||1);
+  renderStageTabs(history?'historyTabs':'stageTabs',history?'historyDetails':'stageDetails',defaultStage,br);
 }
 document.querySelectorAll('[data-champ]').forEach(btn=>btn.addEventListener('click',()=>setChampionshipView(btn.dataset.champ,false)));
 document.querySelectorAll('[data-history-champ]').forEach(btn=>btn.addEventListener('click',()=>setChampionshipView(btn.dataset.historyChamp,true)));
@@ -562,15 +565,15 @@ function renderSignupOutput(meta={}){
 }
 let resultParsed=[];
 function calcPointsForField(pos,p){const offs=[8,4,1,-1,-3,-5,-6];if(pos<=7)return Math.max(1,p+offs[pos-1]);return Math.max(1,p-(pos-1))}
-function resultPrizeFor(pos,p){if(p===10&&pos<=3)return [210,135,105][pos-1];const stage=br3Stages.find(x=>x.n===Number(document.getElementById('resultStage')?.value||11));const old=stage?.results?.[pos-1];return old?.[2]??null}
+function resultPrizeFor(pos,p){const br=document.getElementById('resultChamp')?.value||'br3';const stage=getChampStages(br).find(x=>x.n===Number(document.getElementById('resultStage')?.value||1));const old=stage?.results?.[pos-1];return old?.[2]??null}
 function renderEditableResult(){
   const p=resultParsed.length;
   const key=n=>normalizePlayerName(n).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase();
   const signed=new Set(signupParsed.map(x=>key(x.name))),finished=new Set(resultParsed.map(x=>key(x.name)));
   const signedOnly=signupParsed.filter(x=>!finished.has(key(x.name))).map(x=>x.name),resultOnly=resultParsed.filter(x=>!signed.has(key(x.name))).map(x=>x.name);
   const diff=(signedOnly.length||resultOnly.length)?`<div class="review-banner"><span>!</span><div><b>Divergências para conferir:</b>${signedOnly.length?` confirmaram e não aparecem no resultado: <strong>${signedOnly.join(', ')}</strong>.`:''}${resultOnly.length?` aparecem no resultado mas não estavam na lista: <strong>${resultOnly.join(', ')}</strong>.`:''} O app não altera presença automaticamente.</div></div>`:'';
-  const stageNo=Number(document.getElementById('resultStage')?.value||11);
-  document.getElementById('resultOutput').innerHTML=`<div class="review-banner"><span>✓</span><div><b>${resultParsed.length} colocações interpretadas.</b> Você pode corrigir nome e pontos diretamente abaixo. “Tavares” é reconhecido como <b>DU</b>.</div></div>${diff}<div class="parse-list">${resultParsed.map((r,i)=>`<div class="result-row" data-result-index="${i}"><b>${r.pos}º</b><input class="result-edit result-name" value="${r.name.replace(/"/g,'&quot;')}" aria-label="Jogador ${r.pos}"><input class="result-edit result-points" type="number" min="1" value="${r.pts??calcPointsForField(r.pos,p)}" aria-label="Pontos ${r.pos}"><span class="result-prize">${resultPrizeFor(r.pos,p)!=null?currency(resultPrizeFor(r.pos,p)):'—'}</span></div>`).join('')}</div><div class="update-stage-box"><b class="save-title">Confirmar e atualizar ${stageNo}ª Etapa</b><div class="save-sub">Revise os nomes e pontos acima. Esta ação grava o resultado corrigido e recalcula automaticamente os rankings neste aparelho.</div><div class="save-impact"><span>Rodada</span><span>BR3</span><span>Ranking Geral</span></div><button class="btn gold" id="applyStageResult">✓ SALVAR E ATUALIZAR A RODADA</button></div>`;
+  const stageNo=Number(document.getElementById('resultStage')?.value||1),br=document.getElementById('resultChamp')?.value||'br3',brLabel=br.toUpperCase();
+  document.getElementById('resultOutput').innerHTML=`<div class="review-banner"><span>✓</span><div><b>${resultParsed.length} colocações interpretadas.</b> Você pode corrigir nome e pontos diretamente abaixo. “Tavares” é reconhecido como <b>DU</b>.</div></div>${diff}<div class="parse-list">${resultParsed.map((r,i)=>`<div class="result-row" data-result-index="${i}"><b>${r.pos}º</b><input class="result-edit result-name" value="${r.name.replace(/"/g,'&quot;')}" aria-label="Jogador ${r.pos}"><input class="result-edit result-points" type="number" min="1" value="${r.pts??calcPointsForField(r.pos,p)}" aria-label="Pontos ${r.pos}"><span class="result-prize">${resultPrizeFor(r.pos,p)!=null?currency(resultPrizeFor(r.pos,p)):'—'}</span></div>`).join('')}</div><div class="update-stage-box"><b class="save-title">Confirmar e atualizar ${brLabel} • ${stageNo}ª Etapa</b><div class="save-sub">Revise os nomes e pontos acima. Esta ação grava o resultado corrigido e recalcula automaticamente os rankings neste aparelho.</div><div class="save-impact"><span>Rodada</span><span>${brLabel}</span><span>Ranking Geral</span></div><button class="btn gold" id="applyStageResult">✓ SALVAR E ATUALIZAR A RODADA</button></div>`;
   document.querySelectorAll('.result-name').forEach(el=>el.addEventListener('change',e=>{const i=Number(e.target.closest('[data-result-index]').dataset.resultIndex);resultParsed[i].name=normalizePlayerName(e.target.value);e.target.value=resultParsed[i].name}));
   document.querySelectorAll('.result-points').forEach(el=>el.addEventListener('change',e=>{const i=Number(e.target.closest('[data-result-index]').dataset.resultIndex);resultParsed[i].pts=Math.max(1,Number(e.target.value)||1)}));
   document.getElementById('applyStageResult').addEventListener('click',applyStageResult);
@@ -584,40 +587,52 @@ function parseResultText(){
 }
 function ensureRankPlayer(set,name){let p=set.find(x=>x.name===name);if(!p){p={name,pts:0,discard:0};set.push(p)}return p}
 function applyStageResult(){
-  // Read any edits still focused in the form.
   document.querySelectorAll('[data-result-index]').forEach(row=>{const i=Number(row.dataset.resultIndex);resultParsed[i].name=normalizePlayerName(row.querySelector('.result-name').value);resultParsed[i].pts=Math.max(1,Number(row.querySelector('.result-points').value)||1)});
-  const stageNo=Number(document.getElementById('resultStage').value);const stage=br3Stages.find(x=>x.n===stageNo);if(!stage){showToast('Etapa não encontrada.');return}
+  const br=document.getElementById('resultChamp').value,stageNo=Number(document.getElementById('resultStage').value),stages=getChampStages(br),stage=stages.find(x=>x.n===stageNo);
+  if(!stage){showToast('Etapa não encontrada.');return}
   const oldMap=new Map((stage.results||[]).map(r=>[normalizePlayerName(r[0]).toUpperCase(),Number(r[1])||0]));
   const prizes=(stage.results||[]).map(r=>r[2]??null);
   const newResults=resultParsed.map((r,i)=>[normalizePlayerName(r.name),Number(r.pts)||calcPointsForField(r.pos,resultParsed.length),prizes[i]??resultPrizeFor(r.pos,resultParsed.length)]);
   const newMap=new Map(newResults.map(r=>[normalizePlayerName(r[0]).toUpperCase(),Number(r[1])||0]));
   const allNames=new Set([...oldMap.keys(),...newMap.keys()]);
-  for(const k of allNames){const delta=(newMap.get(k)||0)-(oldMap.get(k)||0);if(!delta)continue;const proper=(newResults.find(r=>normalizePlayerName(r[0]).toUpperCase()===k)?.[0])||(stage.results.find(r=>normalizePlayerName(r[0]).toUpperCase()===k)?.[0])||k;const brp=ensureRankPlayer(rankSets.br3,proper);brp.pts=Math.max(0,(Number(brp.pts)||0)+delta);const gp=ensureRankPlayer(rankSets.geral,proper);gp.pts=Math.max(0,(Number(gp.pts)||0)+delta)}
-  rankSets.br3=rankSets.br3.filter(x=>x.pts>0).sort((a,b)=>b.pts-a.pts||a.name.localeCompare(b.name));rankSets.geral=rankSets.geral.filter(x=>x.pts>0).sort((a,b)=>b.pts-a.pts||a.name.localeCompare(b.name));
-  stage.results=newResults;stage.projected=true;
-  localStorage.setItem('plpStageOverrides',JSON.stringify(br3Stages.map(s=>({n:s.n,results:s.results,projected:s.projected}))));
-  localStorage.setItem('plpRankOverrides',JSON.stringify({geral:rankSets.geral,br3:rankSets.br3}));
-  loadSavedOverrides();renderHome();renderRanking('rankingList',rankSets.geral,'geral');renderFinanceStrip('geral');setChampionshipView('br3',false);renderStageTabs('stageTabs','stageDetails',stageNo,'br3');setChampionshipView('br3',true);renderStageTabs('historyTabs','historyDetails',stageNo,'br3');renderClassified();renderPlayers();
-  showToast(`${stageNo}ª Etapa atualizada. Rankings recalculados neste aparelho.`);
+  for(const k of allNames){const delta=(newMap.get(k)||0)-(oldMap.get(k)||0);if(!delta)continue;const proper=(newResults.find(r=>normalizePlayerName(r[0]).toUpperCase()===k)?.[0])||(stage.results.find(r=>normalizePlayerName(r[0]).toUpperCase()===k)?.[0])||k;const brp=ensureRankPlayer(rankSets[br],proper);brp.pts=Math.max(0,(Number(brp.pts)||0)+delta);const gp=ensureRankPlayer(rankSets.geral,proper);gp.pts=Math.max(0,(Number(gp.pts)||0)+delta)}
+  rankSets[br]=rankSets[br].filter(x=>x.pts>0).sort((a,b)=>b.pts-a.pts||a.name.localeCompare(b.name));rankSets.geral=rankSets.geral.filter(x=>x.pts>0).sort((a,b)=>b.pts-a.pts||a.name.localeCompare(b.name));
+  stage.results=newResults;stage.planned=false;
+  localStorage.setItem('plpStageOverridesV12',JSON.stringify(stageSets));
+  localStorage.setItem('plpRankOverridesV12',JSON.stringify({geral:rankSets.geral,br1:rankSets.br1,br2:rankSets.br2,br3:rankSets.br3,br4:rankSets.br4}));
+  renderHome();renderRanking('rankingList',rankSets.geral,'geral');renderFinanceStrip('geral');setChampionshipView(br,false);renderStageTabs('stageTabs','stageDetails',stageNo,br);setChampionshipView(br,true);renderStageTabs('historyTabs','historyDetails',stageNo,br);renderClassified();renderPlayers();
+  showToast(`${br.toUpperCase()} • ${stageNo}ª Etapa atualizada neste aparelho.`);
   document.getElementById('resultInput').value=newResults.map((r,i)=>`${i+1}- ${r[0]} ${r[1]}`).join('\n');
   renderEditableResult();
 }
 function ensureDataVersion(){
-  const VERSION='plp-data-v6';
+  const VERSION='plp-data-v12';
   if(localStorage.getItem('plpDataVersion')!==VERSION){
-    localStorage.removeItem('plpStageOverrides');
-    localStorage.removeItem('plpRankOverrides');
+    localStorage.removeItem('plpStageOverrides');localStorage.removeItem('plpRankOverrides');
+    localStorage.removeItem('plpStageOverridesV12');localStorage.removeItem('plpRankOverridesV12');
     localStorage.setItem('plpDataVersion',VERSION);
   }
 }
 function loadSavedOverrides(){
-  try{const stages=JSON.parse(localStorage.getItem('plpStageOverrides')||'null');if(Array.isArray(stages)){for(const o of stages){const s=br3Stages.find(x=>x.n===o.n);if(s&&Array.isArray(o.results)){s.results=o.results;s.projected=o.projected??s.projected}}}}catch{}
-  try{const ranks=JSON.parse(localStorage.getItem('plpRankOverrides')||'null');if(ranks?.geral)rankSets.geral=ranks.geral;if(ranks?.br3)rankSets.br3=ranks.br3}catch{}
+  try{const saved=JSON.parse(localStorage.getItem('plpStageOverridesV12')||'null');if(saved&&typeof saved==='object'){for(const br of ['br1','br2','br3','br4'])if(Array.isArray(saved[br]))stageSets[br]=saved[br]}}catch{}
+  try{const ranks=JSON.parse(localStorage.getItem('plpRankOverridesV12')||'null');if(ranks){for(const k of ['geral','br1','br2','br3','br4'])if(Array.isArray(ranks[k]))rankSets[k]=ranks[k]}}catch{}
+}
+function populateResultStageOptions(load=true){
+  const br=document.getElementById('resultChamp').value,sel=document.getElementById('resultStage'),stages=getChampStages(br);
+  sel.innerHTML=stages.map(s=>`<option value="${s.n}">${s.n}ª Etapa • ${s.date}</option>`).join('');
+  const completed=stages.filter(s=>s.results?.length),pick=(completed.slice(-1)[0]||stages[0]);
+  if(pick)sel.value=String(pick.n);
+  if(load)loadSelectedStageResult();
+}
+function loadSelectedStageResult(){
+  const br=document.getElementById('resultChamp').value,n=Number(document.getElementById('resultStage').value),st=getChampStages(br).find(x=>x.n===n);
+  if(st?.results?.length){document.getElementById('resultInput').value=st.results.map((r,i)=>`${i+1}- ${r[0]} ${r[1]}`).join('\n');parseResultText()}
+  else{document.getElementById('resultInput').value='';document.getElementById('resultOutput').innerHTML='<div class="notice">Esta etapa ainda não possui resultado. Cole a classificação para iniciar o lançamento.</div>'}
 }
 document.getElementById('parseSignup').addEventListener('click',parseSignupText);
 document.getElementById('clearSignup').addEventListener('click',()=>{document.getElementById('whatsappInput').value='';document.getElementById('signupOutput').innerHTML=''});
 document.getElementById('parseResult').addEventListener('click',parseResultText);
-document.getElementById('resultStage').addEventListener('change',()=>{const n=Number(document.getElementById('resultStage').value);const st=br3Stages.find(x=>x.n===n);if(st?.results?.length){document.getElementById('resultInput').value=st.results.map((r,i)=>`${i+1}- ${r[0]} ${r[1]}`).join('\n');parseResultText()}});
+document.getElementById('resultChamp').addEventListener('change',()=>populateResultStageOptions(true));document.getElementById('resultStage').addEventListener('change',loadSelectedStageResult);
 document.getElementById('loadSimpleExample').addEventListener('click',()=>{document.getElementById('resultInput').value='1- Cafu\n2- Juninho\n3- Fabeta\n4- Rafa\n5- Neto\n6- Tchola\n7- Du\n8- Caio\n9- Paulão\n10- Geio';parseResultText()});
 document.getElementById('sourceFile').addEventListener('change',e=>{const f=e.target.files?.[0];if(!f)return;const info=document.getElementById('fileInfo'),img=document.getElementById('attachmentPreview');info.style.display='block';info.innerHTML=`<b>${f.name}</b><br><span class="muted">${f.type||'arquivo'} • ${(f.size/1024).toFixed(1)} KB</span>`;img.style.display='none';if(f.type.startsWith('image/')){img.src=URL.createObjectURL(f);img.style.display='block'}else if(f.type.startsWith('text/')||/\.(txt|csv)$/i.test(f.name)){const r=new FileReader();r.onload=()=>{document.getElementById('resultInput').value=String(r.result||'');showToast('Texto carregado. Toque em “Interpretar resultado”.')};r.readAsText(f)}});
 
@@ -629,7 +644,7 @@ document.getElementById('startPause').addEventListener('click',()=>{running=!run
 function renderClassified(){const d=rankSets.geral.filter(x=>x.status);document.getElementById('classifiedList').innerHTML=d.map((p,i)=>`<div class="class-card"><div class="class-badge">${i+1}</div><div class="grow"><b>${p.name}</b><p>${p.status==='classified'?'Classificado para a Libertadores':'Classificando para a Libertadores'} • ${p.pts} pontos</p></div><span class="status ${p.status}">${p.status==='classified'?'GARANTIDO':'PARCIAL'}</span></div>`).join('')}
 function renderPlayers(){document.getElementById('playerGrid').innerHTML=rankSets.geral.map((p,i)=>`<div class="player-card"><div class="avatar">${initials(p.name)}</div><div><b>${p.name}</b><br><span>${i+1}º geral • ${p.pts} pts</span></div></div>`).join('')}
 document.getElementById('financeByBr').innerHTML=['br1','br2','br3'].map(k=>{const f=rankingFinancials[k];return `<div class="row"><div><b>${k.toUpperCase()}</b><div class="small muted">Arrec. ${currency(f.arrec)} • Prêmios ${currency(f.premios)}${f.confirmedArrec!=null?' • inclui projeção':''}</div></div><b class="gold-text">Jackpot ${currency(f.jackpot)}</b></div>`}).join('');
-ensureDataVersion();loadSavedOverrides();renderHome();renderRanking('rankingList',rankSets.geral,'geral');renderFinanceStrip('geral');setChampionshipView('br3',false);setChampionshipView('br3',true);renderClassified();renderPlayers();paintClock();parseSignupText();parseResultText();
+ensureDataVersion();loadSavedOverrides();renderHome();renderRanking('rankingList',rankSets.geral,'geral');renderFinanceStrip('geral');setChampionshipView('br3',false);setChampionshipView('br3',true);renderClassified();renderPlayers();paintClock();parseSignupText();populateResultStageOptions(false);loadSelectedStageResult();
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}
 </script>
 </body>
