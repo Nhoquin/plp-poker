@@ -1,4 +1,4 @@
-const CACHE='plp-2026-v5';
+const CACHE='plp-2026-v6';
 const CORE=['./','./index.html','./manifest.json','./assets/app-icon.png','./assets/icon-192.png','./assets/icon-512.png'];
 self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)))});
 self.addEventListener('activate',e=>{e.waitUntil(Promise.all([caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))),self.clients.claim()]))});
