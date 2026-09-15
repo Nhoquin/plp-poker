@@ -1,4 +1,4 @@
-const CACHE='plp-2026-v20';
+const CACHE='plp-2026-v21';
 const PAGE='./index.html';
 
 self.addEventListener('install',event=>{
@@ -20,7 +20,6 @@ self.addEventListener('activate',event=>{
     await Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)));
     await self.clients.claim();
 
-    // Quando uma nova versão assumir o controle, atualiza automaticamente as telas abertas.
     const windows=await self.clients.matchAll({type:'window',includeUncontrolled:true});
     await Promise.all(windows.map(async client=>{
       try{ await client.navigate(client.url); }catch(_){}
@@ -61,7 +60,6 @@ self.addEventListener('fetch',event=>{
     return;
   }
 
-  // Imagens e demais recursos: usa cache para rapidez, mas atualiza em segundo plano.
   event.respondWith((async()=>{
     const cached=await caches.match(req);
     const refresh=fetch(req).then(async net=>{
