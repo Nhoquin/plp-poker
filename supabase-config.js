@@ -6,7 +6,7 @@ window.PLP_SUPABASE_CONFIG = {
   anonKey: "sb_publishable_elNr5qi_sEYm2ddiZZ9dLg_s_T4oCZM"
 };
 
-window.PLP_BUILD = '21';
+window.PLP_BUILD = '22';
 
 (function(){
   function bindAuthReload(){
@@ -65,16 +65,28 @@ window.PLP_BUILD = '21';
     if(document.querySelector('link[data-plp-bg-v21]')) return;
     var l=document.createElement('link');
     l.rel='stylesheet';
-    l.href='background-v21.css?v=21';
+    l.href='background-v21.css?v=22';
     l.dataset.plpBgV21='1';
     document.head.appendChild(l);
   }
 
+  function loadV22Fix(){
+    if(document.querySelector('script[data-plp-v22-fix]')) return;
+    var f=document.createElement('script');
+    f.src='app-v22-fix.js?v=22';
+    f.dataset.plpV22Fix='1';
+    document.body.appendChild(f);
+  }
+
   function loadV19(){
-    if(document.querySelector('script[data-plp-v19]')) return;
+    if(document.querySelector('script[data-plp-v19]')){
+      loadV22Fix();
+      return;
+    }
     var s=document.createElement('script');
-    s.src='app-v19.js?v=21';
+    s.src='app-v19.js?v=22';
     s.dataset.plpV19='1';
+    s.onload=loadV22Fix;
     document.body.appendChild(s);
   }
 
@@ -85,7 +97,7 @@ window.PLP_BUILD = '21';
       return;
     }
     var s=document.createElement('script');
-    s.src='app-v18.js?v=21';
+    s.src='app-v18.js?v=22';
     s.dataset.plpV18='1';
     s.onload=function(){bindAuthReload();loadV19();};
     document.body.appendChild(s);
