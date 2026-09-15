@@ -6,7 +6,7 @@ window.PLP_SUPABASE_CONFIG = {
   anonKey: "sb_publishable_elNr5qi_sEYm2ddiZZ9dLg_s_T4oCZM"
 };
 
-// Carrega o modo operacional V18 depois que a aplicação principal terminar de iniciar.
+// Carrega o modo operacional V18 e, em seguida, os recursos V19.
 (function(){
   function bindAuthReload(){
     var tries=0;
@@ -27,12 +27,23 @@ window.PLP_SUPABASE_CONFIG = {
       if(tries>80) clearInterval(timer);
     },100);
   }
+  function loadV19(){
+    if(document.querySelector('script[data-plp-v19]')) return;
+    var s=document.createElement('script');
+    s.src='app-v19.js?v=19';
+    s.dataset.plpV19='1';
+    document.body.appendChild(s);
+  }
   function loadV18(){
-    if(document.querySelector('script[data-plp-v18]')) return;
+    if(document.querySelector('script[data-plp-v18]')){
+      bindAuthReload();
+      loadV19();
+      return;
+    }
     var s=document.createElement('script');
     s.src='app-v18.js?v=18';
     s.dataset.plpV18='1';
-    s.onload=bindAuthReload;
+    s.onload=function(){bindAuthReload();loadV19();};
     document.body.appendChild(s);
   }
   if(document.readyState==='complete') setTimeout(loadV18,0);
