@@ -1,53 +1,84 @@
-const CACHE='plp-2026-v19';
-const CORE=['./','./index.html','./manifest.json','./stages.js','./supabase-config.js','./app-v18.js','./v18.css','./app-v19.js','./v19.css','./assets/brand-bg.png','./assets/league-logo.png','./assets/app-icon.png','./assets/apple-touch-icon.png','./assets/icon-192.png','./assets/icon-512.png'];
+const CACHE='plp-2026-v20';
+const PAGE='./index.html';
 
-self.addEventListener('install',e=>{
+self.addEventListener('install',event=>{
   self.skipWaiting();
-  e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)));
+  event.waitUntil((async()=>{
+    try{
+      const cache=await caches.open(CACHE);
+      const response=await fetch(PAGE,{cache:'reload'});
+      if(response.ok) await cache.put(PAGE,response.clone());
+    }catch(_){
+      // A atualização nunca deve falhar só porque um arquivo ainda não propagou no GitHub Pages.
+    }
+  })());
 });
 
-self.addEventListener('activate',e=>{
-  e.waitUntil(Promise.all([
-    caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))),
-    self.clients.claim()
-  ]));
+self.addEventListener('activate',event=>{
+  event.waitUntil((async()=>{
+    const keys=await caches.keys();
+    await Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)));
+    await self.clients.claim();
+
+    // Quando uma nova versão assumir o controle, atualiza automaticamente as telas abertas.
+    const windows=await self.clients.matchAll({type:'window',includeUncontrolled:true});
+    await Promise.all(windows.map(async client=>{
+      try{ await client.navigate(client.url); }catch(_){}
+    }));
+  })());
 });
 
-self.addEventListener('fetch',e=>{
-  const req=e.request;
-  if(req.mode==='navigate'){
-    e.respondWith(fetch(req).then(r=>{
-      const c=r.clone();
-      caches.open(CACHE).then(cache=>cache.put('./index.html',c));
-      return r;
-    }).catch(()=>caches.match('./index.html')));
-    return;
-  }
+self.addEventListener('message',event=>{
+  if(event.data==='SKIP_WAITING') self.skipWaiting();
+});
+
+self.addEventListener('fetch',event=>{
+  const req=event.request;
+  if(req.method!=='GET') return;
 
   const url=new URL(req.url);
-  const isAppAsset=url.origin===self.location.origin && /\.(?:js|css|json)$/i.test(url.pathname);
-  if(isAppAsset){
-    e.respondWith(fetch(req).then(r=>{
-      const c=r.clone();
-      caches.open(CACHE).then(cache=>cache.put(req,c));
-      return r;
-    }).catch(()=>caches.match(req)));
+  if(url.origin!==self.location.origin){
+    event.respondWith(fetch(req));
     return;
   }
 
-  e.respondWith(caches.match(req).then(r=>r||fetch(req).then(net=>{
-    if(req.method==='GET' && net.ok){
-      const c=net.clone();
-      caches.open(CACHE).then(cache=>cache.put(req,c));
-    }
-    return net;
-  })));
+  const isNavigation=req.mode==='navigate';
+  const isCode=/\.(?:js|css|json|html)$/i.test(url.pathname);
+
+  if(isNavigation || isCode){
+    event.respondWith((async()=>{
+      try{
+        const net=await fetch(req,{cache:'no-store'});
+        if(net && net.ok){
+          const cache=await caches.open(CACHE);
+          await cache.put(isNavigation?PAGE:req,net.clone());
+        }
+        return net;
+      }catch(_){
+        return (await caches.match(isNavigation?PAGE:req)) || Response.error();
+      }
+    })());
+    return;
+  }
+
+  // Imagens e demais recursos: usa cache para rapidez, mas atualiza em segundo plano.
+  event.respondWith((async()=>{
+    const cached=await caches.match(req);
+    const refresh=fetch(req).then(async net=>{
+      if(net && net.ok){
+        const cache=await caches.open(CACHE);
+        await cache.put(req,net.clone());
+      }
+      return net;
+    }).catch(()=>null);
+    return cached || (await refresh) || Response.error();
+  })());
 });
 
-self.addEventListener('notificationclick',e=>{
-  e.notification.close();
-  e.waitUntil(clients.matchAll({type:'window',includeUncontrolled:true}).then(list=>{
-    for(const c of list){if('focus' in c)return c.focus()}
-    return clients.openWindow('https://nhoquin.github.io/plp-poker/');
+self.addEventListener('notificationclick',event=>{
+  event.notification.close();
+  event.waitUntil(self.clients.matchAll({type:'window',includeUncontrolled:true}).then(list=>{
+    for(const client of list){ if('focus' in client) return client.focus(); }
+    return self.clients.openWindow('https://nhoquin.github.io/plp-poker/');
   }));
 });
