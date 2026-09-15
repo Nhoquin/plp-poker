@@ -1,4 +1,4 @@
-const CACHE='plp-2026-v22';
+const CACHE='plp-2026-v23';
 const PAGE='./index.html';
 
 self.addEventListener('install',event=>{
