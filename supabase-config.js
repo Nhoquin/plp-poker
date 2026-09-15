@@ -6,7 +6,7 @@ window.PLP_SUPABASE_CONFIG = {
   anonKey: "sb_publishable_elNr5qi_sEYm2ddiZZ9dLg_s_T4oCZM"
 };
 
-window.PLP_BUILD = '20';
+window.PLP_BUILD = '21';
 
 (function(){
   function bindAuthReload(){
@@ -61,10 +61,19 @@ window.PLP_BUILD = '20';
     }).catch(function(){});
   }
 
+  function loadTheme(){
+    if(document.querySelector('link[data-plp-bg-v21]')) return;
+    var l=document.createElement('link');
+    l.rel='stylesheet';
+    l.href='background-v21.css?v=21';
+    l.dataset.plpBgV21='1';
+    document.head.appendChild(l);
+  }
+
   function loadV19(){
     if(document.querySelector('script[data-plp-v19]')) return;
     var s=document.createElement('script');
-    s.src='app-v19.js?v=20';
+    s.src='app-v19.js?v=21';
     s.dataset.plpV19='1';
     document.body.appendChild(s);
   }
@@ -76,12 +85,13 @@ window.PLP_BUILD = '20';
       return;
     }
     var s=document.createElement('script');
-    s.src='app-v18.js?v=20';
+    s.src='app-v18.js?v=21';
     s.dataset.plpV18='1';
     s.onload=function(){bindAuthReload();loadV19();};
     document.body.appendChild(s);
   }
 
+  loadTheme();
   installAutoUpdater();
   if(document.readyState==='complete') setTimeout(loadV18,0);
   else window.addEventListener('load',loadV18,{once:true});
