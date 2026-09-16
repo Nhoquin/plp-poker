@@ -1,7 +1,7 @@
-const CACHE='plp-2026-v24';
+const CACHE='plp-2026-v25';
 const PAGE='./index.html';
 
-// V24: uma nova versão fica aguardando até o usuário aplicar ou todos os clientes
+// V25: uma nova versão fica aguardando até o usuário aplicar ou todos os clientes
 // antigos serem fechados. Isto evita recarregar um Blind Clock durante uma partida.
 self.addEventListener('install',event=>{
   event.waitUntil((async()=>{
@@ -21,9 +21,8 @@ self.addEventListener('activate',event=>{
   })());
 });
 
-// A versão anterior enviava SKIP_WAITING automaticamente. A V24 deliberadamente
-// não responde a essa mensagem. Só PLP_APPLY_UPDATE, disparado por ação do usuário,
-// permite ativação imediata.
+// A atualização aguarda ação do usuário. Só PLP_APPLY_UPDATE, disparado pelo botão
+// de atualização, permite ativação imediata durante uma sessão já aberta.
 self.addEventListener('message',event=>{
   if(event.data==='PLP_APPLY_UPDATE') self.skipWaiting();
 });
