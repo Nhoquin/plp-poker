@@ -4,7 +4,7 @@
 
   const AUTHORIZED_ADMIN_EMAILS = new Set([
     'franmfilho@gmail.com',
-    'fabiocastelari@hotmail.com'
+    'fabiocastellari@hotmail.com'
   ]);
 
   function toast(message){
