@@ -6,7 +6,7 @@ window.PLP_SUPABASE_CONFIG = {
   anonKey: "sb_publishable_elNr5qi_sEYm2ddiZZ9dLg_s_T4oCZM"
 };
 
-window.PLP_BUILD = '24';
+window.PLP_BUILD = '25';
 
 (function(){
   function bindAuthReload(){
@@ -85,16 +85,28 @@ window.PLP_BUILD = '24';
     if(document.querySelector('link[data-plp-bg-v21]')) return;
     var l=document.createElement('link');
     l.rel='stylesheet';
-    l.href='background-v21.css?v=24';
+    l.href='background-v21.css?v=25';
     l.dataset.plpBgV21='1';
     document.head.appendChild(l);
   }
 
+  function loadEliminationsV25(){
+    if(document.querySelector('script[data-plp-elimination-v25]')) return;
+    var e=document.createElement('script');
+    e.src='elimination-v25.js?v=25';
+    e.dataset.plpEliminationV25='1';
+    document.body.appendChild(e);
+  }
+
   function loadClockAdminV24(){
-    if(document.querySelector('script[data-plp-clock-admin-v24]')) return;
+    if(document.querySelector('script[data-plp-clock-admin-v24]')){
+      loadEliminationsV25();
+      return;
+    }
     var a=document.createElement('script');
-    a.src='clock-admin-v24.js?v=24';
+    a.src='clock-admin-v24.js?v=25';
     a.dataset.plpClockAdminV24='1';
+    a.onload=loadEliminationsV25;
     document.body.appendChild(a);
   }
 
@@ -104,7 +116,7 @@ window.PLP_BUILD = '24';
       return;
     }
     var c=document.createElement('script');
-    c.src='clock-v24.js?v=24';
+    c.src='clock-v24.js?v=25';
     c.dataset.plpClockV24='1';
     c.onload=loadClockAdminV24;
     document.body.appendChild(c);
@@ -116,7 +128,7 @@ window.PLP_BUILD = '24';
       return;
     }
     var f=document.createElement('script');
-    f.src='app-v22-fix.js?v=23';
+    f.src='app-v22-fix.js?v=25';
     f.dataset.plpV22Fix='1';
     f.onload=loadClockV24;
     document.body.appendChild(f);
@@ -128,7 +140,7 @@ window.PLP_BUILD = '24';
       return;
     }
     var s=document.createElement('script');
-    s.src='app-v19.js?v=23';
+    s.src='app-v19.js?v=25';
     s.dataset.plpV19='1';
     s.onload=loadV22Fix;
     document.body.appendChild(s);
@@ -141,7 +153,7 @@ window.PLP_BUILD = '24';
       return;
     }
     var s=document.createElement('script');
-    s.src='app-v18.js?v=23';
+    s.src='app-v18.js?v=25';
     s.dataset.plpV18='1';
     s.onload=function(){bindAuthReload();loadV19();};
     document.body.appendChild(s);
