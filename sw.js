@@ -1,7 +1,7 @@
-const CACHE='plp-2026-v28';
+const CACHE='plp-2026-v29';
 const PAGE='./index.html';
 
-// V28: uma nova versão fica aguardando até o usuário aplicar ou todos os clientes
+// V29: uma nova versão fica aguardando até o usuário aplicar ou todos os clientes
 // antigos serem fechados. Isto evita recarregar o aplicativo durante uma partida.
 self.addEventListener('install',event=>{
   event.waitUntil((async()=>{
