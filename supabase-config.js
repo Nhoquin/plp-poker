@@ -6,7 +6,7 @@ window.PLP_SUPABASE_CONFIG = {
   anonKey: "sb_publishable_elNr5qi_sEYm2ddiZZ9dLg_s_T4oCZM"
 };
 
-window.PLP_BUILD = '23';
+window.PLP_BUILD = '24';
 
 (function(){
   function bindAuthReload(){
@@ -31,12 +31,35 @@ window.PLP_BUILD = '23';
 
   function installAutoUpdater(){
     if(!('serviceWorker' in navigator)) return;
-    var reloading=false;
+
+    var applying=false;
+    function removeBanner(){
+      var old=document.getElementById('plpUpdateReadyV24');
+      if(old) old.remove();
+    }
+    function showBanner(reg){
+      if(!reg || !reg.waiting || document.getElementById('plpUpdateReadyV24')) return;
+      var btn=document.createElement('button');
+      btn.id='plpUpdateReadyV24';
+      btn.type='button';
+      btn.textContent='Nova versão disponível • Atualizar quando puder';
+      btn.style.cssText='position:fixed;left:12px;right:12px;bottom:82px;z-index:9999;padding:11px 14px;border-radius:14px;border:1px solid rgba(244,201,20,.5);background:#17130b;color:#ffe36a;font:700 11px system-ui;box-shadow:0 10px 30px rgba(0,0,0,.35)';
+      btn.addEventListener('click',function(){
+        if(!reg.waiting || applying) return;
+        applying=true;
+        btn.disabled=true;
+        btn.textContent='Aplicando atualização…';
+        sessionStorage.setItem('plpApplyUpdateV24','1');
+        try{ reg.waiting.postMessage('PLP_APPLY_UPDATE'); }catch(e){ applying=false; btn.disabled=false; }
+      });
+      document.body.appendChild(btn);
+    }
 
     navigator.serviceWorker.addEventListener('controllerchange',function(){
-      if(reloading) return;
-      reloading=true;
-      location.reload();
+      if(sessionStorage.getItem('plpApplyUpdateV24')==='1'){
+        sessionStorage.removeItem('plpApplyUpdateV24');
+        location.reload();
+      }
     });
 
     navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(function(reg){
@@ -49,15 +72,12 @@ window.PLP_BUILD = '23';
         var worker=reg.installing;
         if(!worker) return;
         worker.addEventListener('statechange',function(){
-          if(worker.state==='installed' && reg.waiting){
-            try{ reg.waiting.postMessage('SKIP_WAITING'); }catch(e){}
-          }
+          if(worker.state==='installed' && reg.waiting) showBanner(reg);
         });
       });
 
-      if(reg.waiting){
-        try{ reg.waiting.postMessage('SKIP_WAITING'); }catch(e){}
-      }
+      if(reg.waiting) showBanner(reg);
+      navigator.serviceWorker.addEventListener('controllerchange',removeBanner);
     }).catch(function(){});
   }
 
@@ -65,16 +85,40 @@ window.PLP_BUILD = '23';
     if(document.querySelector('link[data-plp-bg-v21]')) return;
     var l=document.createElement('link');
     l.rel='stylesheet';
-    l.href='background-v21.css?v=23';
+    l.href='background-v21.css?v=24';
     l.dataset.plpBgV21='1';
     document.head.appendChild(l);
   }
 
+  function loadClockAdminV24(){
+    if(document.querySelector('script[data-plp-clock-admin-v24]')) return;
+    var a=document.createElement('script');
+    a.src='clock-admin-v24.js?v=24';
+    a.dataset.plpClockAdminV24='1';
+    document.body.appendChild(a);
+  }
+
+  function loadClockV24(){
+    if(document.querySelector('script[data-plp-clock-v24]')){
+      loadClockAdminV24();
+      return;
+    }
+    var c=document.createElement('script');
+    c.src='clock-v24.js?v=24';
+    c.dataset.plpClockV24='1';
+    c.onload=loadClockAdminV24;
+    document.body.appendChild(c);
+  }
+
   function loadV22Fix(){
-    if(document.querySelector('script[data-plp-v22-fix]')) return;
+    if(document.querySelector('script[data-plp-v22-fix]')){
+      loadClockV24();
+      return;
+    }
     var f=document.createElement('script');
     f.src='app-v22-fix.js?v=23';
     f.dataset.plpV22Fix='1';
+    f.onload=loadClockV24;
     document.body.appendChild(f);
   }
 

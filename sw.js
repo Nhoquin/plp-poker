@@ -1,16 +1,15 @@
-const CACHE='plp-2026-v23';
+const CACHE='plp-2026-v24';
 const PAGE='./index.html';
 
+// V24: uma nova versão fica aguardando até o usuário aplicar ou todos os clientes
+// antigos serem fechados. Isto evita recarregar um Blind Clock durante uma partida.
 self.addEventListener('install',event=>{
-  self.skipWaiting();
   event.waitUntil((async()=>{
     try{
       const cache=await caches.open(CACHE);
       const response=await fetch(PAGE,{cache:'reload'});
       if(response.ok) await cache.put(PAGE,response.clone());
-    }catch(_){
-      // A atualização nunca deve falhar só porque um arquivo ainda não propagou no GitHub Pages.
-    }
+    }catch(_){ }
   })());
 });
 
@@ -19,16 +18,14 @@ self.addEventListener('activate',event=>{
     const keys=await caches.keys();
     await Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)));
     await self.clients.claim();
-
-    const windows=await self.clients.matchAll({type:'window',includeUncontrolled:true});
-    await Promise.all(windows.map(async client=>{
-      try{ await client.navigate(client.url); }catch(_){}
-    }));
   })());
 });
 
+// A versão anterior enviava SKIP_WAITING automaticamente. A V24 deliberadamente
+// não responde a essa mensagem. Só PLP_APPLY_UPDATE, disparado por ação do usuário,
+// permite ativação imediata.
 self.addEventListener('message',event=>{
-  if(event.data==='SKIP_WAITING') self.skipWaiting();
+  if(event.data==='PLP_APPLY_UPDATE') self.skipWaiting();
 });
 
 self.addEventListener('fetch',event=>{
