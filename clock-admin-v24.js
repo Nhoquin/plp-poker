@@ -2,7 +2,7 @@
 (() => {
   'use strict';
 
-  const state = {busy:false,lastLoadedAt:0};
+  const state = {busy:false,lastLoadedAt:0,editing:false};
 
   function canUse(){
     try{
@@ -88,7 +88,12 @@
 
       document.getElementById('clockApplyPausedV24').addEventListener('click',()=>applyPosition(false));
       document.getElementById('clockApplyRunningV24').addEventListener('click',()=>applyPosition(true));
-      document.getElementById('clockLoadOfficialV24').addEventListener('click',()=>loadOfficial(true));
+      document.getElementById('clockLoadOfficialV24').addEventListener('click',()=>{state.editing=false;void loadOfficial(true);});
+      ['clockRepositionLevelV24','clockRepositionMinV24','clockRepositionSecV24'].forEach(id=>{
+        const el=document.getElementById(id);
+        el?.addEventListener('input',()=>{state.editing=true;setMsg('Valores editados. Use “Aplicar pausado” ou “Aplicar e iniciar”.');});
+        el?.addEventListener('change',()=>{state.editing=true;});
+      });
     }
     panel.classList.toggle('show',canUse());
     return panel;
@@ -107,6 +112,7 @@
     if(level) level.value=String(clamp(Number(row.level)||0,0,Math.max(0,getBlinds().length-1)));
     if(min) min.value=String(Math.floor(remaining/60));
     if(sec) sec.value=String(remaining%60);
+    state.editing=false;
     setMsg(`Oficial: Nível ${(Number(row.level)||0)+1} • ${fmtTime(remaining)} • ${row.running?'rodando':'pausado'}`,'ok');
   }
 
@@ -157,8 +163,8 @@
     buttons.forEach(b=>b.disabled=true);
     setMsg('Gravando e confirmando no relógio oficial…');
     try{
-      const current=await loadOfficial(false);
-      if(!current) return;
+      const {data:before,error:beforeError}=await supa.from('clock_state').select('*').eq('id','main').single();
+      if(beforeError||!before) throw beforeError||new Error('Falha ao ler estado atual');
       if(typeof saveRemoteClock!=='function') throw new Error('saveRemoteClock indisponível');
 
       const saved=await saveRemoteClock({level:target.level,remaining:target.remaining,running});
@@ -194,7 +200,7 @@
 
   function refreshVisibility(){
     const panel=ensurePanel();
-    if(panel && panel.classList.contains('show') && Date.now()-state.lastLoadedAt>15000) void loadOfficial(false);
+    if(panel && panel.classList.contains('show') && !state.editing && Date.now()-state.lastLoadedAt>15000) void loadOfficial(false);
   }
 
   ensurePanel();
