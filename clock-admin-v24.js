@@ -158,6 +158,10 @@
       setMsg('Informe pelo menos 00:01 para reposicionar o relógio.','bad');
       return;
     }
+    const blindLabel=getBlinds()[target.level]?.[0]||`Nível ${target.level+1}`;
+    const actionText=running?'iniciar rodando':'deixar pausado';
+    if(!window.confirm(`Reposicionar o relógio para Nível ${target.level+1} (${blindLabel}), ${fmtTime(target.remaining)}, e ${actionText}?`)) return;
+
     state.busy=true;
     const buttons=[document.getElementById('clockApplyPausedV24'),document.getElementById('clockApplyRunningV24')].filter(Boolean);
     buttons.forEach(b=>b.disabled=true);
@@ -186,8 +190,7 @@
 
       try{ remoteClock=data; if(typeof paintClock==='function') paintClock(); }catch(_){ }
       fillFromRow(data);
-      const label=getBlinds()[target.level]?.[0]||`Nível ${target.level+1}`;
-      setMsg(`✓ Confirmado online: Nível ${target.level+1} • ${label} • ${fmtTime(target.remaining)} • ${running?'rodando':'pausado'}`,'ok');
+      setMsg(`✓ Confirmado online: Nível ${target.level+1} • ${blindLabel} • ${fmtTime(target.remaining)} • ${running?'rodando':'pausado'}`,'ok');
       if(typeof showToast==='function') showToast(running?'✓ Relógio reposicionado e iniciado online.':'✓ Relógio reposicionado e mantido pausado.');
     }catch(_){
       setMsg('⚠ Reposicionamento não confirmado. Confira o relógio oficial antes de continuar.','bad');
