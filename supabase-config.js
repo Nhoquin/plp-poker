@@ -6,7 +6,7 @@ window.PLP_SUPABASE_CONFIG = {
   anonKey: "sb_publishable_elNr5qi_sEYm2ddiZZ9dLg_s_T4oCZM"
 };
 
-window.PLP_BUILD = '28';
+window.PLP_BUILD = '29';
 
 (function(){
   function bindAuthReload(){
@@ -85,16 +85,28 @@ window.PLP_BUILD = '28';
     if(document.querySelector('link[data-plp-bg-v21]')) return;
     var l=document.createElement('link');
     l.rel='stylesheet';
-    l.href='background-v21.css?v=28';
+    l.href='background-v21.css?v=29';
     l.dataset.plpBgV21='1';
     document.head.appendChild(l);
   }
 
+  function loadStabilityV29(){
+    if(document.querySelector('script[data-plp-stability-v29]')) return;
+    var y=document.createElement('script');
+    y.src='stability-v29.js?v=29';
+    y.dataset.plpStabilityV29='1';
+    document.body.appendChild(y);
+  }
+
   function loadFinaleV28(){
-    if(document.querySelector('script[data-plp-finale-v28]')) return;
+    if(document.querySelector('script[data-plp-finale-v28]')){
+      loadStabilityV29();
+      return;
+    }
     var z=document.createElement('script');
-    z.src='finale-v28.js?v=28';
+    z.src='finale-v28.js?v=29';
     z.dataset.plpFinaleV28='1';
+    z.onload=loadStabilityV29;
     document.body.appendChild(z);
   }
 
@@ -104,7 +116,7 @@ window.PLP_BUILD = '28';
       return;
     }
     var q=document.createElement('script');
-    q.src='quick-admin-v27.js?v=28';
+    q.src='quick-admin-v27.js?v=29';
     q.dataset.plpQuickAdminV27='1';
     q.onload=loadFinaleV28;
     document.body.appendChild(q);
@@ -116,7 +128,7 @@ window.PLP_BUILD = '28';
       return;
     }
     var x=document.createElement('script');
-    x.src='admin-access-v26.js?v=28';
+    x.src='admin-access-v26.js?v=29';
     x.dataset.plpAdminAccessV26='1';
     x.onload=loadQuickAdminV27;
     document.body.appendChild(x);
@@ -128,7 +140,7 @@ window.PLP_BUILD = '28';
       return;
     }
     var e=document.createElement('script');
-    e.src='elimination-v25.js?v=28';
+    e.src='elimination-v25.js?v=29';
     e.dataset.plpEliminationV25='1';
     e.onload=loadAdminAccessV26;
     document.body.appendChild(e);
@@ -140,7 +152,7 @@ window.PLP_BUILD = '28';
       return;
     }
     var a=document.createElement('script');
-    a.src='clock-admin-v24.js?v=28';
+    a.src='clock-admin-v24.js?v=29';
     a.dataset.plpClockAdminV24='1';
     a.onload=loadEliminationsV25;
     document.body.appendChild(a);
@@ -152,7 +164,7 @@ window.PLP_BUILD = '28';
       return;
     }
     var c=document.createElement('script');
-    c.src='clock-v24.js?v=28';
+    c.src='clock-v24.js?v=29';
     c.dataset.plpClockV24='1';
     c.onload=loadClockAdminV24;
     document.body.appendChild(c);
@@ -164,7 +176,7 @@ window.PLP_BUILD = '28';
       return;
     }
     var f=document.createElement('script');
-    f.src='app-v22-fix.js?v=28';
+    f.src='app-v22-fix.js?v=29';
     f.dataset.plpV22Fix='1';
     f.onload=loadClockV24;
     document.body.appendChild(f);
@@ -176,7 +188,7 @@ window.PLP_BUILD = '28';
       return;
     }
     var s=document.createElement('script');
-    s.src='app-v19.js?v=28';
+    s.src='app-v19.js?v=29';
     s.dataset.plpV19='1';
     s.onload=loadV22Fix;
     document.body.appendChild(s);
@@ -189,7 +201,7 @@ window.PLP_BUILD = '28';
       return;
     }
     var s=document.createElement('script');
-    s.src='app-v18.js?v=28';
+    s.src='app-v18.js?v=29';
     s.dataset.plpV18='1';
     s.onload=function(){bindAuthReload();loadV19();};
     document.body.appendChild(s);
