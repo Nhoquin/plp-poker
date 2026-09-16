@@ -19,6 +19,8 @@ begin
 end;
 $$;
 
+revoke all on function public.plp_pause_clock_when_stage_finishes() from public, anon, authenticated;
+
 drop trigger if exists plp_pause_clock_on_stage_finalize on public.stages;
 create trigger plp_pause_clock_on_stage_finalize
 after update of status on public.stages
