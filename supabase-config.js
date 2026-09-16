@@ -6,7 +6,7 @@ window.PLP_SUPABASE_CONFIG = {
   anonKey: "sb_publishable_elNr5qi_sEYm2ddiZZ9dLg_s_T4oCZM"
 };
 
-window.PLP_BUILD = '23';
+window.PLP_BUILD = '24-dev';
 
 (function(){
   function bindAuthReload(){
@@ -70,11 +70,23 @@ window.PLP_BUILD = '23';
     document.head.appendChild(l);
   }
 
+  function loadClockV24(){
+    if(document.querySelector('script[data-plp-clock-v24]')) return;
+    var c=document.createElement('script');
+    c.src='clock-v24.js?v=24-dev';
+    c.dataset.plpClockV24='1';
+    document.body.appendChild(c);
+  }
+
   function loadV22Fix(){
-    if(document.querySelector('script[data-plp-v22-fix]')) return;
+    if(document.querySelector('script[data-plp-v22-fix]')){
+      loadClockV24();
+      return;
+    }
     var f=document.createElement('script');
     f.src='app-v22-fix.js?v=23';
     f.dataset.plpV22Fix='1';
+    f.onload=loadClockV24;
     document.body.appendChild(f);
   }
 
