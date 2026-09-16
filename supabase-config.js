@@ -90,11 +90,23 @@ window.PLP_BUILD = '24';
     document.head.appendChild(l);
   }
 
+  function loadClockAdminV24(){
+    if(document.querySelector('script[data-plp-clock-admin-v24]')) return;
+    var a=document.createElement('script');
+    a.src='clock-admin-v24.js?v=24';
+    a.dataset.plpClockAdminV24='1';
+    document.body.appendChild(a);
+  }
+
   function loadClockV24(){
-    if(document.querySelector('script[data-plp-clock-v24]')) return;
+    if(document.querySelector('script[data-plp-clock-v24]')){
+      loadClockAdminV24();
+      return;
+    }
     var c=document.createElement('script');
     c.src='clock-v24.js?v=24';
     c.dataset.plpClockV24='1';
+    c.onload=loadClockAdminV24;
     document.body.appendChild(c);
   }
 
