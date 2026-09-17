@@ -6,7 +6,7 @@ window.PLP_SUPABASE_CONFIG = {
   anonKey: "sb_publishable_elNr5qi_sEYm2ddiZZ9dLg_s_T4oCZM"
 };
 
-window.PLP_BUILD = '31';
+window.PLP_BUILD = '32';
 
 (function(){
   function bindAuthReload(){
@@ -85,7 +85,7 @@ window.PLP_BUILD = '31';
     if(!document.querySelector('link[data-plp-bg-v21]')){
       var l=document.createElement('link');
       l.rel='stylesheet';
-      l.href='background-v21.css?v=31';
+      l.href='background-v21.css?v=32';
       l.dataset.plpBgV21='1';
       document.head.appendChild(l);
     }
@@ -93,17 +93,37 @@ window.PLP_BUILD = '31';
     if(!document.querySelector('link[data-plp-home-clean-v31]')){
       var h=document.createElement('link');
       h.rel='stylesheet';
-      h.href='home-clean-v31.css?v=31';
+      h.href='home-clean-v31.css?v=32';
       h.dataset.plpHomeCleanV31='1';
       document.head.appendChild(h);
     }
+
+    if(!document.querySelector('link[data-plp-theme-v32]')){
+      var t=document.createElement('link');
+      t.rel='stylesheet';
+      t.href='theme-v32.css?v=32';
+      t.dataset.plpThemeV32='1';
+      document.head.appendChild(t);
+    }
+  }
+
+  function loadFinanceOverviewV32(){
+    if(document.querySelector('script[data-plp-finance-overview-v32]')) return;
+    var f32=document.createElement('script');
+    f32.src='finance-overview-v32.js?v=32';
+    f32.dataset.plpFinanceOverviewV32='1';
+    document.body.appendChild(f32);
   }
 
   function loadFinanceV30(){
-    if(document.querySelector('script[data-plp-finance-v30]')) return;
+    if(document.querySelector('script[data-plp-finance-v30]')){
+      loadFinanceOverviewV32();
+      return;
+    }
     var f30=document.createElement('script');
-    f30.src='finance-v30.js?v=31';
+    f30.src='finance-v30.js?v=32';
     f30.dataset.plpFinanceV30='1';
+    f30.onload=loadFinanceOverviewV32;
     document.body.appendChild(f30);
   }
 
@@ -113,7 +133,7 @@ window.PLP_BUILD = '31';
       return;
     }
     var y=document.createElement('script');
-    y.src='stability-v29.js?v=31';
+    y.src='stability-v29.js?v=32';
     y.dataset.plpStabilityV29='1';
     y.onload=loadFinanceV30;
     document.body.appendChild(y);
@@ -125,7 +145,7 @@ window.PLP_BUILD = '31';
       return;
     }
     var z=document.createElement('script');
-    z.src='finale-v28.js?v=31';
+    z.src='finale-v28.js?v=32';
     z.dataset.plpFinaleV28='1';
     z.onload=loadStabilityV29;
     document.body.appendChild(z);
@@ -137,7 +157,7 @@ window.PLP_BUILD = '31';
       return;
     }
     var q=document.createElement('script');
-    q.src='quick-admin-v27.js?v=31';
+    q.src='quick-admin-v27.js?v=32';
     q.dataset.plpQuickAdminV27='1';
     q.onload=loadFinaleV28;
     document.body.appendChild(q);
@@ -149,7 +169,7 @@ window.PLP_BUILD = '31';
       return;
     }
     var x=document.createElement('script');
-    x.src='admin-access-v26.js?v=31';
+    x.src='admin-access-v26.js?v=32';
     x.dataset.plpAdminAccessV26='1';
     x.onload=loadQuickAdminV27;
     document.body.appendChild(x);
@@ -161,7 +181,7 @@ window.PLP_BUILD = '31';
       return;
     }
     var e=document.createElement('script');
-    e.src='elimination-v25.js?v=31';
+    e.src='elimination-v25.js?v=32';
     e.dataset.plpEliminationV25='1';
     e.onload=loadAdminAccessV26;
     document.body.appendChild(e);
@@ -173,7 +193,7 @@ window.PLP_BUILD = '31';
       return;
     }
     var a=document.createElement('script');
-    a.src='clock-admin-v24.js?v=31';
+    a.src='clock-admin-v24.js?v=32';
     a.dataset.plpClockAdminV24='1';
     a.onload=loadEliminationsV25;
     document.body.appendChild(a);
@@ -185,7 +205,7 @@ window.PLP_BUILD = '31';
       return;
     }
     var c=document.createElement('script');
-    c.src='clock-v24.js?v=31';
+    c.src='clock-v24.js?v=32';
     c.dataset.plpClockV24='1';
     c.onload=loadClockAdminV24;
     document.body.appendChild(c);
@@ -197,7 +217,7 @@ window.PLP_BUILD = '31';
       return;
     }
     var f=document.createElement('script');
-    f.src='app-v22-fix.js?v=31';
+    f.src='app-v22-fix.js?v=32';
     f.dataset.plpV22Fix='1';
     f.onload=loadClockV24;
     document.body.appendChild(f);
@@ -209,7 +229,7 @@ window.PLP_BUILD = '31';
       return;
     }
     var s=document.createElement('script');
-    s.src='app-v19.js?v=31';
+    s.src='app-v19.js?v=32';
     s.dataset.plpV19='1';
     s.onload=loadV22Fix;
     document.body.appendChild(s);
@@ -222,7 +242,7 @@ window.PLP_BUILD = '31';
       return;
     }
     var s=document.createElement('script');
-    s.src='app-v18.js?v=31';
+    s.src='app-v18.js?v=32';
     s.dataset.plpV18='1';
     s.onload=function(){bindAuthReload();loadV19();};
     document.body.appendChild(s);
