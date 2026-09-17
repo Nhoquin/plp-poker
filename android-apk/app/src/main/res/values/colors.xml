@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="plp_black">#050504</color>
+    <color name="plp_panel">#100E0A</color>
+    <color name="plp_gold">#F4C914</color>
+    <color name="plp_gold_light">#FFE36A</color>
+    <color name="plp_gold_dark">#8D6B00</color>
+</resources>
