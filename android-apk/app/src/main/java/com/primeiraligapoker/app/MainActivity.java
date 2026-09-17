@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.View;
 import android.view.Window;
 import android.webkit.CookieManager;
 import android.webkit.ServiceWorkerController;
@@ -65,7 +64,7 @@ public class MainActivity extends Activity {
         settings.setTextZoom(100);
         settings.setUserAgentString(settings.getUserAgentString() + " PLPAndroid/1.0");
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             WebView.setSafeBrowsingWhitelist(java.util.Collections.singletonList(APP_HOST), null);
         }
 
