@@ -1,0 +1,43 @@
+/* PLP V31 • tela inicial preparada para receber fundo e logo separados */
+
+/* Quando a Home estiver aberta, remove exclusivamente a arte de fundo global. */
+body:has(#home.active)::before{
+  background:#050504 !important;
+  background-image:none !important;
+  filter:none !important;
+  transform:none !important;
+}
+
+body:has(#home.active)::after{
+  background:none !important;
+  backdrop-filter:none !important;
+}
+
+/* Remove o logo atual somente da tela inicial. */
+#home .logo-wrap{
+  display:none !important;
+}
+
+/* Remove as imagens/efeitos de fundo atuais do hero da Home. */
+#home .home-hero::before,
+#home .home-hero::after{
+  content:none !important;
+  display:none !important;
+  background:none !important;
+}
+
+/* Mantém a estrutura pronta para receber o novo fundo e o novo logo depois. */
+#home .home-hero{
+  background:#050504 !important;
+}
+
+#home .hero-surface{
+  background:transparent !important;
+}
+
+/* Garante que não apareça a arte antiga nas bordas da Home em telas pequenas. */
+@media(max-width:759px){
+  body:has(#home.active){
+    background:#050504 !important;
+  }
+}
