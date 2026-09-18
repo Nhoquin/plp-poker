@@ -8,7 +8,7 @@
     future: 872.00,
     cash: 2398.55,
     projected: 1526.55,
-    updatedAt: '17/09/2026'
+    updatedAt: '18/09/2026'
   };
   window.PLP_FINANCE_SUMMARY = SUMMARY;
 
