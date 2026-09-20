@@ -238,26 +238,19 @@ nav{position:fixed;z-index:30;left:50%;bottom:0;transform:translateX(-50%);width
 }
 
 </style>
+<style id="plp-home-base-v35">
+body:has(#home.active)::before{background:#050504!important;background-image:none!important;filter:none!important;transform:none!important}
+body:has(#home.active)::after{background:none!important;backdrop-filter:none!important}
+#home .home-hero::before,#home .home-hero::after{content:none!important;display:none!important}
+#home .logo-wrap{display:none!important}
+</style>
 </head>
 <body>
 <div class="app">
 <main>
 <section class="screen active" id="home">
-  <div class="home-hero">
-    <button class="notify" data-toast="Notificações estarão ligadas às próximas etapas e avisos da liga."><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="fill" d="M12 2C9.8 4.8 5 8.1 5 12a4 4 0 0 0 7 2.6V18H9.5v2H14v-5.4A4 4 0 0 0 19 12c0-3.9-4.8-7.2-7-10z"/></svg></span></button>
-    <div class="hero-surface">
-      <div class="hero-kicker">Temporada 2026 • BR3</div>
-      <div class="logo-wrap"><img src="assets/league-logo.png" alt="1ª Liga de Poker"></div>
-      <div class="hero-copy">
-        <h1>1ª Liga de Poker</h1>
-        <p>Muito mais que um jogo</p>
-      </div>
-      <div class="hero-meta">
-        <span class="hero-pill">11 etapas com resultado</span>
-        <span class="hero-pill">Ranking geral atualizado</span>
-        <span class="hero-pill">BR4 previsto para 15/set</span>
-      </div>
-    </div>
+  <div class="home-hero" id="homeBrandHero" aria-label="Área de identidade visual da Liga">
+    <div class="hero-surface" id="homeBrandSurface"></div>
   </div>
   <button class="live-clock-home" id="liveClockHome" data-go="clockScreen"><span class="live-dot"></span><div><b>Blind Clock ao vivo</b><span id="liveClockHomeLevel">Nível 1 • 100 / 200 • Ante 200</span></div><div class="live-time" id="liveClockHomeTime">20:00</div></button>
   <div class="home-section-title"><span>Painel da Liga</span><small>Dados atualizados até a 11ª Etapa do BR3</small></div>
