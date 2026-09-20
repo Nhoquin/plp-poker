@@ -1,0 +1,37 @@
+/* PLP V34 • Home enxuta: mantém somente o conteúdo principal mostrado pelo administrador */
+
+/* A tela inicial fica sem logo e sem imagem de fundo por enquanto. */
+body:has(#home.active)::before{
+  background:#050504!important;
+  background-image:none!important;
+  filter:none!important;
+  transform:none!important;
+}
+body:has(#home.active)::after{
+  background:none!important;
+  backdrop-filter:none!important;
+}
+#home .logo-wrap{
+  display:none!important;
+}
+
+/* Mantém Hero, aviso da etapa ao vivo, Painel da Liga e os quatro cards principais.
+   Remove da Home os blocos extras que vinham depois deles. */
+#home .quick-grid,
+#home .dashboard-grid,
+#home .footer-brand{
+  display:none!important;
+}
+
+/* Oculta apenas o título "Acessos rápidos" que antecede a grade removida. */
+#home .home-section-title:has(+ .quick-grid){
+  display:none!important;
+}
+
+/* Evita espaço residual dos blocos removidos. */
+#home .premium-ribbon{
+  margin-bottom:18px!important;
+}
+#home{
+  padding-bottom:18px!important;
+}
