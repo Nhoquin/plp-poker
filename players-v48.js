@@ -419,7 +419,11 @@
     let attempts = 0;
     const timer = window.setInterval(() => {
       attempts += 1;
-      if (openPlayer(playerKey, false) || attempts >= 40) window.clearInterval(timer);
+      const state = runtime();
+      const cloudReady = Boolean(state?.playerRows?.length && state?.rankingRows?.length);
+      if (!cloudReady && attempts < 40) return;
+      openPlayer(playerKey, false);
+      window.clearInterval(timer);
     }, 200);
   }
 
