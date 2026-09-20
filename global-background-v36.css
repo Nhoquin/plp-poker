@@ -1,0 +1,95 @@
+/* PLP V36 • fundo global fixo do aplicativo */
+
+html,body{
+  min-height:100%;
+  background:#050504!important;
+}
+
+body{
+  position:relative!important;
+  overflow-x:hidden!important;
+  background:transparent!important;
+}
+
+/* Fundo único e fixo em todas as telas. */
+body::before,
+body:has(#home.active)::before{
+  content:""!important;
+  position:fixed!important;
+  inset:0!important;
+  z-index:-3!important;
+  display:block!important;
+  background-image:
+    linear-gradient(180deg,rgba(0,0,0,.12),rgba(0,0,0,.34) 44%,rgba(0,0,0,.58)),
+    url('assets/poker-bg-v32.webp')!important;
+  background-size:cover!important;
+  background-position:center center!important;
+  background-repeat:no-repeat!important;
+  background-attachment:fixed!important;
+  filter:none!important;
+  transform:none!important;
+  pointer-events:none!important;
+}
+
+/* Película fixa para leitura, sem trocar a imagem. */
+body::after,
+body:has(#home.active)::after{
+  content:""!important;
+  position:fixed!important;
+  inset:0!important;
+  z-index:-2!important;
+  display:block!important;
+  background:linear-gradient(180deg,rgba(3,3,2,.06),rgba(3,3,2,.18) 40%,rgba(3,3,2,.34))!important;
+  backdrop-filter:none!important;
+  pointer-events:none!important;
+}
+
+/* Nenhuma tela cria outro fundo por cima. */
+main,
+.screen,
+#home,
+#ranking,
+#tournament,
+#finance,
+#profile,
+#clockScreen,
+#gameDay,
+#stageLiveV19{
+  background:transparent!important;
+  background-image:none!important;
+}
+
+/* A área superior da Home é só uma área transparente sobre o mesmo fundo global. */
+#home .home-hero,
+#home .hero-surface{
+  background:transparent!important;
+  background-image:none!important;
+}
+#home .home-hero::before,
+#home .home-hero::after,
+#home .hero-surface::before,
+#home .hero-surface::after{
+  content:none!important;
+  display:none!important;
+  background:none!important;
+}
+
+/* O logo antigo continua fora da Home. */
+#home .logo-wrap{
+  display:none!important;
+}
+
+/* Mantém os cards legíveis sem esconder completamente o fundo. */
+#home .premium-stat,
+#home .quick,
+#home .glass,
+.card,
+.v18-card,
+.v19-card,
+.stage-filter,
+.admin-hero,
+.import-card{
+  background-color:rgba(8,7,5,.72)!important;
+  backdrop-filter:blur(9px)!important;
+  -webkit-backdrop-filter:blur(9px)!important;
+}
