@@ -1,0 +1,85 @@
+/* PLP V35 • Home estável: identidade visual fixa + dados dinâmicos separados */
+
+/* Nunca mostrar arte antiga enquanto a Home está ativa. */
+body:has(#home.active)::before{
+  background:#050504!important;
+  background-image:none!important;
+  filter:none!important;
+  transform:none!important;
+}
+body:has(#home.active)::after{
+  background:none!important;
+  backdrop-filter:none!important;
+}
+
+/* Área superior reservada apenas para fundo/logo fixos.
+   Sem texto dinâmico dentro da imagem. */
+#home .home-hero{
+  position:relative!important;
+  min-height:280px!important;
+  padding:0!important;
+  overflow:hidden!important;
+  border-radius:32px!important;
+  border:1px solid rgba(244,201,20,.18)!important;
+  background:#050504!important;
+  box-shadow:0 20px 50px rgba(0,0,0,.28)!important;
+}
+#home .home-hero::before,
+#home .home-hero::after{
+  content:none!important;
+  display:none!important;
+}
+#home .hero-surface{
+  min-height:280px!important;
+  padding:0!important;
+  background:transparent!important;
+}
+
+/* O logo antigo não existe mais na Home. */
+#home .logo-wrap,
+#home .hero-kicker,
+#home .hero-copy,
+#home .hero-meta,
+#home .notify{
+  display:none!important;
+}
+
+/* Evita duplicidade: V18 e V19 criavam dois cards para a mesma etapa.
+   Mantemos somente o card V19, que recebe os dados atuais do banco. */
+#home #liveStageV18,
+#home #leagueAnnouncementV18{
+  display:none!important;
+}
+
+/* Restaura completamente o conteúdo inferior da Home. */
+#home .home-section-title{
+  display:flex!important;
+}
+#home .premium-ribbon{
+  display:grid!important;
+}
+#home .quick-grid{
+  display:grid!important;
+}
+#home .dashboard-grid{
+  display:grid!important;
+}
+#home .footer-brand{
+  display:flex!important;
+}
+
+/* O único card de etapa da Home é informação do aplicativo, não parte do fundo. */
+#home #liveStageV19{
+  position:relative!important;
+  z-index:2!important;
+  margin-top:14px!important;
+}
+
+/* Em celulares, mantém altura suficiente para receber depois o fundo/logo fixos
+   sem empurrar ou sobrepor as informações da rodada. */
+@media(max-width:759px){
+  #home .home-hero,
+  #home .hero-surface{
+    min-height:250px!important;
+  }
+}
