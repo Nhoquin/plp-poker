@@ -14,13 +14,21 @@
   })[char]);
 
   const cleanName = value => String(value ?? '').trim().replace(/\s+/g, ' ');
+  const displayPlayerName = value => {
+    const name = cleanName(value);
+    return /^daniel(?:\s*\(\s*freeroll\s*\)|\s+freeroll|\s+all\s+capone)?$/i.test(name)
+      ? 'Daniel All Capone'
+      : name;
+  };
   const comparableName = value => cleanName(value)
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .toLocaleLowerCase('pt-BR');
-  const fallbackPlayerKey = value => comparableName(value)
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '') || 'jogador';
+  const fallbackPlayerKey = value => {
+    const comparable = comparableName(value);
+    if (['daniel', 'daniel (freeroll)', 'daniel freeroll', 'daniel all capone'].includes(comparable)) return 'daniel';
+    return comparable.replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'jogador';
+  };
   const initialsFor = value => (cleanName(value).match(/\b[\p{L}\p{N}]/gu) || [])
     .join('')
     .slice(0, 2)
@@ -76,14 +84,14 @@
         if (a.ranking && b.ranking) return a.ranking.position - b.ranking.position;
         if (a.ranking) return -1;
         if (b.ranking) return 1;
-        return cleanName(a.name).localeCompare(cleanName(b.name), 'pt-BR');
+        return displayPlayerName(a.name).localeCompare(displayPlayerName(b.name), 'pt-BR');
       });
 
     const count = document.getElementById('playerCountLabel');
     if (count) count.textContent = `${players.length} jogadores • toque em um nome para abrir o perfil`;
 
     host.innerHTML = players.map(player => {
-      const name = cleanName(player.name);
+      const name = displayPlayerName(player.name);
       const meta = player.ranking
         ? `${player.ranking.position}º geral • ${player.ranking.points} pts`
         : 'Perfil cadastrado • sem pontos no ranking';
@@ -165,7 +173,7 @@
     if (!player || !host) return false;
 
     activePlayerKey = playerKey;
-    const name = cleanName(player.name);
+    const name = displayPlayerName(player.name);
     const results = collectPlayerResults(playerKey);
     const ranking = generalRanking();
     const rankingIndex = ranking.findIndex(row => row.player_key === playerKey);
@@ -240,22 +248,26 @@
 
   function updateLocalPlayerName(playerKey, oldName, newName) {
     const state = runtime();
+    const oldComparableNames = new Set([
+      comparableName(oldName),
+      comparableName(displayPlayerName(oldName))
+    ]);
     const player = state?.playerRows?.find(row => row.player_key === playerKey);
     if (player) player.name = newName;
     (state?.stageRows || []).forEach(stage => {
-      if (comparableName(stage.host_name) === comparableName(oldName)) stage.host_name = newName;
+      if (oldComparableNames.has(comparableName(stage.host_name))) stage.host_name = newName;
     });
 
     if (typeof rankSets !== 'undefined') {
       Object.values(rankSets).flat().forEach(row => {
-        if (comparableName(row.name) === comparableName(oldName)) row.name = newName;
+        if (oldComparableNames.has(comparableName(row.name))) row.name = newName;
       });
     }
     if (typeof stageSets !== 'undefined') {
       Object.values(stageSets).flat().forEach(stage => {
-        if (comparableName(stage.host_name) === comparableName(oldName)) stage.host_name = newName;
+        if (oldComparableNames.has(comparableName(stage.host_name))) stage.host_name = newName;
         (stage.results || []).forEach(result => {
-          if (comparableName(result[0]) === comparableName(oldName)) result[0] = newName;
+          if (oldComparableNames.has(comparableName(result[0]))) result[0] = newName;
         });
       });
     }
@@ -292,7 +304,7 @@
     }
 
     const duplicate = playerRows().some(row => row.player_key !== activePlayerKey
-      && comparableName(row.name) === comparableName(nextName));
+      && comparableName(displayPlayerName(row.name)) === comparableName(nextName));
     if (duplicate) {
       setFormStatus('Já existe outro jogador com esse nome.', 'bad');
       input?.focus();
@@ -300,7 +312,7 @@
     }
 
     const oldName = cleanName(player.name);
-    if (oldName === nextName) {
+    if (displayPlayerName(oldName) === nextName) {
       setFormStatus('O nome já está atualizado.', 'good');
       return;
     }
@@ -377,7 +389,7 @@
       if (form) form.hidden = true;
       if (editButton) editButton.hidden = false;
       const input = document.getElementById('playerNameInputV48');
-      if (input && player) input.value = cleanName(player.name);
+      if (input && player) input.value = displayPlayerName(player.name);
       setFormStatus('');
       return;
     }
