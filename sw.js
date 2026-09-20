@@ -1,7 +1,7 @@
-const CACHE='plp-2026-v45';
+const CACHE='plp-2026-v46';
 const PAGE='./index.html';
 
-// V45: uma nova versão fica aguardando até o usuário aplicar ou todos os clientes
+// V46: uma nova versão fica aguardando até o usuário aplicar ou todos os clientes
 // antigos serem fechados. Isto evita recarregar o aplicativo durante uma partida.
 self.addEventListener('install',event=>{
   self.skipWaiting();
