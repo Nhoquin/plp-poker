@@ -127,7 +127,7 @@
         supa.from('players').select('player_key,name').order('name')
       ]);
       if(stageQ.error || !stageQ.data || entryQ.error) return null;
-      const names=new Map((playersQ.data||[]).map(player=>[player.player_key,player.name]));
+      const names=new Map((playersQ.data||[]).map(player=>[player.player_key,typeof normalizePlayerName==='function'?normalizePlayerName(String(player.name||'')):player.name]));
       const entries=(entryQ.data||[]).map(entry=>({...entry,name:names.get(entry.player_key)||entry.player_key}));
       V28.adminData={stage:stageQ.data,entries};
       return V28.adminData;
@@ -362,7 +362,7 @@
       }
     }catch(_){ }
     const resultMap=new Map(dbResults.map(r=>[Number(r.position),r]));
-    const [bg,logo]=await Promise.all([loadImage('assets/brand-bg.png'),loadImage('assets/league-logo.png')]);
+    const [bg,logo]=await Promise.all([loadImage('assets/poker-bg-v32.webp'),loadImage('assets/plp-logo-v47.png')]);
     const canvas=document.createElement('canvas');canvas.width=1080;canvas.height=1350;const ctx=canvas.getContext('2d');
     ctx.fillStyle='#050504';ctx.fillRect(0,0,1080,1350);
     if(bg){ctx.save();ctx.globalAlpha=.18;drawCover(ctx,bg,0,0,1080,1350);ctx.restore();}
@@ -415,7 +415,7 @@
     if(!champion) return;
     sessionStorage.setItem(key,'1');
     const overlay=document.createElement('div');overlay.id='v28Celebration';overlay.className='v28-celebration';
-    overlay.innerHTML=`<div class="v28-celebration-card"><img class="v28-celebration-logo" src="assets/league-logo.png" alt="1ª Liga de Poker"><h1>TORNEIO FINALIZADO</h1><h2>${esc(champion.name)}</h2><p>Campeão • ${String(stage.championship||'').toUpperCase()} • Etapa ${stage.stage_number}</p><div class="v28-podium" style="text-align:left;margin-top:18px">${rows.slice(0,3).map(r=>`<div class="v28-podium-row ${r.position===1?'first':''}"><div class="v28-podium-pos">${r.position}º</div><div><b>${esc(r.name)}</b><small>${pointFor(r.position,rows.length)} pontos</small></div><div class="v28-podium-prize">${prizeFor(r.position,rows.length)==null?'':money(prizeFor(r.position,rows.length))}</div></div>`).join('')}</div><div class="v28-celebration-actions"><button class="close" type="button">Fechar</button><button class="share" type="button">Compartilhar arte</button></div></div>`;
+    overlay.innerHTML=`<div class="v28-celebration-card"><img class="v28-celebration-logo" src="assets/plp-logo-v47.png" alt="1ª Liga de Poker"><h1>TORNEIO FINALIZADO</h1><h2>${esc(champion.name)}</h2><p>Campeão • ${String(stage.championship||'').toUpperCase()} • Etapa ${stage.stage_number}</p><div class="v28-podium" style="text-align:left;margin-top:18px">${rows.slice(0,3).map(r=>`<div class="v28-podium-row ${r.position===1?'first':''}"><div class="v28-podium-pos">${r.position}º</div><div><b>${esc(r.name)}</b><small>${pointFor(r.position,rows.length)} pontos</small></div><div class="v28-podium-prize">${prizeFor(r.position,rows.length)==null?'':money(prizeFor(r.position,rows.length))}</div></div>`).join('')}</div><div class="v28-celebration-actions"><button class="close" type="button">Fechar</button><button class="share" type="button">Compartilhar arte</button></div></div>`;
     document.body.appendChild(overlay);
     overlay.querySelector('.close').onclick=()=>overlay.remove();
     overlay.querySelector('.share').onclick=()=>shareChampionCard(stage,snapshot.entries||[]);

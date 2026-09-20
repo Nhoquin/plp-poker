@@ -258,7 +258,7 @@
         supa.from('players').select('player_key,name')
       ]);
       if(stageQ.error || !stageQ.data || entryQ.error) throw stageQ.error||entryQ.error||new Error('Etapa não encontrada');
-      const names=new Map((playersQ.data||[]).map(player=>[player.player_key,player.name]));
+      const names=new Map((playersQ.data||[]).map(player=>[player.player_key,typeof normalizePlayerName==='function'?normalizePlayerName(String(player.name||'')):player.name]));
       const order=(entryQ.data||[]).map(entry=>({...entry,name:names.get(entry.player_key)||entry.player_key}))
         .sort((a,b)=>(Number(a.finish_position)||9999)-(Number(b.finish_position)||9999) || (Number(a.list_position)||9999)-(Number(b.list_position)||9999));
       if(order.length<2) return toast('Classificação insuficiente para edição.');

@@ -32,7 +32,12 @@
     try { return typeof normalizePlayerName === 'function' ? normalizePlayerName(String(name||'')) : String(name||'').trim(); }
     catch { return String(name||'').trim(); }
   };
-  const playerKey = name => normName(name).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') || 'jogador';
+  const playerKey = name => {
+    const normalized=normName(name);
+    return normalized==='Daniel All Capone'
+      ? 'daniel'
+      : normalized.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') || 'jogador';
+  };
   const paymentText = status => ({confirmed:'PAGO CONFIRMADO',informed:'PAGAMENTO INFORMADO',pending:'PENDENTE',exempt:'ISENTO'}[status] || String(status||'PENDENTE').toUpperCase());
   const paymentClass = status => status==='confirmed'?'good':status==='informed'?'warn':status==='exempt'?'exempt':'bad';
 
@@ -95,7 +100,7 @@
     const main=document.querySelector('main');
     if(!main) return;
     main.insertAdjacentHTML('beforeend',`<section class="screen" id="stageLiveV19">
-      <div class="screen-top"><div class="screen-top-inner"><img class="mini-logo" src="assets/league-logo.png"><div><h2>Etapa atual</h2><p>Inscrições, pagamentos e premiação projetada</p></div><button class="back-home" data-go="home">⌂</button></div></div>
+      <div class="screen-top"><div class="screen-top-inner"><img class="mini-logo" src="assets/plp-logo-v47.png"><div><h2>Etapa atual</h2><p>Inscrições, pagamentos e premiação projetada</p></div><button class="back-home" data-go="home">⌂</button></div></div>
       <div id="stageLiveV19Body"><div class="v19-card"><div class="empty-state">Carregando etapa…</div></div></div>
     </section>`);
   }
@@ -232,7 +237,7 @@
       supa.from('players').select('player_key,name').order('name')
     ]);
     if(stageQ.error || !stageQ.data) return null;
-    const names=new Map((playersQ.data||[]).map(p=>[p.player_key,p.name]));
+    const names=new Map((playersQ.data||[]).map(p=>[p.player_key,normName(p.name)]));
     const entries=(entryQ.data||[]).map(e=>({...e,name:names.get(e.player_key)||e.player_key}));
     return {stage:stageQ.data,entries,players:playersQ.data||[]};
   }

@@ -86,7 +86,7 @@
       supa.from('players').select('player_key,name').order('name')
     ]);
     if(stageQ.error || !stageQ.data || entryQ.error) return null;
-    const names=new Map((playersQ.data||[]).map(player=>[player.player_key,player.name]));
+    const names=new Map((playersQ.data||[]).map(player=>[player.player_key,typeof normalizePlayerName==='function'?normalizePlayerName(String(player.name||'')):player.name]));
     const entries=(entryQ.data||[]).map(entry=>({...entry,name:names.get(entry.player_key)||entry.player_key}));
     return {stage:stageQ.data,entries};
   }

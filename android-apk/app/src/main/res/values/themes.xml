@@ -3,7 +3,7 @@
     <style name="Theme.PLPPoker" parent="android:style/Theme.Material.NoActionBar">
         <item name="android:windowActionModeOverlay">true</item>
         <item name="android:fontFamily">sans</item>
-        <item name="android:windowBackground">@color/plp_black</item>
+        <item name="android:windowBackground">@drawable/launch_screen</item>
         <item name="android:colorAccent">@color/plp_gold</item>
         <item name="android:statusBarColor">@color/plp_black</item>
         <item name="android:navigationBarColor">@color/plp_black</item>

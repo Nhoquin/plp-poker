@@ -62,7 +62,7 @@ public class MainActivity extends Activity {
         settings.setDisplayZoomControls(false);
         settings.setSupportZoom(false);
         settings.setTextZoom(100);
-        settings.setUserAgentString(settings.getUserAgentString() + " PLPAndroid/1.0");
+        settings.setUserAgentString(settings.getUserAgentString() + " PLPAndroid/1.1");
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             WebView.setSafeBrowsingWhitelist(java.util.Collections.singletonList(APP_HOST), null);

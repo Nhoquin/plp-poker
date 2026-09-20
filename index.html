@@ -9,10 +9,12 @@
 <meta name="apple-mobile-web-app-title" content="Liga Poker" />
 <meta name="mobile-web-app-capable" content="yes" />
 <title>1ª Liga de Poker • 2026</title>
-<link rel="manifest" href="manifest.json" />
-<link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
-<link rel="icon" href="assets/icon-192.png" />
-<link rel="stylesheet" href="home-logo-v37.css?v=46" />
+<link rel="manifest" href="manifest.json?v=47" />
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon-v47.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192-v47.png" />
+<link rel="preload" as="image" href="assets/plp-logo-v47.png" />
+<link rel="stylesheet" href="home-logo-v37.css?v=47" />
+<script src="pwa-update.js?v=47" defer></script>
 <style>
 
 :root{
@@ -23,10 +25,18 @@
 *{box-sizing:border-box}
 html{background:#050504}
 body{margin:0;color:var(--txt);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:#050504;min-height:100vh}
-body::before{content:"";position:fixed;inset:0;z-index:-2;background-image:url('assets/brand-bg.png');background-size:cover;background-position:center center;filter:saturate(1.02) contrast(1.02) brightness(.72);transform:scale(1.02)}
+body::before{content:"";position:fixed;inset:0;z-index:-2;background-image:url('assets/poker-bg-v32.webp');background-size:cover;background-position:center center;filter:saturate(1.02) contrast(1.02) brightness(.72);transform:scale(1.02)}
 body::after{content:"";position:fixed;inset:0;z-index:-1;background:radial-gradient(circle at top,rgba(255,216,84,.12),transparent 22%),linear-gradient(180deg,rgba(4,4,3,.18),rgba(5,5,4,.74) 24%,rgba(5,5,4,.90) 58%,rgba(5,5,4,.97));backdrop-filter:blur(2.8px)}
 button,input,select,textarea{font:inherit}
 button{cursor:pointer}
+html,body{overflow-x:hidden}
+.app-splash{position:fixed;inset:0;z-index:100000;display:grid;place-items:center;background:radial-gradient(circle at 50% 42%,#211707 0,#080704 46%,#030302 100%);opacity:1;visibility:visible;transition:opacity .28s ease,visibility .28s ease}
+.app-splash img{width:min(68vw,330px);height:auto;display:block;filter:drop-shadow(0 20px 44px rgba(0,0,0,.65))}
+body.plp-ready .app-splash{opacity:0;visibility:hidden;pointer-events:none}
+#plpUpdateReady{position:fixed;left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right));bottom:calc(82px + env(safe-area-inset-bottom));z-index:9999;min-height:48px;padding:12px 16px;border-radius:16px;border:1px solid rgba(244,201,20,.62);background:linear-gradient(145deg,#211a0b,#100e09);color:#ffe36a;font:800 13px/1.25 system-ui,-apple-system,"Segoe UI",sans-serif;box-shadow:0 14px 34px rgba(0,0,0,.52);text-align:center}
+#plpUpdateReady:focus-visible{outline:3px solid #fff;outline-offset:2px}
+#plpUpdateReady.is-applying{opacity:.82;cursor:wait}
+@media(prefers-reduced-motion:reduce){.app-splash{transition:none}}
 .app{width:min(100%,1200px);margin:0 auto;min-height:100vh;padding-bottom:96px}
 .screen{display:none}.screen.active{display:block}
 main{padding:0 14px 34px}
@@ -34,7 +44,7 @@ main{padding:0 14px 34px}
 .topline::before,.topline::after{content:"";height:1px;width:64px;background:linear-gradient(90deg,transparent,var(--gold))}
 .topline::after{background:linear-gradient(90deg,var(--gold),transparent)}
 .home-hero{position:relative;overflow:hidden;border-radius:32px;min-height:380px;padding:16px;border:1px solid rgba(244,201,20,.20);background:linear-gradient(145deg,rgba(8,8,7,.30),rgba(8,7,5,.62));box-shadow:0 24px 60px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.04)}
-.home-hero::before{content:"";position:absolute;inset:0;background-image:linear-gradient(180deg,rgba(6,6,5,.06),rgba(6,6,5,.86) 76%),url('assets/brand-bg.png');background-size:cover;background-position:center;transform:scale(1.03)}
+.home-hero::before{content:"";position:absolute;inset:0;background-image:linear-gradient(180deg,rgba(6,6,5,.06),rgba(6,6,5,.86) 76%),url('assets/poker-bg-v32.webp');background-size:cover;background-position:center;transform:scale(1.03)}
 .home-hero::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 24%,rgba(244,201,20,.22),transparent 26%),radial-gradient(circle at 8% 14%,rgba(255,255,255,.06),transparent 20%);pointer-events:none}
 .hero-surface{position:relative;z-index:1;min-height:345px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px 18px 24px;border-radius:26px;background:linear-gradient(180deg,rgba(9,9,8,.06),rgba(9,9,8,.28))}
 .notify{position:absolute;right:14px;top:14px;z-index:2;width:48px;height:48px;border-radius:18px;border:1px solid rgba(255,255,255,.14);background:linear-gradient(145deg,rgba(30,27,19,.88),rgba(9,9,8,.90));display:grid;place-items:center;color:#fff;box-shadow:inset 0 0 26px rgba(244,201,20,.05),0 8px 16px rgba(0,0,0,.18)}
@@ -250,11 +260,19 @@ body::after,body:has(#home.active)::after{content:""!important;position:fixed!im
 </style>
 </head>
 <body>
+<div class="app-splash" id="appSplash" aria-hidden="true"><img src="assets/splash-logo-v47.png" alt=""></div>
+<script>
+(() => {
+  const reveal = () => document.body.classList.add('plp-ready');
+  window.addEventListener('load', () => window.setTimeout(reveal, 220), { once: true });
+  window.setTimeout(reveal, 5000);
+})();
+</script>
 <div class="app">
 <main>
 <section class="screen active" id="home">
   <div class="home-hero" id="homeBrandHero" aria-label="Área de identidade visual da Liga">
-    <div class="hero-surface" id="homeBrandSurface"></div>
+    <div class="hero-surface" id="homeBrandSurface"><img class="home-brand-logo" src="assets/plp-logo-v47.png" alt="1ª Liga de Poker — PLP"></div>
   </div>
   <button class="live-clock-home" id="liveClockHome" data-go="clockScreen"><span class="live-dot"></span><div><b>Blind Clock ao vivo</b><span id="liveClockHomeLevel">Nível 1 • 100 / 200 • Ante 200</span></div><div class="live-time" id="liveClockHomeTime">20:00</div></button>
   <div class="home-section-title"><span>Painel da Liga</span><small>Dados atualizados até a 11ª Etapa do BR3</small></div>
@@ -284,7 +302,7 @@ body::after,body:has(#home.active)::after{content:""!important;position:fixed!im
 </section>
 
 <section class="screen" id="ranking">
-  <div class="screen-top"><div class="screen-top-inner"><img class="mini-logo" src="assets/league-logo.png"><div><h2>Ranking</h2><p>Temporada 2026</p></div><button class="back-home" data-go="home">⌂</button></div></div>
+  <div class="screen-top"><div class="screen-top-inner"><img class="mini-logo" src="assets/plp-logo-v47.png"><div><h2>Ranking</h2><p>Temporada 2026</p></div><button class="back-home" data-go="home">⌂</button></div></div>
   <div class="tabs"><button class="tab active" data-rank="geral">Geral</button><button class="tab" data-rank="br1">BR1</button><button class="tab" data-rank="br2">BR2</button><button class="tab" data-rank="br3">BR3</button><button class="tab" data-rank="br4">BR4</button></div>
   <div class="finance-strip" id="rankingFinance"></div>
   <div class="card" id="rankingList"></div>
@@ -292,7 +310,7 @@ body::after,body:has(#home.active)::after{content:""!important;position:fixed!im
 </section>
 
 <section class="screen" id="tournament">
-  <div class="screen-top"><div class="screen-top-inner"><img class="mini-logo" src="assets/league-logo.png"><div><h2>Etapas</h2><p>Escolha o campeonato e depois a rodada</p></div><button class="back-home" data-go="home">⌂</button></div></div>
+  <div class="screen-top"><div class="screen-top-inner"><img class="mini-logo" src="assets/plp-logo-v47.png"><div><h2>Etapas</h2><p>Escolha o campeonato e depois a rodada</p></div><button class="back-home" data-go="home">⌂</button></div></div>
   <div class="stage-filter">
     <div class="stage-filter-label">Campeonato</div>
     <div class="champ-tabs" id="championshipTabs">
@@ -311,14 +329,14 @@ body::after,body:has(#home.active)::after{content:""!important;position:fixed!im
 </section>
 
 <section class="screen" id="clockScreen">
-  <div class="screen-top"><div class="screen-top-inner"><img class="mini-logo" src="assets/league-logo.png"><div><h2>Blind Clock</h2><p>Estrutura oficial da etapa</p></div><button class="back-home" data-go="home">⌂</button></div></div>
+  <div class="screen-top"><div class="screen-top-inner"><img class="mini-logo" src="assets/plp-logo-v47.png"><div><h2>Blind Clock</h2><p>Estrutura oficial da etapa</p></div><button class="back-home" data-go="home">⌂</button></div></div>
   <div class="clock-access"><span>Sincronização</span><b id="clockAccessStatus" class="local">Modo local</b></div><div class="clock"><div class="lvl" id="levelLabel">NÍVEL 1</div><div class="blinds" id="blindsLabel">100 / 200</div><div class="ante">ANTE <b id="anteLabel">200</b></div><div class="timer" id="timer">20:00</div><div class="progress"><span id="progressBar"></span></div><div class="next">Próximo: <b id="nextBlind">200 / 400</b> • Ante <b id="nextAnte">400</b></div><div class="controls" id="clockControls"><button class="btn primary" id="startPause">▶ Iniciar</button><button class="btn" id="addMinute">+1 min</button><button class="btn" id="nextLevel">Próximo</button><button class="btn" id="resetClock">↺ Resetar</button></div></div>
   <div class="section-title"><h3>Estrutura</h3><span id="clockStatus">Pausado</span></div><div class="notice" id="clockNotice">Controle do relógio reservado à área administrativa. Quando o backend estiver configurado, todos os participantes verão o mesmo tempo em andamento.</div>
   <div class="card"><div class="row"><span class="muted">Stack inicial</span><b>45K</b></div><div class="row"><span class="muted">Time Chip</span><b>+5K</b></div><div class="row"><span class="muted">Registro tardio</span><b>até nível 5</b></div><div class="row"><span class="muted">Formato</span><b>Freezout</b></div></div>
 </section>
 
 <section class="screen" id="finance">
-  <div class="screen-top"><div class="screen-top-inner"><img class="mini-logo" src="assets/league-logo.png"><div><h2>Financeiro</h2><p>Pote, arrecadação e premiações</p></div><button class="back-home" data-go="home">⌂</button></div></div>
+  <div class="screen-top"><div class="screen-top-inner"><img class="mini-logo" src="assets/plp-logo-v47.png"><div><h2>Financeiro</h2><p>Pote, arrecadação e premiações</p></div><button class="back-home" data-go="home">⌂</button></div></div>
   <div class="metric-grid"><div class="metric"><span class="label">Arrecadação conferida</span><span class="value">R$ 22.560</span><span class="sub">até Etapa 10</span></div><div class="metric"><span class="label">Jackpot conferido</span><span class="value">R$ 3.760</span><span class="sub">até Etapa 10</span></div><div class="metric"><span class="label">Etapa 11 projetada</span><span class="value">R$ 540</span><span class="sub">9 pagantes + anfitrião</span></div></div>
   <div class="section-title"><h3>Por campeonato</h3></div><div class="card" id="financeByBr"></div>
   <div class="section-title"><h3>Etapa 11 • 08/set</h3><span>aguardando conferência</span></div><div class="card"><div class="row"><div><b>Lista do WhatsApp</b><div class="small muted">9 jogadores marcaram “pix pg”</div></div><span class="pill warn">INFORMADO</span></div><div class="row"><div><b>Juninho</b><div class="small muted">Anfitrião da etapa</div></div><span class="pill good">ISENTO</span></div><div class="row"><div><b>Financeiro projetado</b><div class="small muted">R$ 450 premiação + R$ 90 Jackpot</div></div><b>R$ 540</b></div><div style="margin-top:10px"><button class="btn gold" style="width:100%" data-go="importer">Conferir pagamentos da Etapa 11</button></div></div>
@@ -326,18 +344,18 @@ body::after,body:has(#home.active)::after{content:""!important;position:fixed!im
 </section>
 
 <section class="screen" id="classified">
-  <div class="screen-top"><div class="screen-top-inner"><img class="mini-logo" src="assets/league-logo.png"><div><h2>Classificados</h2><p>Libertadores • situação da planilha</p></div><button class="back-home" data-go="home">⌂</button></div></div>
+  <div class="screen-top"><div class="screen-top-inner"><img class="mini-logo" src="assets/plp-logo-v47.png"><div><h2>Classificados</h2><p>Libertadores • situação da planilha</p></div><button class="back-home" data-go="home">⌂</button></div></div>
   <div class="card" id="classifiedList"></div>
   <div class="notice">A tela distingue quem já aparece como classificado e quem aparece como “classificando” no material enviado.</div>
 </section>
 
 <section class="screen" id="players">
-  <div class="screen-top"><div class="screen-top-inner"><img class="mini-logo" src="assets/league-logo.png"><div><h2>Jogadores</h2><p>44 nomes no Ranking Geral</p></div><button class="back-home" data-go="home">⌂</button></div></div>
+  <div class="screen-top"><div class="screen-top-inner"><img class="mini-logo" src="assets/plp-logo-v47.png"><div><h2>Jogadores</h2><p>44 nomes no Ranking Geral</p></div><button class="back-home" data-go="home">⌂</button></div></div>
   <div class="player-grid" id="playerGrid"></div>
 </section>
 
 <section class="screen" id="history">
-  <div class="screen-top"><div class="screen-top-inner"><img class="mini-logo" src="assets/league-logo.png"><div><h2>Histórico</h2><p>Resultados por campeonato e etapa</p></div><button class="back-home" data-go="home">⌂</button></div></div>
+  <div class="screen-top"><div class="screen-top-inner"><img class="mini-logo" src="assets/plp-logo-v47.png"><div><h2>Histórico</h2><p>Resultados por campeonato e etapa</p></div><button class="back-home" data-go="home">⌂</button></div></div>
   <div class="stage-filter">
     <div class="stage-filter-label">Campeonato</div>
     <div class="champ-tabs" id="historyChampionshipTabs">
@@ -352,7 +370,7 @@ body::after,body:has(#home.active)::after{content:""!important;position:fixed!im
 </section>
 
 <section class="screen" id="admin">
-  <div class="screen-top"><div class="screen-top-inner"><img class="mini-logo" src="assets/league-logo.png"><div><h2>Administração</h2><p>Central de gestão da Liga</p></div><button class="back-home" data-go="home">⌂</button></div></div>
+  <div class="screen-top"><div class="screen-top-inner"><img class="mini-logo" src="assets/plp-logo-v47.png"><div><h2>Administração</h2><p>Central de gestão da Liga</p></div><button class="back-home" data-go="home">⌂</button></div></div>
   <div class="admin-hero"><div class="badge"><svg viewBox="0 0 24 24"><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/><circle cx="12" cy="12" r="4"/><path d="M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/></svg></div><div><b>Central administrativa</b><span>Importe listas, confira pagamentos, corrija resultados e acompanhe a temporada em um único lugar.</span></div></div>
   <div class="admin-grid">
     <button class="admin-action" data-go="importer"><span class="ico"><svg viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m8 11 4 4 4-4"/><path d="M5 19h14"/></svg></span><span><b>Importar / interpretar</b><span>WhatsApp, lista, foto ou documento</span></span></button>
@@ -369,7 +387,7 @@ body::after,body:has(#home.active)::after{content:""!important;position:fixed!im
 </section>
 
 <section class="screen" id="importer">
-  <div class="screen-top"><div class="screen-top-inner"><img class="mini-logo" src="assets/league-logo.png"><div><h2>Importar / interpretar</h2><p>Lista, pagamentos e resultado</p></div><button class="back-home" data-go="admin">‹</button></div></div>
+  <div class="screen-top"><div class="screen-top-inner"><img class="mini-logo" src="assets/plp-logo-v47.png"><div><h2>Importar / interpretar</h2><p>Lista, pagamentos e resultado</p></div><button class="back-home" data-go="admin">‹</button></div></div>
 
   <div class="import-card">
     <h3>1. Colar lista do WhatsApp</h3>
@@ -449,8 +467,8 @@ body::after,body:has(#home.active)::after{content:""!important;position:fixed!im
 </section>
 
 <section class="screen" id="profile">
-  <div class="screen-top"><div class="screen-top-inner"><img class="mini-logo" src="assets/league-logo.png"><div><h2>Perfil</h2><p>Acesso ao aplicativo</p></div><button class="back-home" data-go="home">⌂</button></div></div>
-  <div class="card" style="text-align:center;padding:24px"><img class="mini-logo" style="width:86px;height:86px" src="assets/league-logo.png"><h3 style="margin:11px 0 3px">1ª Liga de Poker</h3><div class="muted small">Versão 17 Premium • Temporada 2026</div></div>
+  <div class="screen-top"><div class="screen-top-inner"><img class="mini-logo" src="assets/plp-logo-v47.png"><div><h2>Perfil</h2><p>Acesso ao aplicativo</p></div><button class="back-home" data-go="home">⌂</button></div></div>
+  <div class="card" style="text-align:center;padding:24px"><img class="mini-logo" style="width:86px;height:86px" src="assets/plp-logo-v47.png" alt="Logo da 1ª Liga de Poker"><h3 style="margin:11px 0 3px">1ª Liga de Poker</h3><div class="muted small">Versão 47 • Temporada 2026</div></div>
   <div class="card"><div class="row"><span class="muted">Perfil atual</span><b id="profileRole">Administrador local</b></div><div class="row"><span class="muted">Temporada</span><b>2026</b></div><div class="row"><span class="muted">Tema</span><b>PLP Preto & Dourado</b></div></div>
 <div class="card" id="authCard">
   <div class="row"><div><b>Acesso administrativo</b><div class="small muted">Somente contas cadastradas como administradoras podem acessar cadastros, resultados e controles administrativos.</div></div><span class="pill warn" id="backendBadge">LOCAL</span></div>
@@ -480,22 +498,22 @@ const rankingFinancials={
 };
 const rankSets={
  geral:[
-  ['DU',401,1,'R$ 300,00','classified'],['TCHOLA',381,0,'R$ 200,00','classified'],['NETO',310,1,'R$ 100,00','qualifying'],['GEIO',300,0,'','qualifying'],['FABETA',290,0,'','qualifying'],['JUNINHO',270,0,'','qualifying'],['CHARLES',242,0],['PAULO',171,0],['CAIO',136,0],['BRUNO',133,0],['CAZELE',117,0],['RAFAEL',115,0],['JUNIOR',109,0],['GUILHERME',104,0],['GUSTAVO',98,0],['ARTHUR',77,0],['SAMUKA',62,0],['BRUNO L',46,0],['MAURÍCIO',43,0],['CAFU',33,0],['JOÃO',32,0],['DIEGO',32,0],['GUI MENEGA',31,0],['THIAGO',24,0],['CHUCK',23,0],['ZE',20,0],['NHONHO',19,0],['DANIEL',18,0],['XIMBA',16,0],['MURILO',15,0],['TOT',14,0],['WALL',13,0],['PITUCO',12,0],['MONAN',12,0],['ANTONIO',12,0],['KAWE',11,0],['OSNI',8,0],['FLAVIO',7,0],['PEKENOR',7,0],['CHICO',5,0],['RODRIGO',4,0],['LEONARDO',4,0],['JOÃO CARLOS',1,0]
+  ['DU',401,1,'R$ 300,00','classified'],['TCHOLA',381,0,'R$ 200,00','classified'],['NETO',310,1,'R$ 100,00','qualifying'],['GEIO',300,0,'','qualifying'],['FABETA',290,0,'','qualifying'],['JUNINHO',270,0,'','qualifying'],['CHARLES',242,0],['PAULO',171,0],['CAIO',136,0],['BRUNO',133,0],['CAZELE',117,0],['RAFAEL',115,0],['JUNIOR',109,0],['GUILHERME',104,0],['GUSTAVO',98,0],['ARTHUR',77,0],['SAMUKA',62,0],['BRUNO L',46,0],['MAURÍCIO',43,0],['CAFU',33,0],['JOÃO',32,0],['DIEGO',32,0],['GUI MENEGA',31,0],['THIAGO',24,0],['CHUCK',23,0],['ZE',20,0],['NHONHO',19,0],['Daniel All Capone',18,0],['XIMBA',16,0],['MURILO',15,0],['TOT',14,0],['WALL',13,0],['PITUCO',12,0],['MONAN',12,0],['ANTONIO',12,0],['KAWE',11,0],['OSNI',8,0],['FLAVIO',7,0],['PEKENOR',7,0],['CHICO',5,0],['RODRIGO',4,0],['LEONARDO',4,0],['JOÃO CARLOS',1,0]
  ].map(([name,pts,discard,prize,status])=>({name,pts,discard,prize,status})),
  br1:[['DU',172,'R$ 60,00'],['NETO',151],['JUNINHO',125],['TCHOLA',118],['GEIO',112],['CHARLES',110],['FABETA',102],['JUNIOR',99],['GUSTAVO',93],['PAULO',88],['BRUNO',77],['GUILHERME',73],['CAZELE',64],['ARTHUR',64],['SAMUKA',62],['BRUNO L',46],['RAFAEL',38],['JOÃO',32],['GUI MENEGA',19],['MAURÍCIO',15],['PITUCO',12],['KAWE',11],['CAIO',11],['THIAGO',9],['ZE',7],['FLAVIO',5],['RODRIGO',4],['LEONARDO',4],['JOÃO CARLOS',1]].map(([name,pts,prize])=>({name,pts,prize})),
  br2:[['TCHOLA',131,'R$ 60,00'],['DU',127],['FABETA',97],['GEIO',94],['NETO',89],['CHARLES',88],['JUNINHO',72],['PAULO',43],['RAFAEL',41],['CAIO',36],['CAZELE',35],['DIEGO',32],['GUILHERME',28],['MAURÍCIO',22],['MURILO',15],['ARTHUR',13],['ZE',13],['WALL',13],['MONAN',12],['ANTONIO',12],['BRUNO',11],['JUNIOR',6],['THIAGO',6],['GUSTAVO',5],['FLAVIO',2]].map(([name,pts,prize])=>({name,pts,prize})),
- br3:[['TCHOLA',132,'R$ 60,00'],['DU',103],['GEIO',94],['FABETA',91],['CAIO',89],['JUNINHO',73],['NETO',71],['BRUNO',45],['CHARLES',44],['PAULO',40],['RAFAEL',36],['CAFU',33],['MAURÍCIO',28],['CHUCK',23],['NHONHO',19],['CAZELE',18],['DANIEL',18],['XIMBA',16],['TOT',14],['GUI MENEGA',12],['THIAGO',9],['OSNI',8],['PEKENOR',7],['CHICO',5],['JUNIOR',4],['GUILHERME',3]].map(([name,pts,prize])=>({name,pts,prize})),
+ br3:[['TCHOLA',132,'R$ 60,00'],['DU',103],['GEIO',94],['FABETA',91],['CAIO',89],['JUNINHO',73],['NETO',71],['BRUNO',45],['CHARLES',44],['PAULO',40],['RAFAEL',36],['CAFU',33],['MAURÍCIO',28],['CHUCK',23],['NHONHO',19],['CAZELE',18],['Daniel All Capone',18],['XIMBA',16],['TOT',14],['GUI MENEGA',12],['THIAGO',9],['OSNI',8],['PEKENOR',7],['CHICO',5],['JUNIOR',4],['GUILHERME',3]].map(([name,pts,prize])=>({name,pts,prize})),
  br4:[]
 };
 const br3Stages=[
  {n:1,date:'30/jun',arrec:480,jackpot:80,premios:400,results:[['Caio',17,190],['Fabeta',13,120],['Juninho',10,90],['Geio',8],['Tchola',6],['Paulo',4],['Bruno',3],['Neto',2],['Du',1]]},
  {n:2,date:'07/jul',arrec:600,jackpot:100,premios:500,results:[['Caio',19,210],['Geio',15,135],['Tchola',12,105],['Paulo',10,50],['Charles',8],['Du',6],['Fabeta',5],['Neto',4],['Juninho',3],['Bruno',2],['Cazele',1]]},
  {n:3,date:'14/jul',arrec:540,jackpot:90,premios:450,results:[['Charles',19,175],['Cafu',15,170],['Cazele',12,105],['Geio',10],['Caio',8],['Tchola',6],['Du',5],['Maurício',4],['Paulo',3],['Bruno',2],['Neto',1]]},
- {n:4,date:'21/jul',arrec:660,jackpot:110,premios:550,results:[['Tchola',20,225],['Du',16,150],['Fabeta',13,115],['Bruno',11,60],['Neto',9],['Geio',7],['Charles',6],['Cazele',5],['Paulo',4],['Daniel',3],['Juninho',2],['Caio',1]]},
- {n:5,date:'28/jul',arrec:960,jackpot:160,premios:800,results:[['Tchola',25,250],['Fabeta',21,245],['Nhonho',18,155],['Du',16,100],['Neto',14,50],['Gui Menega',12],['Rafael',11],['Charles',10],['Bruno',9],['Osni',8],['Pekenor',7],['Daniel',6],['Juninho',5],['Paulo',4],['Geio',3],['Chuck',2],['Caio',1]]},
+ {n:4,date:'21/jul',arrec:660,jackpot:110,premios:550,results:[['Tchola',20,225],['Du',16,150],['Fabeta',13,115],['Bruno',11,60],['Neto',9],['Geio',7],['Charles',6],['Cazele',5],['Paulo',4],['Daniel All Capone',3],['Juninho',2],['Caio',1]]},
+ {n:5,date:'28/jul',arrec:960,jackpot:160,premios:800,results:[['Tchola',25,250],['Fabeta',21,245],['Nhonho',18,155],['Du',16,100],['Neto',14,50],['Gui Menega',12],['Rafael',11],['Charles',10],['Bruno',9],['Osni',8],['Pekenor',7],['Daniel All Capone',6],['Juninho',5],['Paulo',4],['Geio',3],['Chuck',2],['Caio',1]]},
  {n:6,date:'04/ago',arrec:600,jackpot:100,premios:500,results:[['Tchola',20,210],['Ximba',16,135],['Du',13,105],['Maurício',11,50],['Thiago',9],['Bruno',7],['Neto',6],['Geio',5],['Juninho',4],['Paulo',3],['Fabeta',2],['Caio',1]]},
- {n:7,date:'11/ago',arrec:600,jackpot:100,premios:500,results:[['Geio',20,210],['Neto',16,135],['Maurício',13,105],['Juninho',11,50],['Du',9],['Tchola',7],['Caio',6],['Daniel',5],['Junior',4],['Bruno',3],['Fabeta',2],['Charles',1]]},
- {n:8,date:'18/ago',arrec:600,jackpot:100,premios:500,results:[['Tchola',19,172.5],['Geio',15,172.5],['Caio',12,105],['Juninho',10,50],['Fabeta',8],['Paulo',6],['Diego',5],['Daniel',4],['Du',3],['Bruno',2],['Neto',1]]},
+ {n:7,date:'11/ago',arrec:600,jackpot:100,premios:500,results:[['Geio',20,210],['Neto',16,135],['Maurício',13,105],['Juninho',11,50],['Du',9],['Tchola',7],['Caio',6],['Daniel All Capone',5],['Junior',4],['Bruno',3],['Fabeta',2],['Charles',1]]},
+ {n:8,date:'18/ago',arrec:600,jackpot:100,premios:500,results:[['Tchola',19,172.5],['Geio',15,172.5],['Caio',12,105],['Juninho',10,50],['Fabeta',8],['Paulo',6],['Diego',5],['Daniel All Capone',4],['Du',3],['Bruno',2],['Neto',1]]},
  {n:9,date:'25/ago',arrec:720,jackpot:120,premios:600,results:[['Chuck',21,240],['Caio',17,165],['Tot',14,125],['Du',12,70],['Neto',10],['Geio',8],['Fabeta',7],['Bruno',6],['Tchola',5],['Paulo',4],['Juninho',3],['Rafael',2],['Nhonho',1]]},
  {n:10,date:'01/set',arrec:540,jackpot:90,premios:450,results:[['Cafu',18,210],['Juninho',14,135],['Fabeta',11,105],['Rafael',9],['Neto',7],['Tchola',5],['Du',4],['Caio',3],['Paulo',2],['Geio',1]]},
  {n:11,date:'08/set',arrec:540,jackpot:90,premios:450,projected:true,results:[['DU',18,210],['Rafael',14,135],['Juninho',11,105],['Fabeta',9],['Tchola',7],['Chico',5],['Caio',4],['Guilherme',3],['Geio',2],['Neto',1]]}
@@ -635,7 +653,7 @@ document.querySelectorAll('[data-champ]').forEach(btn=>btn.addEventListener('cli
 document.querySelectorAll('[data-history-champ]').forEach(btn=>btn.addEventListener('click',()=>setChampionshipView(btn.dataset.historyChamp,true)));
 const signupAlias={'TCHÔLA':'TCHOLA','TCHOLA':'TCHOLA','RAFA':'RAFAEL','RAFAEL':'RAFAEL','GUI FURLAN':'GUI FURLAN','GUILHERME':'GUILHERME'};
 let signupParsed=[];let signupSelected=new Set();let signupMeta={};
-function normalizePlayerName(name){let v=name.trim().replace(/\s+/g,' ');const key=v.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase();const aliases={'TCHOLA':'TCHOLA','RAFA':'RAFAEL','RAFAEL':'RAFAEL','TAVARES':'DU','DU':'DU'};return aliases[key]||v.replace(/\b\w/g,c=>c.toUpperCase())}
+function normalizePlayerName(name){let v=String(name||'').trim().replace(/\s+/g,' ');const key=v.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase();const aliases={'TCHOLA':'TCHOLA','RAFA':'RAFAEL','RAFAEL':'RAFAEL','TAVARES':'DU','DU':'DU','DANIEL':'Daniel All Capone','DANIEL (FREEROLL)':'Daniel All Capone','DANIEL FREEROLL':'Daniel All Capone','DANIEL ALL CAPONE':'Daniel All Capone'};return aliases[key]||v.replace(/\b\w/g,c=>c.toUpperCase())}
 function extractMoney(text,re){const m=text.match(re);return m?Number(m[1].replace('.','').replace(',','.')):null}
 function parseSignupText(){
   const text=document.getElementById('whatsappInput').value;
@@ -822,33 +840,7 @@ document.getElementById('adminCreate').addEventListener('click',async()=>{
 });
 document.getElementById('adminLogout').addEventListener('click',async()=>{if(backendReady){await supa.auth.signOut();await refreshAdminRole();showToast('Sessão encerrada.')}});
 ensureDataVersion();loadSavedOverrides();renderHome();renderRanking('rankingList',rankSets.geral,'geral');renderFinanceStrip('geral');setChampionshipView('br3',false);setChampionshipView('br3',true);renderClassified();renderPlayers();paintClock();parseSignupText();populateResultStageOptions(false);loadSelectedStageResult();setAdminUI();initBackend();
-/* ===== PLP V45: atualização silenciosa e recuperação de UI antiga ===== */
-const PLP_APP_VERSION='V46';
-function plpRemoveStaleUpdateMessages(){
-  const terms=['nova versão disponível','atualizar quando puder','aplicando atualização','atualizando…','atualizando...'];
-  [...document.querySelectorAll('body *')].reverse().forEach(el=>{
-    if(el.id==='toast'||el.closest('.update-stage-box'))return;
-    const own=[...el.childNodes].filter(n=>n.nodeType===3).map(n=>n.textContent).join(' ').trim().toLowerCase();
-    const full=(el.textContent||'').trim().toLowerCase();
-    if(terms.some(t=>own.includes(t)||(el.children.length===0&&full.includes(t))))el.remove();
-  });
-  document.querySelectorAll('#plpUpdateBanner,[data-plp-update]').forEach(el=>el.remove());
-}
-function plpGameInProgress(){try{const v=currentClockView();return !!(v&&v.running)}catch(_){return false}}
-if('serviceWorker' in navigator){
-  window.addEventListener('load',async()=>{
-    plpRemoveStaleUpdateMessages();
-    try{
-      const reg=await navigator.serviceWorker.register('sw.js?v=46',{updateViaCache:'none'});
-      await reg.update();
-      if(reg.waiting&&!plpGameInProgress())reg.waiting.postMessage('PLP_APPLY_UPDATE');
-    }catch(_){}
-  });
-  navigator.serviceWorker.addEventListener('controllerchange',()=>{plpRemoveStaleUpdateMessages()});
-}
-setTimeout(plpRemoveStaleUpdateMessages,500);
-setTimeout(plpRemoveStaleUpdateMessages,2500);
-console.info('PLP Poker '+PLP_APP_VERSION);
+console.info('PLP Poker V47');
 </script>
 </body>
 </html>

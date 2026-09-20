@@ -1,78 +1,111 @@
-const CACHE='plp-2026-v46';
-const PAGE='./index.html';
+const PLP_BUILD = '47';
+const CACHE = `plp-2026-v${PLP_BUILD}`;
+const CACHE_PREFIX = 'plp-2026-v';
+const PAGE = './index.html';
 
-// V46: uma nova versão fica aguardando até o usuário aplicar ou todos os clientes
-// antigos serem fechados. Isto evita recarregar o aplicativo durante uma partida.
-self.addEventListener('install',event=>{
-  self.skipWaiting();
-  event.waitUntil((async()=>{
-    try{
-      const cache=await caches.open(CACHE);
-      const response=await fetch(PAGE,{cache:'reload'});
-      if(response.ok) await cache.put(PAGE,response.clone());
-    }catch(_){ }
+const SHELL_ASSETS = [
+  './',
+  PAGE,
+  './manifest.json',
+  './pwa-update.js',
+  './supabase-config.js',
+  './stages.js',
+  './home-logo-v37.css',
+  './home-stable-v35.css',
+  './global-background-v36.css',
+  './theme-v32.css',
+  './v18.css',
+  './v19.css',
+  './app-v18.js',
+  './app-v19.js',
+  './app-v22-fix.js',
+  './clock-v24.js',
+  './clock-admin-v24.js',
+  './elimination-v25.js',
+  './admin-access-v26.js',
+  './quick-admin-v27.js',
+  './finale-v28.js',
+  './stability-v29.js',
+  './finance-v30.js',
+  './finance-overview-v32.js',
+  './finance-ledger-v33.js',
+  './assets/plp-logo-v47.png',
+  './assets/splash-logo-v47.png',
+  './assets/poker-bg-v32.webp',
+  './assets/icon-192-v47.png',
+  './assets/icon-512-v47.png',
+  './assets/icon-maskable-192-v47.png',
+  './assets/icon-maskable-512-v47.png',
+  './assets/apple-touch-icon-v47.png'
+];
+
+async function putIfValid(cache, key, response) {
+  if (response && response.ok) await cache.put(key, response.clone());
+  return response;
+}
+
+self.addEventListener('install', event => {
+  // Updates remain waiting until the user taps "Atualizar agora".
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE);
+    await Promise.allSettled(SHELL_ASSETS.map(async asset => {
+      const response = await fetch(asset, { cache: 'reload' });
+      await putIfValid(cache, asset, response);
+    }));
   })());
 });
 
-self.addEventListener('activate',event=>{
-  event.waitUntil((async()=>{
-    const keys=await caches.keys();
-    await Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)));
+self.addEventListener('activate', event => {
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(keys
+      .filter(key => key.startsWith(CACHE_PREFIX) && key !== CACHE)
+      .map(key => caches.delete(key)));
     await self.clients.claim();
+    const clients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    clients.forEach(client => client.postMessage({ type: 'PLP_UPDATE_APPLIED', build: PLP_BUILD }));
   })());
 });
 
-self.addEventListener('message',event=>{
-  if(event.data==='PLP_APPLY_UPDATE') self.skipWaiting();
+self.addEventListener('message', event => {
+  const type = typeof event.data === 'string' ? event.data : event.data?.type;
+  if (type === 'PLP_APPLY_UPDATE' || type === 'SKIP_WAITING') self.skipWaiting();
 });
 
-self.addEventListener('fetch',event=>{
-  const req=event.request;
-  if(req.method!=='GET') return;
+async function networkFirst(request, cacheKey = request) {
+  try {
+    const response = await fetch(request, { cache: 'no-store' });
+    const cache = await caches.open(CACHE);
+    await putIfValid(cache, cacheKey, response);
+    return response;
+  } catch (_) {
+    return (await caches.match(cacheKey)) || Response.error();
+  }
+}
 
-  const url=new URL(req.url);
-  if(url.origin!==self.location.origin){
-    event.respondWith(fetch(req));
+self.addEventListener('fetch', event => {
+  const request = event.request;
+  if (request.method !== 'GET') return;
+
+  const url = new URL(request.url);
+  if (url.origin !== self.location.origin) return;
+
+  if (request.mode === 'navigate') {
+    event.respondWith(networkFirst(request, PAGE));
     return;
   }
 
-  const isNavigation=req.mode==='navigate';
-  const isCode=/\.(?:js|css|json|html)$/i.test(url.pathname);
-  const isVersionedAsset=/\/assets\//i.test(url.pathname);
-
-  if(isNavigation || isCode || isVersionedAsset){
-    event.respondWith((async()=>{
-      try{
-        const net=await fetch(req,{cache:'no-store'});
-        if(net && net.ok){
-          const cache=await caches.open(CACHE);
-          await cache.put(isNavigation?PAGE:req,net.clone());
-        }
-        return net;
-      }catch(_){
-        return (await caches.match(isNavigation?PAGE:req)) || Response.error();
-      }
-    })());
-    return;
+  if (/\.(?:js|css|json|html|png|webp|jpe?g|svg)$/i.test(url.pathname)) {
+    event.respondWith(networkFirst(request));
   }
-
-  event.respondWith((async()=>{
-    const cached=await caches.match(req);
-    const refresh=fetch(req).then(async net=>{
-      if(net && net.ok){
-        const cache=await caches.open(CACHE);
-        await cache.put(req,net.clone());
-      }
-      return net;
-    }).catch(()=>null);
-    return cached || (await refresh) || Response.error();
-  })());
 });
 
-self.addEventListener('notificationclick',event=>{
+self.addEventListener('notificationclick', event => {
   event.notification.close();
-  event.waitUntil(self.clients.matchAll({type:'window',includeUncontrolled:true}).then(list=>{
-    for(const client of list){ if('focus' in client) return client.focus(); }
+  event.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+    for (const client of list) {
+      if ('focus' in client) return client.focus();
+    }
     return self.clients.openWindow('https://nhoquin.github.io/plp-poker/');
   }));
 });

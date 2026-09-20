@@ -1,88 +1,156 @@
-/* PLP V46 • logo oficial visível dentro do hero */
+/* PLP V47 • identidade oficial e layout responsivo da Home */
 
-/* Área vazia no topo da Home para o logo respirar sem encostar no card da etapa. */
-#home .home-hero,
-#home .hero-surface{
-  min-height:430px!important;
-  background:transparent!important;
-  border-color:rgba(244,201,20,.16)!important;
+/* A marca participa do fluxo normal da página: nunca fica atrás nem sobre o painel. */
+#home::before,
+#home #homeBrandSurface::before{
+  content:none!important;
+  display:none!important;
 }
 
-/* Logo da Liga: independente dos dados da rodada e estacionado no topo.
-   Usa o arquivo oficial de logo já armazenado em assets. */
-#home::before{
-  content:""!important;
-  position:fixed!important;
-  top:82px!important;
-  left:50%!important;
-  width:min(54vw,330px)!important;
-  aspect-ratio:1/1!important;
-  transform:translateX(-50%)!important;
-  background:url('assets/plp-logo-v38.webp?v=44') center/contain no-repeat!important;
-  z-index:0!important;
-  pointer-events:none!important;
-  filter:drop-shadow(0 12px 28px rgba(0,0,0,.55))!important;
-  opacity:1!important;
-}
-
-/* Conteúdo continua rolando normalmente acima do fundo.
-   O logo não participa do layout nem recebe os dados da etapa. */
-#home > *{
-  position:relative;
-  z-index:1;
-}
-
-#home .home-hero{
-  z-index:0!important;
-}
-
-#home .hero-surface{
+#home #homeBrandHero{
   position:relative!important;
-  z-index:0!important;
+  display:block!important;
+  min-height:0!important;
+  padding:clamp(14px,4vw,26px)!important;
+  overflow:hidden!important;
+  border-radius:32px!important;
+  border:1px solid rgba(244,201,20,.18)!important;
+  background:radial-gradient(circle at 50% 38%,rgba(244,201,20,.10),rgba(5,5,4,.72) 60%,rgba(5,5,4,.92))!important;
+  box-shadow:0 20px 50px rgba(0,0,0,.30)!important;
 }
 
-/* Ao rolar, os cards passam sobre a região do logo com superfície escura,
-   evitando conflito de leitura. */
-#home #liveStageV19,
-#home .premium-ribbon,
+#home #homeBrandSurface{
+  position:relative!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:0!important;
+  width:100%!important;
+  padding:0!important;
+  background:transparent!important;
+}
+
+#home .home-brand-logo{
+  display:block!important;
+  width:clamp(190px,58vw,320px)!important;
+  max-width:100%!important;
+  height:auto!important;
+  aspect-ratio:1/1;
+  object-fit:contain;
+  border-radius:50%;
+  filter:drop-shadow(0 14px 30px rgba(0,0,0,.58));
+}
+
+#home .logo-wrap,
+#home .hero-kicker,
+#home .hero-copy,
+#home .hero-meta,
+#home .notify{
+  display:none!important;
+}
+
+/* Painel da Liga: colunas flexíveis e quebra segura para nomes/valores longos. */
+#home .home-section-title{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  align-items:start!important;
+  gap:4px!important;
+}
+
+#home .home-section-title span,
+#home .home-section-title small{
+  min-width:0!important;
+  max-width:none!important;
+  text-align:left!important;
+  overflow-wrap:anywhere;
+}
+
+#home .premium-ribbon{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+}
+
 #home .premium-stat,
 #home .quick,
-#home .glass{
+#home .glass,
+#home .mini-row,
+#home .mini-row > *{
+  min-width:0!important;
+}
+
+#home .premium-stat{
+  overflow:hidden!important;
+}
+
+#home .premium-stat span,
+#home .premium-stat b,
+#home .premium-stat small,
+#home .mini-row span,
+#home .mini-row b{
+  max-width:100%;
+  overflow-wrap:anywhere;
+  word-break:normal;
+}
+
+#home .premium-stat b{
+  font-size:clamp(14px,4vw,18px)!important;
+  line-height:1.18!important;
+}
+
+#home .premium-stat small{
+  line-height:1.35!important;
+}
+
+#home .v19-live-copy,
+#home .v19-live-copy b,
+#home .v19-live-copy span{
+  min-width:0!important;
+  max-width:100%;
+  overflow-wrap:anywhere;
+}
+
+#home #liveStageV19,
+#home .premium-ribbon,
+#home .quick-grid,
+#home .dashboard-grid,
+#home .footer-brand{
   position:relative!important;
-  z-index:2!important;
+  z-index:1!important;
 }
 
-@media(max-width:430px){
-  #home .home-hero,
-  #home .hero-surface{
-    min-height:410px!important;
+.screen-top-inner > div{
+  min-width:0;
+}
+
+.screen-top h2,
+.screen-top p{
+  overflow-wrap:anywhere;
+}
+
+.screen-top .back-home,
+.screen-top .mini-logo{
+  flex:none;
+}
+
+@media(max-width:350px){
+  #home .premium-ribbon{
+    grid-template-columns:1fr!important;
   }
-  #home::before{
-    top:84px!important;
-    width:min(58vw,300px)!important;
+}
+
+@media(min-width:520px){
+  #home .home-section-title{
+    grid-template-columns:auto minmax(0,1fr)!important;
+    align-items:end!important;
+    gap:12px!important;
+  }
+  #home .home-section-title small{
+    text-align:right!important;
   }
 }
 
-
-/* V46: o logo fica dentro da área visual da Home.
-   Evita pseudo-elemento atrás do hero transparente. */
-#home::before{content:none!important;display:none!important}
-#home #homeBrandHero{position:relative!important;display:flex!important;align-items:flex-start!important;justify-content:center!important}
-#home #homeBrandSurface{position:relative!important;width:100%!important;display:flex!important;align-items:flex-start!important;justify-content:center!important;padding-top:24px!important}
-#home #homeBrandSurface::before{
-  content:""!important;
-  display:block!important;
-  width:min(58vw,300px)!important;
-  aspect-ratio:1/1!important;
-  background-image:url('assets/plp-logo-v38.webp?v=46')!important;
-  background-position:center!important;
-  background-size:contain!important;
-  background-repeat:no-repeat!important;
-  filter:drop-shadow(0 12px 28px rgba(0,0,0,.55))!important;
-  opacity:1!important;
-  visibility:visible!important;
-}
-@media(max-width:430px){
- #home #homeBrandSurface{padding-top:18px!important}
- #home #homeBrandSurface::before{width:min(62vw,280px)!important}
+@media(min-width:760px){
+  #home .premium-ribbon{
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  }
 }
