@@ -238,9 +238,12 @@ nav{position:fixed;z-index:30;left:50%;bottom:0;transform:translateX(-50%);width
 }
 
 </style>
-<style id="plp-home-base-v35">
-body:has(#home.active)::before{background:#050504!important;background-image:none!important;filter:none!important;transform:none!important}
-body:has(#home.active)::after{background:none!important;backdrop-filter:none!important}
+<style id="plp-global-bg-base-v36">
+html,body{min-height:100%;background:#050504!important}
+body{background:transparent!important}
+body::before,body:has(#home.active)::before{content:""!important;position:fixed!important;inset:0!important;z-index:-3!important;display:block!important;background-image:linear-gradient(180deg,rgba(0,0,0,.12),rgba(0,0,0,.34) 44%,rgba(0,0,0,.58)),url('assets/poker-bg-v32.webp')!important;background-size:cover!important;background-position:center center!important;background-repeat:no-repeat!important;filter:none!important;transform:none!important;pointer-events:none!important}
+body::after,body:has(#home.active)::after{content:""!important;position:fixed!important;inset:0!important;z-index:-2!important;display:block!important;background:linear-gradient(180deg,rgba(3,3,2,.06),rgba(3,3,2,.18) 40%,rgba(3,3,2,.34))!important;backdrop-filter:none!important;pointer-events:none!important}
+#home .home-hero,#home .hero-surface{background:transparent!important;background-image:none!important}
 #home .home-hero::before,#home .home-hero::after{content:none!important;display:none!important}
 #home .logo-wrap{display:none!important}
 </style>
