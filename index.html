@@ -12,7 +12,7 @@
 <link rel="manifest" href="manifest.json" />
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
 <link rel="icon" href="assets/icon-192.png" />
-<link rel="stylesheet" href="home-logo-v37.css?v=45" />
+<link rel="stylesheet" href="home-logo-v37.css?v=46" />
 <style>
 
 :root{
@@ -823,7 +823,7 @@ document.getElementById('adminCreate').addEventListener('click',async()=>{
 document.getElementById('adminLogout').addEventListener('click',async()=>{if(backendReady){await supa.auth.signOut();await refreshAdminRole();showToast('Sessão encerrada.')}});
 ensureDataVersion();loadSavedOverrides();renderHome();renderRanking('rankingList',rankSets.geral,'geral');renderFinanceStrip('geral');setChampionshipView('br3',false);setChampionshipView('br3',true);renderClassified();renderPlayers();paintClock();parseSignupText();populateResultStageOptions(false);loadSelectedStageResult();setAdminUI();initBackend();
 /* ===== PLP V45: atualização silenciosa e recuperação de UI antiga ===== */
-const PLP_APP_VERSION='V45';
+const PLP_APP_VERSION='V46';
 function plpRemoveStaleUpdateMessages(){
   const terms=['nova versão disponível','atualizar quando puder','aplicando atualização','atualizando…','atualizando...'];
   [...document.querySelectorAll('body *')].reverse().forEach(el=>{
@@ -839,7 +839,7 @@ if('serviceWorker' in navigator){
   window.addEventListener('load',async()=>{
     plpRemoveStaleUpdateMessages();
     try{
-      const reg=await navigator.serviceWorker.register('sw.js?v=45',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('sw.js?v=46',{updateViaCache:'none'});
       await reg.update();
       if(reg.waiting&&!plpGameInProgress())reg.waiting.postMessage('PLP_APPLY_UPDATE');
     }catch(_){}
