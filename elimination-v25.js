@@ -98,7 +98,8 @@
     V25.publicPollAt=now;
     const {data,error}=await supa.rpc('plp_public_stage_snapshot');
     if(error) return V25.publicSnapshot;
-    V25.publicSnapshot=data||{stage:null,entries:[],finalized_jackpot:0};
+    const snapshot=data||{stage:null,entries:[],finalized_jackpot:0};
+    V25.publicSnapshot=typeof normalizeStageSnapshot==='function'?normalizeStageSnapshot(snapshot):snapshot;
     if(window.PLP_V19) window.PLP_V19.snapshot=V25.publicSnapshot;
     return V25.publicSnapshot;
   }

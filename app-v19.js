@@ -118,7 +118,8 @@
       if(!silent) showToast('Não foi possível atualizar a etapa atual.');
       return null;
     }
-    V19.snapshot=data||{stage:null,entries:[],finalized_jackpot:0};
+    const snapshot=data||{stage:null,entries:[],finalized_jackpot:0};
+    V19.snapshot=typeof normalizeStageSnapshot==='function'?normalizeStageSnapshot(snapshot):snapshot;
     renderHomeStage();
     if(document.getElementById('stageLiveV19')?.classList.contains('active')) renderPublicStage();
     if(document.getElementById('gameDay')?.classList.contains('active')) scheduleAdminPatch(60);

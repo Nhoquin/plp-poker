@@ -654,6 +654,8 @@ document.querySelectorAll('[data-history-champ]').forEach(btn=>btn.addEventListe
 const signupAlias={'TCHÔLA':'TCHOLA','TCHOLA':'TCHOLA','RAFA':'RAFAEL','RAFAEL':'RAFAEL','GUI FURLAN':'GUI FURLAN','GUILHERME':'GUILHERME'};
 let signupParsed=[];let signupSelected=new Set();let signupMeta={};
 function normalizePlayerName(name){let v=String(name||'').trim().replace(/\s+/g,' ');const key=v.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase();const aliases={'TCHOLA':'TCHOLA','RAFA':'RAFAEL','RAFAEL':'RAFAEL','TAVARES':'DU','DU':'DU','DANIEL':'Daniel All Capone','DANIEL (FREEROLL)':'Daniel All Capone','DANIEL FREEROLL':'Daniel All Capone','DANIEL ALL CAPONE':'Daniel All Capone'};return aliases[key]||v.replace(/\b\w/g,c=>c.toUpperCase())}
+function normalizeStageSnapshot(snapshot){if(!snapshot)return snapshot;const stage=snapshot.stage?{...snapshot.stage,host_name:snapshot.stage.host_name?normalizePlayerName(snapshot.stage.host_name):snapshot.stage.host_name}:snapshot.stage;const entries=Array.isArray(snapshot.entries)?snapshot.entries.map(entry=>({...entry,name:normalizePlayerName(entry.name)})):[];return{...snapshot,stage,entries}}
+window.normalizeStageSnapshot=normalizeStageSnapshot;
 function extractMoney(text,re){const m=text.match(re);return m?Number(m[1].replace('.','').replace(',','.')):null}
 function parseSignupText(){
   const text=document.getElementById('whatsappInput').value;

@@ -176,8 +176,9 @@
     try{
       const {data,error}=await supa.rpc('plp_public_stage_snapshot');
       if(error) return window.PLP_V19?.snapshot||null;
-      if(window.PLP_V19) window.PLP_V19.snapshot=data;
-      return data;
+      const snapshot=typeof normalizeStageSnapshot==='function'?normalizeStageSnapshot(data):data;
+      if(window.PLP_V19) window.PLP_V19.snapshot=snapshot;
+      return snapshot;
     }catch(_){ return window.PLP_V19?.snapshot||null; }
   }
 
