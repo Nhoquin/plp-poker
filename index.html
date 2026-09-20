@@ -12,7 +12,7 @@
 <link rel="manifest" href="manifest.json" />
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
 <link rel="icon" href="assets/icon-192.png" />
-<link rel="stylesheet" href="home-logo-v37.css?v=42" />
+<link rel="stylesheet" href="home-logo-v37.css?v=43" />
 <style>
 
 :root{
@@ -822,71 +822,77 @@ document.getElementById('adminCreate').addEventListener('click',async()=>{
 });
 document.getElementById('adminLogout').addEventListener('click',async()=>{if(backendReady){await supa.auth.signOut();await refreshAdminRole();showToast('Sessão encerrada.')}});
 ensureDataVersion();loadSavedOverrides();renderHome();renderRanking('rankingList',rankSets.geral,'geral');renderFinanceStrip('geral');setChampionshipView('br3',false);setChampionshipView('br3',true);renderClassified();renderPlayers();paintClock();parseSignupText();populateResultStageOptions(false);loadSelectedStageResult();setAdminUI();initBackend();
-/* ===== PLP V42: atualização confiável do PWA ===== */
-const PLP_APP_VERSION='V42';
+/* ===== PLP V43: atualizador único e resiliente ===== */
+const PLP_APP_VERSION='V43';
+let plpRegistration=null;
 let plpWaitingWorker=null;
 let plpUpdateReloading=false;
 
 function plpGameInProgress(){
-  try{
-    const v=currentClockView();
-    return !!(v && v.running);
-  }catch(_){ return false; }
+  try{const v=currentClockView();return !!(v&&v.running)}catch(_){return false}
+}
+function plpRemoveLegacyUpdateUI(){
+  document.querySelectorAll('[id*="update" i],[class*="update" i]').forEach(el=>{
+    if(el.id==='plpUpdateBanner'||el.closest('#plpUpdateBanner')||el.classList.contains('update-stage-box'))return;
+    const txt=(el.textContent||'').toLowerCase();
+    if(txt.includes('nova versão disponível')||txt.includes('atualizar quando puder'))el.remove();
+  });
 }
 function plpEnsureUpdateUI(){
-  if(document.getElementById('plpUpdateBanner')) return;
-  const el=document.createElement('div');
-  el.id='plpUpdateBanner';
+  plpRemoveLegacyUpdateUI();
+  let el=document.getElementById('plpUpdateBanner');
+  if(el)return el;
+  el=document.createElement('div');el.id='plpUpdateBanner';
   el.style.cssText='display:none;position:fixed;left:12px;right:12px;bottom:92px;z-index:1000;max-width:620px;margin:auto;padding:13px 14px;border:1px solid rgba(244,201,20,.55);border-radius:18px;background:rgba(12,11,8,.97);box-shadow:0 18px 50px rgba(0,0,0,.55);color:#fff;font-size:11px';
-  el.innerHTML='<div style="display:flex;gap:12px;align-items:center"><div style="flex:1"><b style="color:#ffe36a;font-size:12px">Nova versão disponível</b><div id="plpUpdateText" style="margin-top:4px;color:#c5bcaa;line-height:1.4">Uma atualização do PLP Poker está pronta.</div></div><button id="plpApplyUpdate" class="btn gold" style="white-space:nowrap;padding:9px 12px">Atualizar agora</button></div>';
+  el.innerHTML='<div style="display:flex;gap:12px;align-items:center"><div style="flex:1"><b style="color:#ffe36a;font-size:12px">Nova versão disponível</b><div id="plpUpdateText" style="margin-top:4px;color:#c5bcaa;line-height:1.4">Atualização pronta.</div></div><button id="plpApplyUpdate" class="btn gold" style="white-space:nowrap;padding:9px 12px">Atualizar agora</button></div>';
   document.body.appendChild(el);
-  document.getElementById('plpApplyUpdate').addEventListener('click',()=>plpApplyUpdate(true));
+  document.getElementById('plpApplyUpdate').addEventListener('click',()=>plpApplyUpdate());
+  return el;
 }
 function plpShowUpdate(worker){
-  plpWaitingWorker=worker||plpWaitingWorker;
-  plpEnsureUpdateUI();
-  const banner=document.getElementById('plpUpdateBanner');
-  const text=document.getElementById('plpUpdateText');
-  const btn=document.getElementById('plpApplyUpdate');
-  const playing=plpGameInProgress();
-  text.textContent=playing?'Atualização pronta. Para não interromper a partida, aplique quando o jogo estiver pausado ou finalizado.':'Atualização pronta para instalar com segurança.';
-  btn.textContent=playing?'Atualizar depois':'Atualizar agora';
+  if(worker)plpWaitingWorker=worker;
+  const banner=plpEnsureUpdateUI(),playing=plpGameInProgress();
+  document.getElementById('plpUpdateText').textContent=playing?'Atualização pronta. Pause ou finalize a partida antes de instalar.':'Atualização pronta para instalar.';
+  document.getElementById('plpApplyUpdate').textContent=playing?'Aguardar partida':'Atualizar agora';
   banner.style.display='block';
 }
-function plpApplyUpdate(userInitiated=false){
-  if(!plpWaitingWorker) return;
-  if(plpGameInProgress()){
-    if(userInitiated) showToast('Partida em andamento: a atualização foi preservada para depois.');
-    plpShowUpdate(plpWaitingWorker);
-    return;
+async function plpApplyUpdate(){
+  if(plpGameInProgress()){showToast('Partida em andamento: atualização preservada para depois.');return}
+  const btn=document.getElementById('plpApplyUpdate');
+  if(btn){btn.disabled=true;btn.textContent='Atualizando…'}
+  try{
+    if(plpRegistration)await plpRegistration.update();
+    const worker=(plpRegistration&&plpRegistration.waiting)||plpWaitingWorker;
+    if(worker){
+      plpWaitingWorker=worker;
+      worker.postMessage('PLP_APPLY_UPDATE');
+      setTimeout(()=>{if(!plpUpdateReloading)location.reload()},1800);
+    }else{
+      location.reload();
+    }
+  }catch(_){
+    if(btn){btn.disabled=false;btn.textContent='Tentar novamente'}
+    showToast('Não foi possível aplicar agora. Tente novamente.');
   }
-  try{plpWaitingWorker.postMessage('PLP_APPLY_UPDATE')}catch(_){}
 }
 function plpWatchRegistration(reg){
-  if(reg.waiting) plpShowUpdate(reg.waiting);
+  plpRegistration=reg;
+  plpRemoveLegacyUpdateUI();
+  if(reg.waiting)plpShowUpdate(reg.waiting);
   reg.addEventListener('updatefound',()=>{
-    const worker=reg.installing;
-    if(!worker) return;
-    worker.addEventListener('statechange',()=>{
-      if(worker.state==='installed' && navigator.serviceWorker.controller) plpShowUpdate(worker);
-    });
+    const worker=reg.installing;if(!worker)return;
+    worker.addEventListener('statechange',()=>{if(worker.state==='installed'&&navigator.serviceWorker.controller)plpShowUpdate(worker)});
   });
-  const check=()=>reg.update().catch(()=>{});
-  setTimeout(check,2500);
-  setInterval(check,5*60*1000);
+  const check=()=>reg.update().then(()=>{if(reg.waiting)plpShowUpdate(reg.waiting)}).catch(()=>{});
+  setTimeout(check,1500);setInterval(check,5*60*1000);
   document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')check()});
   window.addEventListener('online',check);
 }
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.addEventListener('controllerchange',()=>{
-    if(plpUpdateReloading) return;
-    plpUpdateReloading=true;
-    location.reload();
-  });
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{if(plpUpdateReloading)return;plpUpdateReloading=true;location.reload()});
   window.addEventListener('load',()=>{
-    navigator.serviceWorker.register('sw.js?v=42',{updateViaCache:'none'})
-      .then(plpWatchRegistration)
-      .catch(()=>{});
+    plpRemoveLegacyUpdateUI();
+    navigator.serviceWorker.register('sw.js?v=43',{updateViaCache:'none'}).then(plpWatchRegistration).catch(()=>{});
   });
 }
 console.info('PLP Poker '+PLP_APP_VERSION);
