@@ -12,7 +12,7 @@
 <link rel="manifest" href="manifest.json" />
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
 <link rel="icon" href="assets/icon-192.png" />
-<link rel="stylesheet" href="home-logo-v37.css?v=44" />
+<link rel="stylesheet" href="home-logo-v37.css?v=45" />
 <style>
 
 :root{
@@ -822,40 +822,32 @@ document.getElementById('adminCreate').addEventListener('click',async()=>{
 });
 document.getElementById('adminLogout').addEventListener('click',async()=>{if(backendReady){await supa.auth.signOut();await refreshAdminRole();showToast('Sessão encerrada.')}});
 ensureDataVersion();loadSavedOverrides();renderHome();renderRanking('rankingList',rankSets.geral,'geral');renderFinanceStrip('geral');setChampionshipView('br3',false);setChampionshipView('br3',true);renderClassified();renderPlayers();paintClock();parseSignupText();populateResultStageOptions(false);loadSelectedStageResult();setAdminUI();initBackend();
-/* ===== PLP V44: atualização simples, sem avisos fantasma ===== */
-const PLP_APP_VERSION='V44';
-let plpUpdateReloading=false;
-function plpGameInProgress(){try{const v=currentClockView();return !!(v&&v.running)}catch(_){return false}}
-function plpClearUpdateUI(){
+/* ===== PLP V45: atualização silenciosa e recuperação de UI antiga ===== */
+const PLP_APP_VERSION='V45';
+function plpRemoveStaleUpdateMessages(){
+  const terms=['nova versão disponível','atualizar quando puder','aplicando atualização','atualizando…','atualizando...'];
+  [...document.querySelectorAll('body *')].reverse().forEach(el=>{
+    if(el.id==='toast'||el.closest('.update-stage-box'))return;
+    const own=[...el.childNodes].filter(n=>n.nodeType===3).map(n=>n.textContent).join(' ').trim().toLowerCase();
+    const full=(el.textContent||'').trim().toLowerCase();
+    if(terms.some(t=>own.includes(t)||(el.children.length===0&&full.includes(t))))el.remove();
+  });
   document.querySelectorAll('#plpUpdateBanner,[data-plp-update]').forEach(el=>el.remove());
-  document.querySelectorAll('body *').forEach(el=>{
-    if(el.children.length>4)return;
-    const t=(el.textContent||'').trim().toLowerCase();
-    if((t.includes('nova versão disponível')||t.includes('atualizar quando puder'))&&!el.closest('.update-stage-box'))el.remove();
-  });
 }
-async function plpApplyWaiting(reg){
-  if(!reg?.waiting||plpGameInProgress())return false;
-  reg.waiting.postMessage('PLP_APPLY_UPDATE');
-  return true;
-}
+function plpGameInProgress(){try{const v=currentClockView();return !!(v&&v.running)}catch(_){return false}}
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.addEventListener('controllerchange',()=>{
-    if(plpUpdateReloading)return;plpUpdateReloading=true;location.replace(location.pathname+'?v=44');
-  });
   window.addEventListener('load',async()=>{
-    plpClearUpdateUI();
+    plpRemoveStaleUpdateMessages();
     try{
-      const reg=await navigator.serviceWorker.register('sw.js?v=44',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('sw.js?v=45',{updateViaCache:'none'});
       await reg.update();
-      await plpApplyWaiting(reg);
-      reg.addEventListener('updatefound',()=>{
-        const w=reg.installing;if(!w)return;
-        w.addEventListener('statechange',()=>{if(w.state==='installed')plpApplyWaiting(reg)});
-      });
+      if(reg.waiting&&!plpGameInProgress())reg.waiting.postMessage('PLP_APPLY_UPDATE');
     }catch(_){}
   });
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{plpRemoveStaleUpdateMessages()});
 }
+setTimeout(plpRemoveStaleUpdateMessages,500);
+setTimeout(plpRemoveStaleUpdateMessages,2500);
 console.info('PLP Poker '+PLP_APP_VERSION);
 </script>
 </body>
