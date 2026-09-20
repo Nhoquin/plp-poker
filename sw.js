@@ -1,4 +1,4 @@
-const PLP_BUILD = '47';
+const PLP_BUILD = '48';
 const CACHE = `plp-2026-v${PLP_BUILD}`;
 const CACHE_PREFIX = 'plp-2026-v';
 const PAGE = './index.html';
@@ -16,9 +16,11 @@ const SHELL_ASSETS = [
   './theme-v32.css',
   './v18.css',
   './v19.css',
+  './players-v48.css',
   './app-v18.js',
   './app-v19.js',
   './app-v22-fix.js',
+  './players-v48.js',
   './clock-v24.js',
   './clock-admin-v24.js',
   './elimination-v25.js',
