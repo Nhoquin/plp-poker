@@ -1,0 +1,64 @@
+/* PLP V37 • logo fixo da Liga sobre o fundo global */
+
+/* Área vazia no topo da Home para o logo respirar sem encostar no card da etapa. */
+#home .home-hero,
+#home .hero-surface{
+  min-height:430px!important;
+  background:transparent!important;
+  border-color:rgba(244,201,20,.16)!important;
+}
+
+/* Logo da Liga: independente dos dados da rodada e estacionado no topo.
+   Usa o arquivo oficial de logo já armazenado em assets. */
+#home::before{
+  content:""!important;
+  position:fixed!important;
+  top:82px!important;
+  left:50%!important;
+  width:min(54vw,330px)!important;
+  aspect-ratio:1/1!important;
+  transform:translateX(-50%)!important;
+  background:url('assets/league-logo.png') center/contain no-repeat!important;
+  z-index:0!important;
+  pointer-events:none!important;
+  filter:drop-shadow(0 12px 28px rgba(0,0,0,.55))!important;
+  opacity:1!important;
+}
+
+/* Conteúdo continua rolando normalmente acima do fundo.
+   O logo não participa do layout nem recebe os dados da etapa. */
+#home > *{
+  position:relative;
+  z-index:1;
+}
+
+#home .home-hero{
+  z-index:0!important;
+}
+
+#home .hero-surface{
+  position:relative!important;
+  z-index:0!important;
+}
+
+/* Ao rolar, os cards passam sobre a região do logo com superfície escura,
+   evitando conflito de leitura. */
+#home #liveStageV19,
+#home .premium-ribbon,
+#home .premium-stat,
+#home .quick,
+#home .glass{
+  position:relative!important;
+  z-index:2!important;
+}
+
+@media(max-width:430px){
+  #home .home-hero,
+  #home .hero-surface{
+    min-height:410px!important;
+  }
+  #home::before{
+    top:84px!important;
+    width:min(58vw,300px)!important;
+  }
+}
