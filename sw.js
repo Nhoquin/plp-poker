@@ -1,7 +1,7 @@
-const CACHE='plp-2026-v43';
+const CACHE='plp-2026-v44';
 const PAGE='./index.html';
 
-// V43: uma nova versão fica aguardando até o usuário aplicar ou todos os clientes
+// V44: uma nova versão fica aguardando até o usuário aplicar ou todos os clientes
 // antigos serem fechados. Isto evita recarregar o aplicativo durante uma partida.
 self.addEventListener('install',event=>{
   event.waitUntil((async()=>{
@@ -37,7 +37,7 @@ self.addEventListener('fetch',event=>{
 
   const isNavigation=req.mode==='navigate';
   const isCode=/\.(?:js|css|json|html)$/i.test(url.pathname);
-  const isVersionedAsset=/\/assets\/(?:plp-logo-v38\.webp|poker-bg-v32\.webp)$/i.test(url.pathname);
+  const isVersionedAsset=/\/assets\//i.test(url.pathname);
 
   if(isNavigation || isCode || isVersionedAsset){
     event.respondWith((async()=>{
