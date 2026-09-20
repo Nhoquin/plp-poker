@@ -17,6 +17,11 @@
   const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
   const esc = value => String(value ?? '').replace(/[&<>\"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[ch]));
   const money = value => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(value)||0);
+  const playerName = value => {
+    const raw=String(value||'').trim().replace(/\s+/g,' ');
+    if(/^daniel(?:\s*\(\s*freeroll\s*\)|\s+freeroll|\s+all\s+capone)?$/i.test(raw)) return 'Daniel All Capone';
+    try{return typeof normalizePlayerName==='function'?normalizePlayerName(raw):raw}catch(_){return raw}
+  };
 
   function toast(message){
     try{ if(typeof showToast === 'function') return showToast(message); }catch(_){ }
@@ -101,7 +106,7 @@
     const home=document.getElementById('home');
     if(!home) return;
 
-    const entries=Array.isArray(snapshot.entries)?snapshot.entries:[];
+    const entries=(Array.isArray(snapshot.entries)?snapshot.entries:[]).map(entry=>({...entry,name:playerName(entry.name)}));
     const champ=championshipLabel(stage.championship);
     const stageDate=shortDate(stage.stage_date);
     const nextStageDate=shortDate(nextDate(stage.stage_date));
@@ -176,7 +181,8 @@
     try{
       const {data,error}=await supa.rpc('plp_public_stage_snapshot');
       if(error) return window.PLP_V19?.snapshot||null;
-      const snapshot=typeof normalizeStageSnapshot==='function'?normalizeStageSnapshot(data):data;
+      const normalized=typeof normalizeStageSnapshot==='function'?normalizeStageSnapshot(data):data;
+      const snapshot=normalized?{...normalized,entries:(normalized.entries||[]).map(entry=>({...entry,name:playerName(entry.name)}))}:normalized;
       if(window.PLP_V19) window.PLP_V19.snapshot=snapshot;
       return snapshot;
     }catch(_){ return window.PLP_V19?.snapshot||null; }

@@ -29,8 +29,10 @@
     return `${day}/${m}/${y}`;
   };
   const normName = name => {
-    try { return typeof normalizePlayerName === 'function' ? normalizePlayerName(String(name||'')) : String(name||'').trim(); }
-    catch { return String(name||'').trim(); }
+    const raw=String(name||'').trim().replace(/\s+/g,' ');
+    if(/^daniel(?:\s*\(\s*freeroll\s*\)|\s+freeroll|\s+all\s+capone)?$/i.test(raw)) return 'Daniel All Capone';
+    try { return typeof normalizePlayerName === 'function' ? normalizePlayerName(raw) : raw; }
+    catch { return raw; }
   };
   const playerKey = name => {
     const normalized=normName(name);
@@ -132,9 +134,9 @@
     const snap=V19.snapshot, s=snap?.stage;
     btn.classList.toggle('show',!!s);
     if(!s) return;
-    const entries=snap.entries||[];
+    const entries=(snap.entries||[]).map(entry=>({...entry,name:normName(entry.name)}));
     const calc=calcStage(s,entries,snap.finalized_jackpot);
-    const host=(s.host_name||calc.host?.name||'A DEFINIR').toUpperCase();
+    const host=normName(s.host_name||calc.host?.name||'A DEFINIR').toUpperCase();
     const phase=s.game_started?'EM TEMPO REAL':s.registration_closed?'INSCRIÇÕES ENCERRADAS':'INSCRIÇÕES ABERTAS';
     const confirmed=entries.filter(e=>e.payment_status==='confirmed').length;
     const informed=entries.filter(e=>e.payment_status==='informed').length;
@@ -162,8 +164,8 @@
     if(!host) return;
     const snap=V19.snapshot, s=snap?.stage;
     if(!s){host.innerHTML='<div class="v19-card"><div class="empty-state">Não há etapa publicada no momento.</div></div>';return}
-    const entries=snap.entries||[], calc=calcStage(s,entries,snap.finalized_jackpot);
-    const local=s.host_name||calc.host?.name||'A definir';
+    const entries=(snap.entries||[]).map(entry=>({...entry,name:normName(entry.name)})), calc=calcStage(s,entries,snap.finalized_jackpot);
+    const local=normName(s.host_name||calc.host?.name||'A definir');
     const confirmed=entries.filter(e=>e.payment_status==='confirmed').length;
     const informed=entries.filter(e=>e.payment_status==='informed').length;
     const pending=entries.filter(e=>e.payment_status==='pending').length;

@@ -15,6 +15,11 @@
 
   const esc = value => String(value ?? '').replace(/[&<>\"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[ch]));
   const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+  const playerName = value => {
+    const raw=String(value||'').trim().replace(/\s+/g,' ');
+    if(/^daniel(?:\s*\(\s*freeroll\s*\)|\s+freeroll|\s+all\s+capone)?$/i.test(raw)) return 'Daniel All Capone';
+    try{return typeof normalizePlayerName==='function'?normalizePlayerName(raw):raw}catch(_){return raw}
+  };
 
   function toast(message){
     try{
@@ -69,7 +74,7 @@
   }
 
   function splitEntries(entries){
-    const all=Array.isArray(entries)?entries:[];
+    const all=(Array.isArray(entries)?entries:[]).map(entry=>({...entry,name:playerName(entry.name)}));
     const active=all.filter(entry=>!entry.eliminated_at && !entry.elimination_order)
       .sort((a,b)=>(Number(a.list_position)||9999)-(Number(b.list_position)||9999) || String(a.name||'').localeCompare(String(b.name||'')));
     const eliminated=all.filter(entry=>entry.eliminated_at || entry.elimination_order)
@@ -86,7 +91,7 @@
       supa.from('players').select('player_key,name').order('name')
     ]);
     if(stageQ.error || !stageQ.data || entryQ.error) return null;
-    const names=new Map((playersQ.data||[]).map(player=>[player.player_key,typeof normalizePlayerName==='function'?normalizePlayerName(String(player.name||'')):player.name]));
+    const names=new Map((playersQ.data||[]).map(player=>[player.player_key,playerName(player.name)]));
     const entries=(entryQ.data||[]).map(entry=>({...entry,name:names.get(entry.player_key)||entry.player_key}));
     return {stage:stageQ.data,entries};
   }
