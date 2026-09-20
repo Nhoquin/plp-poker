@@ -1,4 +1,4 @@
-/* PLP V37 • logo fixo da Liga sobre o fundo global */
+/* PLP V38 • logo oficial fixo da Liga sobre o fundo global */
 
 /* Área vazia no topo da Home para o logo respirar sem encostar no card da etapa. */
 #home .home-hero,
@@ -18,7 +18,7 @@
   width:min(54vw,330px)!important;
   aspect-ratio:1/1!important;
   transform:translateX(-50%)!important;
-  background:url('assets/league-logo.png') center/contain no-repeat!important;
+  background:url('assets/plp-logo-v38.webp') center/contain no-repeat!important;
   z-index:0!important;
   pointer-events:none!important;
   filter:drop-shadow(0 12px 28px rgba(0,0,0,.55))!important;
