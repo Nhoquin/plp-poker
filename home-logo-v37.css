@@ -1,4 +1,4 @@
-/* PLP V38 • logo oficial fixo da Liga sobre o fundo global */
+/* PLP V46 • logo oficial visível dentro do hero */
 
 /* Área vazia no topo da Home para o logo respirar sem encostar no card da etapa. */
 #home .home-hero,
@@ -61,4 +61,28 @@
     top:84px!important;
     width:min(58vw,300px)!important;
   }
+}
+
+
+/* V46: o logo fica dentro da área visual da Home.
+   Evita pseudo-elemento atrás do hero transparente. */
+#home::before{content:none!important;display:none!important}
+#home #homeBrandHero{position:relative!important;display:flex!important;align-items:flex-start!important;justify-content:center!important}
+#home #homeBrandSurface{position:relative!important;width:100%!important;display:flex!important;align-items:flex-start!important;justify-content:center!important;padding-top:24px!important}
+#home #homeBrandSurface::before{
+  content:""!important;
+  display:block!important;
+  width:min(58vw,300px)!important;
+  aspect-ratio:1/1!important;
+  background-image:url('assets/plp-logo-v38.webp?v=46')!important;
+  background-position:center!important;
+  background-size:contain!important;
+  background-repeat:no-repeat!important;
+  filter:drop-shadow(0 12px 28px rgba(0,0,0,.55))!important;
+  opacity:1!important;
+  visibility:visible!important;
+}
+@media(max-width:430px){
+ #home #homeBrandSurface{padding-top:18px!important}
+ #home #homeBrandSurface::before{width:min(62vw,280px)!important}
 }
