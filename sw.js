@@ -1,4 +1,4 @@
-const PLP_BUILD = '49';
+const PLP_BUILD = '50';
 const CACHE = `plp-2026-v${PLP_BUILD}`;
 const CACHE_PREFIX = 'plp-2026-v';
 const PAGE = './index.html';
