@@ -9,14 +9,14 @@
 <meta name="apple-mobile-web-app-title" content="Liga Poker" />
 <meta name="mobile-web-app-capable" content="yes" />
 <title>1ª Liga de Poker • 2026</title>
-<link rel="manifest" href="manifest.json?v=49" />
+<link rel="manifest" href="manifest.json?v=50" />
 <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon-v47.png" />
 <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192-v47.png" />
 <link rel="preload" as="image" href="assets/plp-logo-v47.png" />
-<link rel="stylesheet" href="home-logo-v37.css?v=49" />
-<link rel="stylesheet" href="players-v48.css?v=49" />
-<script src="pwa-update.js?v=49" defer></script>
-<script src="players-v48.js?v=49" defer></script>
+<link rel="stylesheet" href="home-logo-v37.css?v=50" />
+<link rel="stylesheet" href="players-v48.css?v=50" />
+<script src="pwa-update.js?v=50" defer></script>
+<script src="players-v48.js?v=50" defer></script>
 <style>
 
 :root{
@@ -470,7 +470,7 @@ body::after,body:has(#home.active)::after{content:""!important;position:fixed!im
 
 <section class="screen" id="profile">
   <div class="screen-top"><div class="screen-top-inner"><img class="mini-logo" src="assets/plp-logo-v47.png"><div><h2>Perfil</h2><p>Acesso ao aplicativo</p></div><button class="back-home" data-go="home">⌂</button></div></div>
-  <div class="card" style="text-align:center;padding:24px"><img class="mini-logo" style="width:86px;height:86px" src="assets/plp-logo-v47.png" alt="Logo da 1ª Liga de Poker"><h3 style="margin:11px 0 3px">1ª Liga de Poker</h3><div class="muted small">Versão 49 • Temporada 2026</div></div>
+  <div class="card" style="text-align:center;padding:24px"><img class="mini-logo" style="width:86px;height:86px" src="assets/plp-logo-v47.png" alt="Logo da 1ª Liga de Poker"><h3 style="margin:11px 0 3px">1ª Liga de Poker</h3><div class="muted small">Versão 50 • Temporada 2026</div></div>
   <div class="card"><div class="row"><span class="muted">Perfil atual</span><b id="profileRole">Administrador local</b></div><div class="row"><span class="muted">Temporada</span><b>2026</b></div><div class="row"><span class="muted">Tema</span><b>PLP Preto & Dourado</b></div></div>
 <div class="card" id="authCard">
   <div class="row"><div><b>Acesso administrativo</b><div class="small muted">Somente contas cadastradas como administradoras podem acessar cadastros, resultados e controles administrativos.</div></div><span class="pill warn" id="backendBadge">LOCAL</span></div>
@@ -655,7 +655,7 @@ document.querySelectorAll('[data-champ]').forEach(btn=>btn.addEventListener('cli
 document.querySelectorAll('[data-history-champ]').forEach(btn=>btn.addEventListener('click',()=>setChampionshipView(btn.dataset.historyChamp,true)));
 const signupAlias={'TCHÔLA':'TCHOLA','TCHOLA':'TCHOLA','RAFA':'RAFAEL','RAFAEL':'RAFAEL','GUI FURLAN':'GUI FURLAN','GUILHERME':'GUILHERME'};
 let signupParsed=[];let signupSelected=new Set();let signupMeta={};
-function normalizePlayerName(name){let v=String(name||'').trim().replace(/\s+/g,' ');const key=v.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase();const aliases={'TCHOLA':'TCHOLA','RAFA':'RAFAEL','RAFAEL':'RAFAEL','TAVARES':'DU','DU':'DU','DANIEL':'Daniel All Capone','DANIEL (FREEROLL)':'Daniel All Capone','DANIEL FREEROLL':'Daniel All Capone','DANIEL ALL CAPONE':'Daniel All Capone'};return aliases[key]||v.replace(/\b\w/g,c=>c.toUpperCase())}
+function normalizePlayerName(name){let v=String(name||'').trim().replace(/\s+/g,' ');const key=v.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase();const aliases={'TCHOLA':'TCHOLA','RAFA':'RAFAEL','RAFAEL':'RAFAEL','TAVARES':'DU','DU':'DU','DANIEL':'Daniel All Capone','DANIEL (FREEROLL)':'Daniel All Capone','DANIEL FREEROLL':'Daniel All Capone','DANIEL ALL CAPONE':'Daniel All Capone','CAZELE':'CAZELE','KAZELE':'CAZELE','KKKAZELE':'CAZELE'};return aliases[key]||v.replace(/\b\w/g,c=>c.toUpperCase())}
 function normalizeStageSnapshot(snapshot){if(!snapshot)return snapshot;const stage=snapshot.stage?{...snapshot.stage,host_name:snapshot.stage.host_name?normalizePlayerName(snapshot.stage.host_name):snapshot.stage.host_name}:snapshot.stage;const entries=Array.isArray(snapshot.entries)?snapshot.entries.map(entry=>({...entry,name:normalizePlayerName(entry.name)})):[];return{...snapshot,stage,entries}}
 window.normalizeStageSnapshot=normalizeStageSnapshot;
 function extractMoney(text,re){const m=text.match(re);return m?Number(m[1].replace('.','').replace(',','.')):null}
@@ -862,7 +862,7 @@ function dedupeRankSets(){
   }
 }
 ensureDataVersion();loadSavedOverrides();dedupeRankSets();renderHome();renderRanking('rankingList',rankSets.geral,'geral');renderFinanceStrip('geral');setChampionshipView('br3',false);setChampionshipView('br3',true);renderClassified();renderPlayers();paintClock();parseSignupText();populateResultStageOptions(false);loadSelectedStageResult();setAdminUI();initBackend();
-console.info('PLP Poker V49');
+console.info('PLP Poker V50');
 </script>
 </body>
 </html>
