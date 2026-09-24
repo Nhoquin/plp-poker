@@ -9,14 +9,14 @@
 <meta name="apple-mobile-web-app-title" content="Liga Poker" />
 <meta name="mobile-web-app-capable" content="yes" />
 <title>1ª Liga de Poker • 2026</title>
-<link rel="manifest" href="manifest.json?v=48" />
+<link rel="manifest" href="manifest.json?v=49" />
 <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon-v47.png" />
 <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192-v47.png" />
 <link rel="preload" as="image" href="assets/plp-logo-v47.png" />
-<link rel="stylesheet" href="home-logo-v37.css?v=48" />
-<link rel="stylesheet" href="players-v48.css?v=48" />
-<script src="pwa-update.js?v=48" defer></script>
-<script src="players-v48.js?v=48" defer></script>
+<link rel="stylesheet" href="home-logo-v37.css?v=49" />
+<link rel="stylesheet" href="players-v48.css?v=49" />
+<script src="pwa-update.js?v=49" defer></script>
+<script src="players-v48.js?v=49" defer></script>
 <style>
 
 :root{
@@ -470,7 +470,7 @@ body::after,body:has(#home.active)::after{content:""!important;position:fixed!im
 
 <section class="screen" id="profile">
   <div class="screen-top"><div class="screen-top-inner"><img class="mini-logo" src="assets/plp-logo-v47.png"><div><h2>Perfil</h2><p>Acesso ao aplicativo</p></div><button class="back-home" data-go="home">⌂</button></div></div>
-  <div class="card" style="text-align:center;padding:24px"><img class="mini-logo" style="width:86px;height:86px" src="assets/plp-logo-v47.png" alt="Logo da 1ª Liga de Poker"><h3 style="margin:11px 0 3px">1ª Liga de Poker</h3><div class="muted small">Versão 48 • Temporada 2026</div></div>
+  <div class="card" style="text-align:center;padding:24px"><img class="mini-logo" style="width:86px;height:86px" src="assets/plp-logo-v47.png" alt="Logo da 1ª Liga de Poker"><h3 style="margin:11px 0 3px">1ª Liga de Poker</h3><div class="muted small">Versão 49 • Temporada 2026</div></div>
   <div class="card"><div class="row"><span class="muted">Perfil atual</span><b id="profileRole">Administrador local</b></div><div class="row"><span class="muted">Temporada</span><b>2026</b></div><div class="row"><span class="muted">Tema</span><b>PLP Preto & Dourado</b></div></div>
 <div class="card" id="authCard">
   <div class="row"><div><b>Acesso administrativo</b><div class="small muted">Somente contas cadastradas como administradoras podem acessar cadastros, resultados e controles administrativos.</div></div><span class="pill warn" id="backendBadge">LOCAL</span></div>
@@ -843,8 +843,26 @@ document.getElementById('adminCreate').addEventListener('click',async()=>{
   else{const st=document.getElementById('adminAuthStatus');if(st){st.className='auth-status good';st.textContent='Cadastro criado. Confirme o e-mail recebido e depois entre no aplicativo.'}showToast('Confira seu e-mail para confirmar o cadastro.')}
 });
 document.getElementById('adminLogout').addEventListener('click',async()=>{if(backendReady){await supa.auth.signOut();await refreshAdminRole();showToast('Sessão encerrada.')}});
-ensureDataVersion();loadSavedOverrides();renderHome();renderRanking('rankingList',rankSets.geral,'geral');renderFinanceStrip('geral');setChampionshipView('br3',false);setChampionshipView('br3',true);renderClassified();renderPlayers();paintClock();parseSignupText();populateResultStageOptions(false);loadSelectedStageResult();setAdminUI();initBackend();
-console.info('PLP Poker V48');
+function canonicalRankKey(name){return String(normalizePlayerName(name)||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().replace(/\s+/g,' ').toUpperCase()}
+function dedupeRankSets(){
+  for(const scope of ['geral','br1','br2','br3','br4']){
+    const rows=Array.isArray(rankSets[scope])?rankSets[scope]:[],merged=new Map();
+    for(const row of rows){
+      const key=canonicalRankKey(row.name);if(!key)continue;
+      const current=merged.get(key);
+      if(!current){merged.set(key,{...row,name:normalizePlayerName(row.name)});continue}
+      // Duplicatas visuais representam o mesmo cadastro: mantém a maior pontuação,
+      // evitando somar duas vezes o mesmo histórico já consolidado.
+      if((Number(row.pts)||0)>(Number(current.pts)||0))current.pts=Number(row.pts)||0;
+      current.discard=Math.max(Number(current.discard)||0,Number(row.discard)||0);
+      current.prize=current.prize||row.prize||'';
+      current.status=current.status||row.status;
+    }
+    rankSets[scope]=[...merged.values()].sort((a,b)=>(Number(b.pts)||0)-(Number(a.pts)||0)||String(a.name).localeCompare(String(b.name),'pt-BR'));
+  }
+}
+ensureDataVersion();loadSavedOverrides();dedupeRankSets();renderHome();renderRanking('rankingList',rankSets.geral,'geral');renderFinanceStrip('geral');setChampionshipView('br3',false);setChampionshipView('br3',true);renderClassified();renderPlayers();paintClock();parseSignupText();populateResultStageOptions(false);loadSelectedStageResult();setAdminUI();initBackend();
+console.info('PLP Poker V49');
 </script>
 </body>
 </html>
