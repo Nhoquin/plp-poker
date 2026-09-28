@@ -31,7 +31,8 @@ window.PLP_BUILD = '52';
     ['finance-v30.js', 'plpFinanceV30'],
     ['finance-overview-v32.js', 'plpFinanceOverviewV32'],
     ['finance-ledger-v33.js', 'plpFinanceLedgerV33'],
-    ['game-flow-v52.js', 'plpGameFlowV52']
+    ['game-flow-v52.js', 'plpGameFlowV52'],
+    ['game-flow-v52-compat.js', 'plpGameFlowV52Compat']
   ];
 
   function versioned(path) {
