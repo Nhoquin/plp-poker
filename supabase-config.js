@@ -5,7 +5,7 @@ window.PLP_SUPABASE_CONFIG = {
   anonKey: "sb_publishable_elNr5qi_sEYm2ddiZZ9dLg_s_T4oCZM"
 };
 
-window.PLP_BUILD = '52';
+window.PLP_BUILD = '53';
 
 (() => {
   'use strict';
@@ -32,7 +32,8 @@ window.PLP_BUILD = '52';
     ['finance-overview-v32.js', 'plpFinanceOverviewV32'],
     ['finance-ledger-v33.js', 'plpFinanceLedgerV33'],
     ['game-flow-v52.js', 'plpGameFlowV52'],
-    ['game-flow-v52-compat.js', 'plpGameFlowV52Compat']
+    ['game-flow-v52-compat.js', 'plpGameFlowV52Compat'],
+    ['game-list-template-v53.js', 'plpGameListTemplateV53']
   ];
 
   function versioned(path) {
@@ -82,11 +83,11 @@ window.PLP_BUILD = '52';
         if (typeof supa !== 'undefined' && supa) {
           window.clearInterval(timer);
           supa.auth.onAuthStateChange(event => {
-            if (event === 'SIGNED_IN' && !sessionStorage.getItem('plpV52SignedReload')) {
-              sessionStorage.setItem('plpV52SignedReload', '1');
+            if (event === 'SIGNED_IN' && !sessionStorage.getItem('plpV53SignedReload')) {
+              sessionStorage.setItem('plpV53SignedReload', '1');
               window.setTimeout(() => location.reload(), 250);
             }
-            if (event === 'SIGNED_OUT') sessionStorage.removeItem('plpV52SignedReload');
+            if (event === 'SIGNED_OUT') sessionStorage.removeItem('plpV53SignedReload');
           });
         }
       } catch (_) {}
