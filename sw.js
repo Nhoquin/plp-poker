@@ -1,4 +1,4 @@
-const PLP_BUILD = '51';
+const PLP_BUILD = '52';
 const CACHE = `plp-2026-v${PLP_BUILD}`;
 const CACHE_PREFIX = 'plp-2026-v';
 const PAGE = './index.html';
@@ -31,6 +31,7 @@ const SHELL_ASSETS = [
   './finance-v30.js',
   './finance-overview-v32.js',
   './finance-ledger-v33.js',
+  './game-flow-v52.js',
   './assets/plp-logo-v47.png',
   './assets/splash-logo-v47.png',
   './assets/poker-bg-v32.webp',
@@ -47,7 +48,7 @@ async function putIfValid(cache, key, response) {
 }
 
 self.addEventListener('install', event => {
-  // Updates remain waiting until the user taps "Atualizar agora".
+  // A nova versão permanece aguardando até o usuário tocar em "Atualizar agora".
   event.waitUntil((async () => {
     const cache = await caches.open(CACHE);
     await Promise.allSettled(SHELL_ASSETS.map(async asset => {
