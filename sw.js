@@ -32,6 +32,7 @@ const SHELL_ASSETS = [
   './finance-overview-v32.js',
   './finance-ledger-v33.js',
   './game-flow-v52.js',
+  './game-flow-v52-compat.js',
   './assets/plp-logo-v47.png',
   './assets/splash-logo-v47.png',
   './assets/poker-bg-v32.webp',
