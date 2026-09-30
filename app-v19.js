@@ -289,12 +289,29 @@
       const data=await fetchAdminStageData(stageId);
       if(!data) return;
       patchLegacyGameDayHeader(data.stage,data.entries);
-      const old=document.getElementById('v19AdminRegistrations'); if(old) old.remove();
       const calc=calcStage(data.stage,data.entries,V19.snapshot?.finalized_jackpot||0);
       const host=data.stage.host_name || data.entries.find(e=>e.is_host)?.name || 'A definir';
       const phase=data.stage.game_started?'JOGO EM ANDAMENTO':data.stage.registration_closed?'INSCRIÇÕES ENCERRADAS':'INSCRIÇÕES ABERTAS';
-      const panel=document.createElement('div');
+      const signature=JSON.stringify([
+        data.stage.id,data.stage.updated_at,data.stage.game_started,data.stage.registration_closed,
+        data.stage.financial_mode,data.stage.collected_amount,data.stage.jackpot_amount,data.stage.prize_pool,
+        data.stage.host_name,
+        data.entries.map(e=>[
+          e.player_key,e.list_position,e.payment_status,e.attendance_status,e.amount_paid,
+          e.is_host,e.elimination_order,e.finish_position,e.eliminated_at
+        ])
+      ]);
+      const old=document.getElementById('v19AdminRegistrations');
+      if(old?.dataset.renderSignature===signature){
+        applyFinanceInputs(data.stage,calc);
+        return;
+      }
+
+      const scrollY=window.scrollY;
+      const preserveScroll=Boolean(old && document.getElementById('gameDay')?.classList.contains('active'));
+      const panel=old || document.createElement('div');
       panel.id='v19AdminRegistrations';
+      panel.dataset.renderSignature=signature;
       panel.innerHTML=`<div class="v19-card v19-admin-card">
         <div class="v19-card-title"><div><h3>Inscrições da etapa</h3><p>${data.stage.championship.toUpperCase()} • Etapa ${data.stage.stage_number} • Local: <b>${esc(host)}</b></p></div><span class="v19-phase">${phase}</span></div>
         <div class="v19-admin-summary"><div><span>Inscritos</span><b>${data.entries.length}</b></div><div><span>Pagantes</span><b>${calc.payers}</b></div><div><span>Premiação</span><b>${money(calc.current.prizePool)}</b></div><div><span>Jackpot etapa</span><b>${money(calc.current.jackpot)}</b></div></div>
@@ -308,9 +325,19 @@
         <div class="v19-actions-row"><button class="btn ghost" id="v19AutoFinance">Usar cálculo automático</button><button class="btn gold" id="v19ManualFinance">Salvar valores manuais acima</button></div>
         <div class="v19-note">“Valores manuais acima” usa os campos Arrecadação, Jackpot e Premiação já existentes na tela. Você pode voltar ao automático a qualquer momento antes do fechamento.</div>
       </div>`;
-      content.prepend(panel);
+      if(!old) content.prepend(panel);
       bindAdminPanel(data,calc);
       applyFinanceInputs(data.stage,calc);
+
+      if(preserveScroll){
+        requestAnimationFrame(()=>{
+          if(Math.abs(window.scrollY-scrollY)>2){
+            const native=window.PLP_UI_STABILITY?.nativeScrollTo;
+            if(typeof native==='function') native(0,scrollY);
+            else window.scrollTo({top:scrollY,behavior:'auto'});
+          }
+        });
+      }
     }finally{
       V19.renderingAdmin=false;
     }
