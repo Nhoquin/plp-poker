@@ -134,19 +134,34 @@
   function renderAdminPanel(data){
     const content=document.getElementById('gdContent');
     if(!content || !document.getElementById('gameDay')?.classList.contains('active') || !adminReady()) return;
-    document.getElementById('v25EliminationAdmin')?.remove();
 
     const split=splitEntries(data.entries);
     applyLegacyLocks(data,split);
 
-    const panel=document.createElement('div');
+    const signature=JSON.stringify([
+      data.stage.id,data.stage.updated_at,data.stage.game_started,data.stage.status,
+      data.entries.map(entry=>[
+        entry.player_key,entry.list_position,entry.payment_status,entry.is_host,
+        entry.elimination_order,entry.finish_position,entry.eliminated_at
+      ])
+    ]);
+    const old=document.getElementById('v25EliminationAdmin');
+    if(old?.dataset.renderSignature===signature) return;
+
+    const scrollY=window.scrollY;
+    const preserveScroll=Boolean(old && document.getElementById('gameDay')?.classList.contains('active'));
+    const panel=old || document.createElement('div');
     panel.id='v25EliminationAdmin';
     panel.className='v25-card';
+    panel.dataset.renderSignature=signature;
 
     if(!data.stage.game_started){
       panel.innerHTML=`<div class="v25-head"><div><h3>Controle de eliminações</h3><p>A classificação será registrada automaticamente conforme os jogadores forem saindo.</p></div><span class="v25-live-badge">PRONTO</span></div><div class="v25-note">Inicie o jogo para liberar os botões de eliminação. Com <strong>${data.entries.length} jogadores</strong>, o primeiro eliminado será registrado em <strong>${data.entries.length}º lugar</strong>.</div>`;
-      const anchor=document.getElementById('v19AdminRegistrations');
-      if(anchor) anchor.insertAdjacentElement('afterend',panel); else content.prepend(panel);
+      if(!old){
+        const anchor=document.getElementById('v19AdminRegistrations');
+        if(anchor) anchor.insertAdjacentElement('afterend',panel); else content.prepend(panel);
+      }
+      if(preserveScroll) requestAnimationFrame(()=>window.PLP_UI_STABILITY?.nativeScrollTo?.(0,scrollY));
       return;
     }
 
@@ -168,8 +183,10 @@
       ${complete?'<button class="v25-copy" type="button" id="v25CopyClassification">Copiar classificação completa</button>':''}
     `;
 
-    const anchor=document.getElementById('v19AdminRegistrations');
-    if(anchor) anchor.insertAdjacentElement('afterend',panel); else content.prepend(panel);
+    if(!old){
+      const anchor=document.getElementById('v19AdminRegistrations');
+      if(anchor) anchor.insertAdjacentElement('afterend',panel); else content.prepend(panel);
+    }
 
     panel.querySelectorAll('[data-v25-eliminate]').forEach(btn=>{
       btn.addEventListener('click',()=>eliminatePlayer(data,btn.dataset.v25Eliminate,btn.dataset.v25Name));
@@ -178,6 +195,16 @@
     if(undo) undo.addEventListener('click',()=>restoreLast(data,undo.dataset.v25Undo,undo.dataset.v25Name));
     const copy=panel.querySelector('#v25CopyClassification');
     if(copy) copy.addEventListener('click',()=>copyClassification(data));
+
+    if(preserveScroll){
+      requestAnimationFrame(()=>{
+        if(Math.abs(window.scrollY-scrollY)>2){
+          const native=window.PLP_UI_STABILITY?.nativeScrollTo;
+          if(typeof native==='function') native(0,scrollY);
+          else window.scrollTo({top:scrollY,behavior:'auto'});
+        }
+      });
+    }
   }
 
   async function eliminatePlayer(data,playerKey,name){
