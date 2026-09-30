@@ -1,4 +1,4 @@
-const PLP_BUILD = '54';
+const PLP_BUILD = '55';
 const CACHE = `plp-2026-v${PLP_BUILD}`;
 const CACHE_PREFIX = 'plp-2026-v';
 const PAGE = './index.html';
@@ -35,6 +35,7 @@ const SHELL_ASSETS = [
   './game-flow-v52-compat.js',
   './game-list-template-v53.js',
   './game-flow-v54.js',
+  './live-game-v55.js',
   './assets/plp-logo-v47.png',
   './assets/splash-logo-v47.png',
   './assets/poker-bg-v32.webp',
