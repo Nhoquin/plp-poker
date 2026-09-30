@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const BUILD = '51';
+  const BUILD = '55';
   const BANNER_ID = 'plpUpdateReady';
   const APPLY_KEY = 'plpApplyingBuild';
   let registration = null;
