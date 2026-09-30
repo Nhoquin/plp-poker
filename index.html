@@ -9,14 +9,14 @@
 <meta name="apple-mobile-web-app-title" content="Liga Poker" />
 <meta name="mobile-web-app-capable" content="yes" />
 <title>1ª Liga de Poker • 2026</title>
-<link rel="manifest" href="manifest.json?v=50" />
+<link rel="manifest" href="manifest.json?v=55" />
 <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon-v47.png" />
 <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192-v47.png" />
 <link rel="preload" as="image" href="assets/plp-logo-v47.png" />
-<link rel="stylesheet" href="home-logo-v37.css?v=50" />
-<link rel="stylesheet" href="players-v48.css?v=50" />
-<script src="pwa-update.js?v=50" defer></script>
-<script src="players-v48.js?v=50" defer></script>
+<link rel="stylesheet" href="home-logo-v37.css?v=55" />
+<link rel="stylesheet" href="players-v48.css?v=55" />
+<script src="pwa-update.js?v=55" defer></script>
+<script src="players-v48.js?v=55" defer></script>
 <style>
 
 :root{
@@ -470,7 +470,7 @@ body::after,body:has(#home.active)::after{content:""!important;position:fixed!im
 
 <section class="screen" id="profile">
   <div class="screen-top"><div class="screen-top-inner"><img class="mini-logo" src="assets/plp-logo-v47.png"><div><h2>Perfil</h2><p>Acesso ao aplicativo</p></div><button class="back-home" data-go="home">⌂</button></div></div>
-  <div class="card" style="text-align:center;padding:24px"><img class="mini-logo" style="width:86px;height:86px" src="assets/plp-logo-v47.png" alt="Logo da 1ª Liga de Poker"><h3 style="margin:11px 0 3px">1ª Liga de Poker</h3><div class="muted small">Versão 50 • Temporada 2026</div></div>
+  <div class="card" style="text-align:center;padding:24px"><img class="mini-logo" style="width:86px;height:86px" src="assets/plp-logo-v47.png" alt="Logo da 1ª Liga de Poker"><h3 style="margin:11px 0 3px">1ª Liga de Poker</h3><div class="muted small">Versão 55 • Temporada 2026</div></div>
   <div class="card"><div class="row"><span class="muted">Perfil atual</span><b id="profileRole">Administrador local</b></div><div class="row"><span class="muted">Temporada</span><b>2026</b></div><div class="row"><span class="muted">Tema</span><b>PLP Preto & Dourado</b></div></div>
 <div class="card" id="authCard">
   <div class="row"><div><b>Acesso administrativo</b><div class="small muted">Somente contas cadastradas como administradoras podem acessar cadastros, resultados e controles administrativos.</div></div><span class="pill warn" id="backendBadge">LOCAL</span></div>
@@ -862,7 +862,7 @@ function dedupeRankSets(){
   }
 }
 ensureDataVersion();loadSavedOverrides();dedupeRankSets();renderHome();renderRanking('rankingList',rankSets.geral,'geral');renderFinanceStrip('geral');setChampionshipView('br3',false);setChampionshipView('br3',true);renderClassified();renderPlayers();paintClock();parseSignupText();populateResultStageOptions(false);loadSelectedStageResult();setAdminUI();initBackend();
-console.info('PLP Poker V50');
+console.info('PLP Poker V55');
 </script>
 </body>
 </html>
