@@ -459,14 +459,21 @@
     indices = [...new Set(indices)].filter(index => signupParsed[index]);
     const data = await fetchStageData(stage.id);
     if (!data) return toast('Não foi possível carregar a etapa.');
+
     const markers = rawSignupMarkers();
     const explicitHostName = normalizeName(typeof signupMeta !== 'undefined' ? signupMeta?.host : '');
     const existingHost = data.entries.find(entry => entry.is_host);
     const hostName = explicitHostName || normalizeName(stage.host_name || existingHost?.name || '');
-    let hostPlayer = null;
+    let hostPlayer = existingHost ? {key:existingHost.player_key,name:existingHost.name} : null;
+    let lateAdded = 0;
+    let updated = 0;
+
     V52.busy = true;
     try {
-      if (hostName) {
+      // Depois que o jogo começa, o anfitrião e a estrutura da etapa ficam congelados.
+      // Novos nomes passam obrigatoriamente pela RPC de entrada tardia, que preserva
+      // a ordem de eliminação e recalcula as posições já registradas.
+      if (!stage.game_started && hostName) {
         hostPlayer = await ensurePlayer(hostName, data.players);
         const {error} = await supa.rpc('plp_admin_prepare_stage', {
           p_stage_id:stage.id,
@@ -482,17 +489,34 @@
       const mapping = {informado:'informed',conferido:'confirmed',pendente:'pending',isento:'exempt'};
       const attendance = {presente:'present',faltou:'absent',nao_conferido:'unchecked'};
       const payload = [];
+
       for (let order=0; order<indices.length; order++) {
         const source = signupParsed[indices[order]];
         const marker = markers.get(Number(source.n));
         const sourceName = marker?.name ? normalizeName(marker.name) : source.name;
         const player = await ensurePlayer(sourceName, data.players);
-        const isHost = Boolean(hostPlayer && player.key === hostPlayer.key);
+        const existing = data.entries.find(entry => entry.player_key === player.key);
+        const isHost = stage.game_started
+          ? Boolean(existing?.is_host)
+          : Boolean(hostPlayer && player.key === hostPlayer.key);
+
         let payment = mapping[source.payment] || 'pending';
         if (marker?.exempt && !isHost) payment = 'exempt';
         else if (marker?.paid && payment === 'pending') payment = 'informed';
         if (isHost) payment = 'exempt';
-        const existing = data.entries.find(entry => entry.player_key === player.key);
+
+        if (stage.game_started && !existing) {
+          const {error} = await supa.rpc('plp_admin_add_late_participant', {
+            p_stage_id:stage.id,
+            p_player_key:player.key,
+            p_player_name:player.name,
+            p_payment_status:payment
+          });
+          if (error) throw error;
+          lateAdded++;
+          continue;
+        }
+
         const position = isHost ? 1 : (existing?.list_position || currentMax + order + 1);
         payload.push({
           stage_id:stage.id,
@@ -506,14 +530,26 @@
           updated_at:new Date().toISOString()
         });
       }
+
       if (payload.length) {
         const result = await supa.from('stage_entries').upsert(payload,{onConflict:'stage_id,player_key'});
         if (result.error) throw result.error;
+        updated = payload.length;
       }
-      await resequenceEntries(stage.id, hostPlayer?.key || existingHost?.player_key || null);
+
+      if (!stage.game_started) {
+        await resequenceEntries(stage.id, hostPlayer?.key || existingHost?.player_key || null);
+      }
+
       if (window.PLP_V18) window.PLP_V18.selectedStageId = stage.id;
       sessionStorage.setItem('plpV52TargetStageId', stage.id);
-      toast(`${payload.length} participante${payload.length===1?'':'s'} aplicado${payload.length===1?'':'s'}. Isentos permanecem separados do anfitrião.`);
+
+      if (stage.game_started && lateAdded) {
+        toast(`${lateAdded} participante${lateAdded===1?'':'s'} novo${lateAdded===1?'':'s'} adicionado${lateAdded===1?'':'s'} com o jogo em andamento. Classificação preservada.`);
+      } else {
+        toast(`${updated} participante${updated===1?'':'s'} aplicado${updated===1?'':'s'}. Isentos permanecem separados do anfitrião.`);
+      }
+
       await refreshSnapshots(stage.id);
       if (document.getElementById('gameDay')?.classList.contains('active')) setTimeout(()=>refreshFlow(true),150);
     } catch (error) {
