@@ -5,7 +5,7 @@ window.PLP_SUPABASE_CONFIG = {
   anonKey: "sb_publishable_elNr5qi_sEYm2ddiZZ9dLg_s_T4oCZM"
 };
 
-window.PLP_BUILD = '56';
+window.PLP_BUILD = '57';
 
 (() => {
   'use strict';
@@ -35,7 +35,8 @@ window.PLP_BUILD = '56';
     ['game-flow-v52-compat.js', 'plpGameFlowV52Compat'],
     ['game-list-template-v53.js', 'plpGameListTemplateV53'],
     ['game-flow-v54.js', 'plpGameFlowV54'],
-    ['live-game-v55.js', 'plpLiveGameV55']
+    ['live-game-v55.js', 'plpLiveGameV55'],
+    ['stage-correction-v57.js', 'plpStageCorrectionV57']
   ];
 
   function versioned(path) {
