@@ -2,7 +2,7 @@
 (() => {
   'use strict';
 
-  const BUILD = '58';
+  const BUILD = '59';
   const state = {
     busy:false,
     patchTimer:null,
