@@ -5,7 +5,7 @@ window.PLP_SUPABASE_CONFIG = {
   anonKey: "sb_publishable_elNr5qi_sEYm2ddiZZ9dLg_s_T4oCZM"
 };
 
-window.PLP_BUILD = '57';
+window.PLP_BUILD = '58';
 
 (() => {
   'use strict';
@@ -36,6 +36,7 @@ window.PLP_BUILD = '57';
     ['game-list-template-v53.js', 'plpGameListTemplateV53'],
     ['game-flow-v54.js', 'plpGameFlowV54'],
     ['live-game-v55.js', 'plpLiveGameV55'],
+    ['live-roster-v58.js', 'plpLiveRosterV58'],
     ['stage-correction-v57.js', 'plpStageCorrectionV57']
   ];
 
