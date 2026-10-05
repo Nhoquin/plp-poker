@@ -2,7 +2,7 @@
 (() => {
   'use strict';
 
-  const BUILD = '58';
+  const BUILD = '59';
   const state = {timer:null,channel:null,busy:false,lastSignature:''};
   window.PLP_V55 = state;
 
