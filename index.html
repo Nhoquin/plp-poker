@@ -575,10 +575,13 @@ async function loadRemoteClock(){
 async function saveRemoteClock(next){
   if(!backendReady)return false;
   if(!isAdmin){showToast('Somente administradores podem controlar o relógio.');return false}
-  const payload={level:next.level,remaining_seconds:next.remaining,running:next.running,started_at:next.running?new Date().toISOString():null,updated_at:new Date().toISOString(),updated_by:currentUser?.id||null};
-  const {data,error}=await supa.from('clock_state').update(payload).eq('id','main').select().single();
-  if(error){showToast('Não foi possível sincronizar o relógio.');return false}
-  remoteClock=data;paintClock();return true;
+  const {data,error}=await supa.rpc('plp_admin_set_clock',{
+    p_level:Number(next.level)||0,
+    p_remaining_seconds:Math.max(0,Math.floor(Number(next.remaining)||0)),
+    p_running:Boolean(next.running)
+  });
+  if(error||!data?.clock){showToast('Não foi possível sincronizar o relógio.');return false}
+  remoteClock=data.clock;paintClock();return true;
 }
 async function initBackend(){
   if(!backendReady){setAdminUI();return}
