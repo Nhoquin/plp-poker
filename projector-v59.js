@@ -160,9 +160,9 @@
     const root=document.getElementById('p59Projector');
     if(!root)return;
     const b=list(),v=view(),level=Math.max(0,Math.min(b.length-1,v.level)),next=Math.min(level+1,b.length-1),s=state.stage;
-    const started=!!s?.game_started && s?.status==='open',finalized=s?.status==='finalized';
+    const started=!!s?.game_started && s?.status==='open',finalized=s?.status==='finalized',clockLive=!!v.running;
     root.querySelector('#p59Stage').textContent=s ? String(s.championship||'').toUpperCase()+' • ETAPA '+s.stage_number : 'PRIMEIRA LIGA DE POKER';
-    root.querySelector('#p59Sub').textContent=finalized ? 'ETAPA FINALIZADA' : started ? (v.running?'BLIND CLOCK EM ANDAMENTO':'BLIND CLOCK PAUSADO') : 'AGUARDANDO INÍCIO DA PARTIDA';
+    root.querySelector('#p59Sub').textContent=clockLive ? 'BLIND CLOCK EM ANDAMENTO' : finalized ? 'ETAPA FINALIZADA • RELÓGIO PAUSADO' : started ? 'BLIND CLOCK PAUSADO' : 'AGUARDANDO INÍCIO DA PARTIDA';
     root.querySelector('#p59Level').textContent='NÍVEL '+(level+1);
     root.querySelector('#p59Time').textContent=fmt(v.remaining);
     root.querySelector('#p59Blinds').textContent=b[level][0];
@@ -174,7 +174,7 @@
     conn.textContent=state.online?'ONLINE • SINCRONIZADO':'SEM CONEXÃO • CONTAGEM LOCAL';
     conn.dataset.online=state.online?'1':'0';
     root.classList.toggle('p59-paused',started&&!v.running);
-    root.classList.toggle('p59-wait',!started||finalized);
+    root.classList.toggle('p59-wait',!clockLive&&!started);
   }
 
   async function client(){
