@@ -5,7 +5,7 @@ window.PLP_SUPABASE_CONFIG = {
   anonKey: "sb_publishable_elNr5qi_sEYm2ddiZZ9dLg_s_T4oCZM"
 };
 
-window.PLP_BUILD = '59';
+window.PLP_BUILD = '60';
 
 (() => {
   'use strict';
@@ -38,7 +38,7 @@ window.PLP_BUILD = '59';
     ['live-game-v55.js', 'plpLiveGameV55'],
     ['live-roster-v58.js', 'plpLiveRosterV58'],
     ['projector-v59.js', 'plpProjectorV59'],
-    ['stage-correction-v57.js', 'plpStageCorrectionV57']
+    ['stage-correction-v60.js', 'plpStageCorrectionV60']
   ];
 
   function versioned(path) {
