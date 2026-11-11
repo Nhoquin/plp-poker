@@ -1,5 +1,5 @@
-// V59 projector final refresh
-const PLP_BUILD = '59';
+// V60 correction of stage participant aliases
+const PLP_BUILD = '60';
 const CACHE = `plp-2026-v${PLP_BUILD}`;
 const CACHE_PREFIX = 'plp-2026-v';
 const PAGE = './index.html';
@@ -39,7 +39,7 @@ const SHELL_ASSETS = [
   './live-game-v55.js',
   './live-roster-v58.js',
   './projector-v59.js',
-  './stage-correction-v57.js',
+  './stage-correction-v60.js',
   './assets/plp-logo-v47.png',
   './assets/splash-logo-v47.png',
   './assets/poker-bg-v32.webp',
